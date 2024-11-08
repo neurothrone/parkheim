@@ -1,0 +1,138 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:8448756685682649899",
+      "lastPropertyId": "5:3582479374788032921",
+      "name": "ParkingEntity",
+      "properties": [
+        {
+          "id": "1:1984680148380655091",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5260266785386349893",
+          "name": "vehicleId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:7910061890182033992",
+          "relationTarget": "VehicleEntity"
+        },
+        {
+          "id": "3:7098436844037054178",
+          "name": "parkingSpaceId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "2:7178469029638787433",
+          "relationTarget": "ParkingSpaceEntity"
+        },
+        {
+          "id": "4:3156992928871210255",
+          "name": "startTime",
+          "type": 10
+        },
+        {
+          "id": "5:3582479374788032921",
+          "name": "endTime",
+          "type": 10
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:4407802685306652129",
+      "lastPropertyId": "3:7450109992284608905",
+      "name": "ParkingSpaceEntity",
+      "properties": [
+        {
+          "id": "1:7070863136838255406",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:61494257422816125",
+          "name": "address",
+          "type": 9
+        },
+        {
+          "id": "3:7450109992284608905",
+          "name": "pricePerHour",
+          "type": 8
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:1613293111816462252",
+      "lastPropertyId": "3:8404318957467511061",
+      "name": "PersonEntity",
+      "properties": [
+        {
+          "id": "1:19233394389269597",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8371795390049317381",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:8404318957467511061",
+          "name": "socialSecurityNumber",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:3263033936753839536",
+      "lastPropertyId": "4:4129014785711129029",
+      "name": "VehicleEntity",
+      "properties": [
+        {
+          "id": "1:4329874328920255263",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7989196139821774655",
+          "name": "registrationNumber",
+          "type": 9
+        },
+        {
+          "id": "3:8899406532577159307",
+          "name": "ownerId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "3:6173139102471649757",
+          "relationTarget": "PersonEntity"
+        },
+        {
+          "id": "4:4129014785711129029",
+          "name": "vehicleTypeIndex",
+          "type": 6
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "4:3263033936753839536",
+  "lastIndexId": "3:6173139102471649757",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}
