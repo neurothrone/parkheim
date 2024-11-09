@@ -8,15 +8,11 @@ sealed class Result<T, E> {
   R when<R>({
     required R Function(T data) success,
     required R Function(E error) failure,
-  }) {
-    if (this is Success<T, E>) {
-      return success((this as Success<T, E>).data);
-    } else if (this is Failure<T, E>) {
-      return failure((this as Failure<T, E>).error);
-    }
-
-    throw StateError("Unhandled Result state");
-  }
+  }) =>
+      switch (this) {
+        Success<T, E> successState => success(successState.data),
+        Failure<T, E> failureState => failure(failureState.error),
+      };
 
   T getOrElse(T defaultValue) {
     return when(
