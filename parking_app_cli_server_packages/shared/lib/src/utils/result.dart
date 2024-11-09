@@ -14,12 +14,10 @@ sealed class Result<T, E> {
         Failure<T, E> failureState => failure(failureState.error),
       };
 
-  T getOrElse(T defaultValue) {
-    return when(
-      success: (value) => value,
-      failure: (_) => defaultValue,
-    );
-  }
+  T getOrElse(T defaultValue) => when(
+        success: (value) => value,
+        failure: (_) => defaultValue,
+      );
 }
 
 class Success<T, E> extends Result<T, E> {
