@@ -13,5 +13,6 @@ export 'src/models/parking_space.dart';
 export 'src/models/person.dart';
 export 'src/models/vehicle.dart';
 export 'src/utils/json_helper.dart';
+export 'src/utils/result.dart';
 export 'src/utils/string_extensions.dart';
 export 'src/utils/validation_helper.dart';

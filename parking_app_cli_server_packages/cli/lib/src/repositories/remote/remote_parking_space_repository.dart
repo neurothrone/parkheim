@@ -1,7 +1,8 @@
 import 'package:shared/shared.dart';
 import 'base_remote_repository.dart';
 
-class RemoteParkingSpaceRepository extends BaseRemoteRepository<ParkingSpace> {
+class RemoteParkingSpaceRepository
+    extends BaseRemoteRepository<ParkingSpace, String> {
   RemoteParkingSpaceRepository._internal()
       : super(
           resource: ModelType.parkingSpace.resource,

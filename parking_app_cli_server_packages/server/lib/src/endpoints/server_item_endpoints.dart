@@ -5,40 +5,54 @@ import 'package:shelf_router/shelf_router.dart';
 
 import 'package:shared/shared.dart';
 
-class ServerItemEndpoints<T extends Serializable> {
+class ServerItemEndpoints<T extends Serializable, E> {
   ServerItemEndpoints({
-    required Repository<T> repository,
+    required Repository<T, E> repository,
     required T Function(Map<String, dynamic>) fromJson,
   })  : _repository = repository,
         _fromJson = fromJson;
 
-  final Repository<T> _repository;
+  final Repository<T, E> _repository;
   final T Function(Map<String, dynamic>) _fromJson;
 
   Future<Response> createItemHandler(Request request) async {
-    final data = await request.readAsString();
-
     try {
+      final data = await request.readAsString();
       final json = jsonDecode(data) as Map<String, dynamic>;
-      final createdItem = await _repository.create(
+
+      final result = await _repository.create(
         _fromJson(json),
       );
-      return Response.ok(
-        jsonEncode(createdItem.toJson()),
+      return result.when(
+        success: (T createdItem) {
+          return Response.ok(
+            jsonEncode(createdItem.toJson()),
+          );
+        },
+        failure: (error) {
+          return Response.badRequest(body: error);
+        },
       );
     } catch (e) {
-      return Response.internalServerError();
+      return Response.internalServerError(body: e.toString());
     }
   }
 
   Future<Response> getItemsHandler(Request request) async {
     try {
-      final items = await _repository.getAll();
-      return Response.ok(
-        jsonEncode(items),
+      final result = await _repository.getAll();
+      return result.when(
+        success: (List<T> items) {
+          return Response.ok(
+            jsonEncode(items),
+          );
+        },
+        failure: (error) {
+          return Response.badRequest(body: error);
+        },
       );
     } catch (e) {
-      return Response.internalServerError();
+      return Response.internalServerError(body: e.toString());
     }
   }
 
@@ -46,13 +60,18 @@ class ServerItemEndpoints<T extends Serializable> {
     final id = _parseIdFromParams(request.params);
 
     try {
-      final T? item = await _repository.getById(id);
-      if (item == null) {
-        return Response.notFound(null);
-      }
-
-      return Response.ok(
-        jsonEncode(item.toJson()),
+      final result = await _repository.getById(id);
+      return result.when(
+        success: (T? item) {
+          return item == null
+              ? Response.notFound(null)
+              : Response.ok(
+                  jsonEncode(item.toJson()),
+                );
+        },
+        failure: (error) {
+          return Response.badRequest(body: error);
+        },
       );
     } catch (e) {
       return Response.internalServerError();
@@ -61,47 +80,84 @@ class ServerItemEndpoints<T extends Serializable> {
 
   Future<Response> updateItemHandler(Request request) async {
     final id = _parseIdFromParams(request.params);
-
-    if (!await _repository.exists(id)) {
-      return Response.notFound(null);
+    if (id == -1) {
+      return Response.badRequest(body: "⚠️ -> Invalid ID provided.");
     }
 
-    final data = await request.readAsString();
+    final result = await _repository.exists(id);
+    return result.when(
+      success: (bool exists) async {
+        if (!exists) {
+          return Response.notFound(null);
+        }
 
-    try {
-      final json = jsonDecode(data) as Map<String, dynamic>;
-      final updatedItem = await _repository.update(
-        id,
-        _fromJson(json),
-      );
-      return Response.ok(
-        jsonEncode(updatedItem.toJson()),
-      );
-    } catch (e) {
-      return Response.internalServerError();
-    }
+        try {
+          final data = await request.readAsString();
+          final json = jsonDecode(data) as Map<String, dynamic>;
+
+          final updateResult = await _repository.update(
+            id,
+            _fromJson(json),
+          );
+
+          return updateResult.when(
+            success: (T updatedItem) {
+              return Response.ok(
+                jsonEncode(updatedItem.toJson()),
+              );
+            },
+            failure: (error) {
+              return Response.internalServerError(body: error);
+            },
+          );
+        } catch (e) {
+          return Response.internalServerError();
+        }
+      },
+      failure: (error) {
+        return Response.internalServerError(body: error);
+      },
+    );
   }
 
   Future<Response> deleteItemHandler(Request request) async {
     final id = _parseIdFromParams(request.params);
-
-    if (!await _repository.exists(id)) {
-      return Response.notFound(null);
+    if (id == -1) {
+      return Response.badRequest(body: "⚠️ -> Invalid ID provided.");
     }
 
-    try {
-      final T deletedItem = await _repository.delete(id);
-      return Response.ok(
-        jsonEncode(deletedItem.toJson()),
-      );
-    } catch (e) {
-      return Response.internalServerError();
-    }
+    final result = await _repository.exists(id);
+    return result.when(
+      success: (bool exists) async {
+        if (!exists) {
+          return Response.notFound(null);
+        }
+
+        try {
+          final deleteResult = await _repository.delete(id);
+          return deleteResult.when(
+            success: (T deletedItem) {
+              return Response.ok(
+                jsonEncode(deletedItem.toJson()),
+              );
+            },
+            failure: (error) {
+              return Response.internalServerError(body: error);
+            },
+          );
+        } catch (e) {
+          return Response.internalServerError();
+        }
+      },
+      failure: (error) {
+        return Response.internalServerError(body: error);
+      },
+    );
   }
 
   int _parseIdFromParams(Map<String, dynamic> map) {
     final stringId = map.containsKey("id") ? map["id"] as String : "";
-    final id = int.tryParse(stringId) ?? 0;
+    final id = int.tryParse(stringId) ?? -1;
     return id;
   }
 }

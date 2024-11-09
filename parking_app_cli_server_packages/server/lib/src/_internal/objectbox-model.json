@@ -4,39 +4,39 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:8448756685682649899",
-      "lastPropertyId": "5:3582479374788032921",
+      "id": "1:2694885760429889290",
+      "lastPropertyId": "5:797804001771321211",
       "name": "ParkingEntity",
       "properties": [
         {
-          "id": "1:1984680148380655091",
+          "id": "1:7243182214721564384",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:5260266785386349893",
+          "id": "2:1314464720844894714",
           "name": "vehicleId",
           "type": 11,
           "flags": 520,
-          "indexId": "1:7910061890182033992",
+          "indexId": "1:3160067532180572208",
           "relationTarget": "VehicleEntity"
         },
         {
-          "id": "3:7098436844037054178",
+          "id": "3:4547827375767293807",
           "name": "parkingSpaceId",
           "type": 11,
           "flags": 520,
-          "indexId": "2:7178469029638787433",
+          "indexId": "2:5165304292478145721",
           "relationTarget": "ParkingSpaceEntity"
         },
         {
-          "id": "4:3156992928871210255",
+          "id": "4:3718277476715628240",
           "name": "startTime",
           "type": 10
         },
         {
-          "id": "5:3582479374788032921",
+          "id": "5:797804001771321211",
           "name": "endTime",
           "type": 10
         }
@@ -44,23 +44,23 @@
       "relations": []
     },
     {
-      "id": "2:4407802685306652129",
-      "lastPropertyId": "3:7450109992284608905",
+      "id": "2:4872726380988876277",
+      "lastPropertyId": "3:7070147626266401459",
       "name": "ParkingSpaceEntity",
       "properties": [
         {
-          "id": "1:7070863136838255406",
+          "id": "1:7340355296602069428",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:61494257422816125",
+          "id": "2:2354229130927877435",
           "name": "address",
           "type": 9
         },
         {
-          "id": "3:7450109992284608905",
+          "id": "3:7070147626266401459",
           "name": "pricePerHour",
           "type": 8
         }
@@ -68,23 +68,23 @@
       "relations": []
     },
     {
-      "id": "3:1613293111816462252",
-      "lastPropertyId": "3:8404318957467511061",
+      "id": "3:3754462875777520021",
+      "lastPropertyId": "3:4150391665003164204",
       "name": "PersonEntity",
       "properties": [
         {
-          "id": "1:19233394389269597",
+          "id": "1:1222255643583477764",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:8371795390049317381",
+          "id": "2:8149851870476183845",
           "name": "name",
           "type": 9
         },
         {
-          "id": "3:8404318957467511061",
+          "id": "3:4150391665003164204",
           "name": "socialSecurityNumber",
           "type": 9
         }
@@ -92,40 +92,40 @@
       "relations": []
     },
     {
-      "id": "4:3263033936753839536",
-      "lastPropertyId": "4:4129014785711129029",
+      "id": "4:3375811358397607236",
+      "lastPropertyId": "4:7819187906691474608",
       "name": "VehicleEntity",
       "properties": [
         {
-          "id": "1:4329874328920255263",
+          "id": "1:3977456354261303121",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:7989196139821774655",
+          "id": "2:4164057959784295572",
           "name": "registrationNumber",
           "type": 9
         },
         {
-          "id": "3:8899406532577159307",
+          "id": "3:701141724314988592",
+          "name": "vehicleTypeIndex",
+          "type": 6
+        },
+        {
+          "id": "4:7819187906691474608",
           "name": "ownerId",
           "type": 11,
           "flags": 520,
-          "indexId": "3:6173139102471649757",
+          "indexId": "3:3573827676731762008",
           "relationTarget": "PersonEntity"
-        },
-        {
-          "id": "4:4129014785711129029",
-          "name": "vehicleTypeIndex",
-          "type": 6
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "4:3263033936753839536",
-  "lastIndexId": "3:6173139102471649757",
+  "lastEntityId": "4:3375811358397607236",
+  "lastIndexId": "3:3573827676731762008",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

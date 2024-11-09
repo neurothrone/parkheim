@@ -1,13 +1,15 @@
-abstract interface class Repository<T> {
-  Future<T> create(T item);
+import '../utils/result.dart';
 
-  Future<List<T>> getAll();
+abstract interface class Repository<T, E> {
+  Future<Result<T, E>> create(T item);
 
-  Future<T?> getById(int id);
+  Future<Result<List<T>, E>> getAll();
 
-  Future<T> update(int id, T item);
+  Future<Result<T?, E>> getById(int id);
 
-  Future<T> delete(int id);
+  Future<Result<T, E>> update(int id, T item);
 
-  Future<bool> exists(int id);
+  Future<Result<T, E>> delete(int id);
+
+  Future<Result<bool, E>> exists(int id);
 }

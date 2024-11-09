@@ -1,7 +1,7 @@
 import 'package:shared/shared.dart';
 import 'base_remote_repository.dart';
 
-class RemotePersonRepository extends BaseRemoteRepository<Person> {
+class RemotePersonRepository extends BaseRemoteRepository<Person, String> {
   RemotePersonRepository._internal()
       : super(
           resource: ModelType.person.resource,

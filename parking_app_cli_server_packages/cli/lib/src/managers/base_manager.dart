@@ -69,27 +69,26 @@ abstract class BaseManager {
       return;
     }
 
-    switch (modelType) {
-      case ModelType.person:
-        await personRepository.create(item as Person);
-      case ModelType.vehicle:
-        await vehicleRepository.create(item as Vehicle);
-      case ModelType.parking:
-        await parkingRepository.create(item as Parking);
-      case ModelType.parkingSpace:
-        await parkingSpaceRepository.create(item as ParkingSpace);
-    }
+    final result = switch (modelType) {
+      ModelType.person => await personRepository.create(item as Person),
+      ModelType.vehicle => await vehicleRepository.create(item as Vehicle),
+      ModelType.parking => await parkingRepository.create(item as Parking),
+      ModelType.parkingSpace =>
+        await parkingSpaceRepository.create(item as ParkingSpace),
+    };
 
-    stdout.writeln("✅ -> ${modelType.singular()} created.");
+    result.when(
+      success: (_) {
+        stdout.writeln("✅ -> ${modelType.singular()} created.");
+      },
+      failure: (error) {
+        stdout.writeln("⚠️ -> Failed to create ${modelType.singular()}.");
+      },
+    );
   }
 
   Future<void> showAllItems(ModelType modelType) async {
-    final List<BaseModel> items = switch (modelType) {
-      ModelType.person => await personRepository.getAll(),
-      ModelType.vehicle => await vehicleRepository.getAll(),
-      ModelType.parking => await parkingRepository.getAll(),
-      ModelType.parkingSpace => await parkingSpaceRepository.getAll(),
-    };
+    final List<BaseModel> items = await _getAllItems(modelType);
 
     if (items.isEmpty) {
       stdout.writeln("No ${modelType.plural()} yet, try adding one first.");
@@ -104,12 +103,8 @@ abstract class BaseManager {
   }
 
   Future<void> updateItem(ModelType modelType) async {
-    final List<BaseModel> items = switch (modelType) {
-      ModelType.person => await personRepository.getAll(),
-      ModelType.vehicle => await vehicleRepository.getAll(),
-      ModelType.parking => await parkingRepository.getAll(),
-      ModelType.parkingSpace => await parkingSpaceRepository.getAll(),
-    };
+    final List<BaseModel> items = await _getAllItems(modelType);
+
     if (items.isEmpty) {
       stdout.writeln(
           "Nothing to update, try adding ${modelType.plural()} first.");
@@ -131,11 +126,10 @@ abstract class BaseManager {
       ModelType.parkingSpace =>
         await updateParkingSpace(items[index] as ParkingSpace),
     };
+
     if (updated == null) {
       return;
-    }
-
-    if (updated) {
+    } else if (updated) {
       stdout.writeln("✅ -> ${modelType.singular()} updated.");
     } else {
       stdout.writeln("⚠️ -> ${modelType.singular()} NOT updated.");
@@ -153,25 +147,37 @@ abstract class BaseManager {
     // TODO: Should deleting a Vehicle remove it from existing Parkings?
     // TODO: Should deleting a ParkingSpace remove it from existing Parkings?
 
-    try {
-      final _ = switch (modelType) {
-        ModelType.person => await personRepository.delete(selection.id),
-        ModelType.vehicle => await vehicleRepository.delete(selection.id),
-        ModelType.parking => await parkingRepository.delete(selection.id),
-        ModelType.parkingSpace =>
-          await parkingSpaceRepository.delete(selection.id),
-      };
+    final result = switch (modelType) {
+      ModelType.person => await personRepository.delete(selection.id),
+      ModelType.vehicle => await vehicleRepository.delete(selection.id),
+      ModelType.parking => await parkingRepository.delete(selection.id),
+      ModelType.parkingSpace =>
+        await parkingSpaceRepository.delete(selection.id),
+    };
 
-      stdout.writeln("✅ -> ${modelType.singular()} deleted.");
-    } catch (e) {
-      print(e);
-      stdout.writeln("⚠️ -> ${modelType.singular()} NOT deleted.");
-    }
+    result.when(
+      success: (_) {
+        stdout.writeln("✅ -> ${modelType.singular()} deleted.");
+      },
+      failure: (error) {
+        stdout.writeln(
+            "⚠️ -> ${modelType.singular()} NOT deleted, error: $error");
+      },
+    );
   }
 
   // endregion
 
   // region Helpers
+
+  Future<List<BaseModel>> _getAllItems(ModelType modelType) async =>
+      switch (modelType) {
+        ModelType.person => (await personRepository.getAll()).getOrElse([]),
+        ModelType.vehicle => (await vehicleRepository.getAll()).getOrElse([]),
+        ModelType.parking => (await parkingRepository.getAll()).getOrElse([]),
+        ModelType.parkingSpace =>
+          (await parkingSpaceRepository.getAll()).getOrElse([]),
+      };
 
   void listOneBasedIndexedItems(List<BaseModel> items) {
     stdout.writeln(Constants.divider);
@@ -213,12 +219,7 @@ abstract class BaseManager {
   // region Select
 
   Future<BaseModel?> selectItem(ModelType modelType) async {
-    final List<BaseModel> items = switch (modelType) {
-      ModelType.person => await personRepository.getAll(),
-      ModelType.vehicle => await vehicleRepository.getAll(),
-      ModelType.parking => await parkingRepository.getAll(),
-      ModelType.parkingSpace => await parkingSpaceRepository.getAll(),
-    };
+    final List<BaseModel> items = await _getAllItems(modelType);
 
     if (items.isEmpty) {
       stdout.writeln("No ${modelType.singular()} to select.");
@@ -406,12 +407,12 @@ abstract class BaseManager {
           newSocialSecurityNumber.isEmpty ? null : newSocialSecurityNumber,
     );
 
-    try {
-      final _ = await personRepository.update(updatedPerson.id, updatedPerson);
-      return true;
-    } catch (e) {
-      return false;
-    }
+    final result =
+        await personRepository.update(updatedPerson.id, updatedPerson);
+    return result.when(
+      success: (_) => true,
+      failure: (__) => false,
+    );
   }
 
   Future<bool?> updateVehicle(Vehicle vehicle) async {
@@ -466,13 +467,12 @@ abstract class BaseManager {
       setOwnerToNull: setOwnerToNull,
     );
 
-    try {
-      final _ =
-          await vehicleRepository.update(vehicleToUpdate.id, vehicleToUpdate);
-      return true;
-    } catch (e) {
-      return false;
-    }
+    final result =
+        await vehicleRepository.update(vehicleToUpdate.id, vehicleToUpdate);
+    return result.when(
+      success: (_) => true,
+      failure: (__) => false,
+    );
   }
 
   Future<bool?> updateParking(Parking parking) async {
@@ -548,13 +548,12 @@ abstract class BaseManager {
       endTime: endTime,
     );
 
-    try {
-      final _ =
-          await parkingRepository.update(parkingToUpdate.id, parkingToUpdate);
-      return true;
-    } catch (e) {
-      return false;
-    }
+    final result =
+        await parkingRepository.update(parkingToUpdate.id, parkingToUpdate);
+    return result.when(
+      success: (_) => true,
+      failure: (__) => false,
+    );
   }
 
   Future<bool?> updateParkingSpace(ParkingSpace parkingSpace) async {
@@ -577,13 +576,12 @@ abstract class BaseManager {
       pricePerHour: pricePerHour,
     );
 
-    try {
-      final _ = await parkingSpaceRepository.update(
-          parkingSpaceToUpdate.id, parkingSpaceToUpdate);
-      return true;
-    } catch (e) {
-      return false;
-    }
+    final result = await parkingSpaceRepository.update(
+        parkingSpaceToUpdate.id, parkingSpaceToUpdate);
+    return result.when(
+      success: (_) => true,
+      failure: (__) => false,
+    );
   }
 
   // endregion

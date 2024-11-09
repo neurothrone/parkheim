@@ -14,19 +14,19 @@ import 'repositories/server_item_repository.dart';
 
 class App {
   App() {
-    _personEndpoints = ServerItemEndpoints(
+    _personEndpoints = ServerItemEndpoints<PersonEntity, String>(
       repository: ServerItemRepository<PersonEntity>(),
       fromJson: PersonEntity.fromJson,
     );
-    _vehicleEndpoints = ServerItemEndpoints(
+    _vehicleEndpoints = ServerItemEndpoints<VehicleEntity, String>(
       repository: ServerItemRepository<VehicleEntity>(),
       fromJson: VehicleEntity.fromJson,
     );
-    _parkingEndpoints = ServerItemEndpoints(
+    _parkingEndpoints = ServerItemEndpoints<ParkingEntity, String>(
       repository: ServerItemRepository<ParkingEntity>(),
       fromJson: ParkingEntity.fromJson,
     );
-    _parkingSpaceEndpoints = ServerItemEndpoints(
+    _parkingSpaceEndpoints = ServerItemEndpoints<ParkingSpaceEntity, String>(
       repository: ServerItemRepository<ParkingSpaceEntity>(),
       fromJson: ParkingSpaceEntity.fromJson,
     );
@@ -68,10 +68,11 @@ class App {
   }
 
   late final Router _router;
-  late final ServerItemEndpoints _personEndpoints;
-  late final ServerItemEndpoints _vehicleEndpoints;
-  late final ServerItemEndpoints _parkingEndpoints;
-  late final ServerItemEndpoints _parkingSpaceEndpoints;
+  late final ServerItemEndpoints<PersonEntity, String> _personEndpoints;
+  late final ServerItemEndpoints<VehicleEntity, String> _vehicleEndpoints;
+  late final ServerItemEndpoints<ParkingEntity, String> _parkingEndpoints;
+  late final ServerItemEndpoints<ParkingSpaceEntity, String>
+      _parkingSpaceEndpoints;
 
   Future<void> run() async {
     // Use any available host or container IP (usually `0.0.0.0`).

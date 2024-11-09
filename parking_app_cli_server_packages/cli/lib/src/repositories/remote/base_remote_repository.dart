@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 
 import 'package:shared/shared.dart';
 
-abstract class BaseRemoteRepository<T extends Serializable>
-    implements Repository<T> {
+abstract class BaseRemoteRepository<T extends Serializable, E>
+    implements Repository<T, String> {
   BaseRemoteRepository({
     required String resource,
     required T Function(Map<String, dynamic>) fromJson,
@@ -20,7 +20,7 @@ abstract class BaseRemoteRepository<T extends Serializable>
   final T Function(Map<String, dynamic>) _fromJson;
 
   @override
-  Future<T> create(T item) async {
+  Future<Result<T, String>> create(T item) async {
     final uri = Uri.parse(_endpoint);
     final http.Response response = await http.post(
       uri,
@@ -29,51 +29,61 @@ abstract class BaseRemoteRepository<T extends Serializable>
     );
 
     if (response.statusCode != HttpStatus.ok) {
-      throw Exception(
-          "⚠️ -> Create failed. Status code: ${response.statusCode}.");
+      return Result.failure(
+          error: "⚠️ -> Create failed. Status code: ${response.statusCode}.");
     }
+
     try {
       final map = jsonDecode(response.body) as Map<String, dynamic>;
-      return _fromJson(map);
+      return Result.success(value: _fromJson(map));
     } catch (e) {
-      throw Exception("⚠️ -> Create failed. Error: $e");
+      return Result.failure(error: "⚠️ -> Create failed. Error: $e");
     }
   }
 
   @override
-  Future<List<T>> getAll() async {
+  Future<Result<List<T>, String>> getAll() async {
     final Uri url = Uri.parse(_endpoint);
     final response = await http.get(url);
 
-    List<T> items = [];
-    if (response.statusCode == HttpStatus.ok) {
-      // !: Approach 1
-      // final json = jsonDecode(response.body);
-      // return (json as List)
-      //     .map((item) => _fromJson(item as Map<String, dynamic>))
-      //     .toList();
-      // !: Approach 2
-      items = _parseItemsJson(response.body);
-    }
+    try {
+      List<T> items = [];
 
-    return List.unmodifiable(items);
+      if (response.statusCode == HttpStatus.ok) {
+        // !: Approach 1
+        // final json = jsonDecode(response.body);
+        // return (json as List)
+        //     .map((item) => _fromJson(item as Map<String, dynamic>))
+        //     .toList();
+        // !: Approach 2
+        items = _parseItemsJson(response.body);
+      }
+
+      return Result.success(value: List.unmodifiable(items));
+    } catch (e) {
+      return Result.failure(error: e.toString());
+    }
   }
 
   @override
-  Future<T?> getById(int id) async {
+  Future<Result<T?, String>> getById(int id) async {
     final Uri url = Uri.parse("$_endpoint/$id");
     final response = await http.get(url);
 
     if (response.statusCode == HttpStatus.ok) {
-      final json = jsonDecode(response.body);
-      return _fromJson(json as Map<String, dynamic>);
+      try {
+        final json = jsonDecode(response.body);
+        return Result.success(value: _fromJson(json as Map<String, dynamic>));
+      } catch (e) {
+        return Result.failure(error: e.toString());
+      }
     }
 
-    return null;
+    return Result.success(value: null);
   }
 
   @override
-  Future<T> update(int id, T updatedItem) async {
+  Future<Result<T, String>> update(int id, T updatedItem) async {
     final Uri url = Uri.parse("$_endpoint/$id");
     final response = await http.put(
       url,
@@ -84,18 +94,21 @@ abstract class BaseRemoteRepository<T extends Serializable>
     );
 
     if (response.statusCode != HttpStatus.ok) {
-      throw Exception("Failed to create. Error code.");
+      return Result.failure(
+          error: "⚠️ -> Update failed. Status code: ${response.statusCode}");
     }
+
     try {
       final json = jsonDecode(response.body);
-      return _fromJson(json as Map<String, dynamic>);
+      return Result.success(value: _fromJson(json as Map<String, dynamic>));
     } catch (e) {
-      throw Exception("Failed to parse");
+      return Result.failure(
+          error: "⚠️ -> Update failed. Unable to parse response, error: $e");
     }
   }
 
   @override
-  Future<T> delete(int id) async {
+  Future<Result<T, String>> delete(int id) async {
     final Uri url = Uri.parse("$_endpoint/$id");
     final response = await http.delete(
       url,
@@ -105,21 +118,28 @@ abstract class BaseRemoteRepository<T extends Serializable>
     );
 
     if (response.statusCode != HttpStatus.ok) {
-      throw Exception("Failed to create. Error code.");
+      return Result.failure(
+          error: "⚠️ -> Delete failed. Status code: ${response.statusCode}");
     }
 
     try {
       final json = jsonDecode(response.body);
-      return _fromJson(json as Map<String, dynamic>);
+      return Result.success(value: _fromJson(json as Map<String, dynamic>));
     } catch (e) {
-      throw Exception("Failed to parse");
+      return Result.failure(
+          error: "⚠️ -> Delete failed. Unable to parse response, error: $e");
     }
   }
 
   @override
-  Future<bool> exists(int id) async {
-    final item = await getById(id);
-    return item != null;
+  Future<Result<bool, String>> exists(int id) async {
+    final result = await getById(id);
+    return result.when(
+      success: (T? item) {
+        return Result.success(value: item != null);
+      },
+      failure: (error) => Result.failure(error: error),
+    );
   }
 
   List<T> _parseItemsJson(String responseBody) {
@@ -130,14 +150,14 @@ abstract class BaseRemoteRepository<T extends Serializable>
             try {
               return _fromJson(itemJson as Map<String, dynamic>);
             } catch (e) {
-              print("⚠️ -> Error parsing Item. Error: ${e.toString()}");
+              // print("⚠️ -> Error parsing Item. Error: ${e.toString()}");
               return null;
             }
           })
           .whereType<T>() // Filter out any nulls
           .toList();
     } catch (e) {
-      print("⚠️ -> Error decoding response body. Error: ${e.toString()}");
+      // print("⚠️ -> Error decoding response body. Error: ${e.toString()}");
       return [];
     }
   }
