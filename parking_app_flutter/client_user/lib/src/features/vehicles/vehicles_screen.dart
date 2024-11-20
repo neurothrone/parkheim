@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../core/widgets/custom_app_bar.dart';
-import '../../core/widgets/custom_navigation_rail.dart';
-import '../../core/enums/screen.dart';
+import '../../common/widgets/custom_app_bar.dart';
+import '../../common/widgets/custom_navigation_rail.dart';
+import '../../common/navigation/bottom_tab.dart';
 
 class VehiclesScreen extends StatelessWidget {
   const VehiclesScreen({
@@ -11,8 +11,8 @@ class VehiclesScreen extends StatelessWidget {
     required this.onScreenSelected,
   });
 
-  final Screen selectedScreen;
-  final Function(Screen) onScreenSelected;
+  final BottomTab selectedScreen;
+  final Function(BottomTab) onScreenSelected;
 
   @override
   Widget build(BuildContext context) {

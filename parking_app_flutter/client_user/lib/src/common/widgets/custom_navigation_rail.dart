@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../enums/screen.dart';
+import '../navigation/bottom_tab.dart';
 
 class CustomNavigationBar extends StatelessWidget {
   const CustomNavigationBar({
@@ -9,17 +9,17 @@ class CustomNavigationBar extends StatelessWidget {
     required this.onScreenSelected,
   });
 
-  final Screen selectedScreen;
-  final Function(Screen) onScreenSelected;
+  final BottomTab selectedScreen;
+  final Function(BottomTab) onScreenSelected;
 
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
       onDestinationSelected: (int index) {
-        onScreenSelected(Screen.fromIndex(index));
+        onScreenSelected(BottomTab.fromIndex(index));
       },
       selectedIndex: selectedScreen.index,
-      destinations: Screen.values
+      destinations: BottomTab.values
           .map(
             (screen) => NavigationDestination(
               icon: Icon(
