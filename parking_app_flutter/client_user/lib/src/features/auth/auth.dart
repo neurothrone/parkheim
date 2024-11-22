@@ -1,3 +1,3 @@
 // !: Screens
-export 'screens/login_screen.dart';
-export 'screens/register_screen.dart';
+export 'screens/sign_in_screen.dart';
+export 'screens/sign_up_screen.dart';

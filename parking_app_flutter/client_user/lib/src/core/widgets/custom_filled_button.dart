@@ -7,7 +7,7 @@ class CustomFilledButton extends StatelessWidget {
     required this.text,
   });
 
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String text;
 
   @override
@@ -20,7 +20,14 @@ class CustomFilledButton extends StatelessWidget {
           48.0,
         ),
       ),
-      child: Text(text),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: Colors.white,
+              fontSize: 18.0,
+              fontWeight: FontWeight.w600,
+            ),
+      ),
     );
   }
 }

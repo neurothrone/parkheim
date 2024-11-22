@@ -7,41 +7,33 @@ class CustomScaffold extends StatelessWidget {
     required this.child,
     this.automaticallyImplyLeading = true,
     this.centerTitle = true,
-    this.withPadding = true,
     this.leading,
     this.actions,
     this.bottomNavigationBar,
   });
 
   final String title;
+  final Widget child;
   final bool automaticallyImplyLeading;
   final bool centerTitle;
-  final bool withPadding;
-  final Widget child;
   final Widget? leading;
   final List<Widget>? actions;
-  final BottomNavigationBar? bottomNavigationBar;
+  final Widget? bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: key,
       appBar: AppBar(
+        backgroundColor: Colors.deepPurpleAccent.shade100,
+        automaticallyImplyLeading: automaticallyImplyLeading,
         leading: leading,
         centerTitle: centerTitle,
-        automaticallyImplyLeading: automaticallyImplyLeading,
         title: Text(title),
         actions: actions,
       ),
       body: SafeArea(
-        child: withPadding
-            ? Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                ),
-                child: child,
-              )
-            : child,
+        child: child,
       ),
       bottomNavigationBar: bottomNavigationBar,
     );

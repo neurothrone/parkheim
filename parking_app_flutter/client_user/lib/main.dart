@@ -1,22 +1,32 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'firebase_options.dart';
 import 'src/app.dart';
+import 'src/core/cubits/navigation/bottom_navigation_cubit.dart';
+import 'src/core/di/dependencies.dart';
+import 'src/core/cubits/app_user/app_user_cubit.dart';
+import 'src/features/auth/bloc/auth_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  await initDependencies();
+
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => serviceLocator<AppUserCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<AuthBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<BottomNavigationCubit>(),
+        ),
+      ],
+      child: const MainApp(),
+    ),
   );
-
-  if (kDebugMode) {
-    await FirebaseAuth.instance.useAuthEmulator("localhost", 9099);
-  }
-
-  runApp(const MainApp());
 }
