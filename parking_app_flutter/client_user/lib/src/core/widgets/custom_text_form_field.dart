@@ -39,6 +39,7 @@ class CustomTextFormField extends StatelessWidget {
       textInputAction: textInputAction,
       keyboardType: keyboardType,
       maxLines: maxLines ?? 1,
+      autocorrect: false,
       decoration: InputDecoration(
         labelText: labelText,
         border: const OutlineInputBorder(),
