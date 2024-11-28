@@ -4,13 +4,13 @@ class AppTheme {
   const AppTheme._internal();
 
   static ThemeData get lightTheme => ThemeData(
-        primarySwatch: Colors.blue,
-        primaryColor: Colors.blue,
-        primaryColorDark: Colors.blue[700],
-        primaryColorLight: Colors.blue[300],
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
+        primarySwatch: Colors.deepPurple,
+        primaryColor: Colors.deepPurple,
+        primaryColorDark: Colors.deepPurple[700],
+        primaryColorLight: Colors.deepPurple[300],
+        scaffoldBackgroundColor: Colors.white.withOpacity(0.95),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.deepPurple.shade100,
           elevation: 0,
           iconTheme: IconThemeData(
             color: Colors.black,
@@ -20,16 +20,21 @@ class AppTheme {
             fontSize: 20,
           ),
         ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Colors.deepPurple.shade100,
+          surfaceTintColor: Colors.deepPurple.shade100,
+        ),
       );
 
   static ThemeData get darkTheme => ThemeData(
-        primarySwatch: Colors.blue,
-        primaryColor: Colors.blue,
-        primaryColorDark: Colors.blue[700],
-        primaryColorLight: Colors.blue[300],
-        scaffoldBackgroundColor: Colors.black,
-        appBarTheme: const AppBarTheme(
+        primarySwatch: Colors.deepPurple,
+        primaryColor: Colors.deepPurple,
+        primaryColorDark: Colors.deepPurple[700],
+        primaryColorLight: Colors.deepPurple[300],
+        scaffoldBackgroundColor: Colors.white10,
+        appBarTheme: AppBarTheme(
           backgroundColor: Colors.black,
+          surfaceTintColor: Colors.deepPurple,
           elevation: 0,
           iconTheme: IconThemeData(
             color: Colors.white,
@@ -37,6 +42,23 @@ class AppTheme {
           titleTextStyle: TextStyle(
             color: Colors.white,
             fontSize: 20,
+          ),
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Colors.black,
+          indicatorColor: Colors.deepPurple.shade200,
+          // indicatorShape: CircleBorder(),
+          elevation: 0,
+          iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.selected)) {
+                return IconThemeData(color: Colors.black);
+              }
+              return IconThemeData(color: Colors.deepPurple.shade100);
+            },
+          ),
+          labelTextStyle: WidgetStatePropertyAll(
+            TextStyle(color: Colors.deepPurple.shade100),
           ),
         ),
       );

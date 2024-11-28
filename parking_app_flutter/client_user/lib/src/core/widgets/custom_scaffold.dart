@@ -9,6 +9,7 @@ class CustomScaffold extends StatelessWidget {
     this.centerTitle = true,
     this.leading,
     this.actions,
+    this.floatingActionButton,
     this.bottomNavigationBar,
   });
 
@@ -19,13 +20,14 @@ class CustomScaffold extends StatelessWidget {
   final Widget? leading;
   final List<Widget>? actions;
   final Widget? bottomNavigationBar;
+  final Widget? floatingActionButton;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: key,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurpleAccent.shade100,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         automaticallyImplyLeading: automaticallyImplyLeading,
         leading: leading,
         centerTitle: centerTitle,
@@ -35,6 +37,7 @@ class CustomScaffold extends StatelessWidget {
       body: SafeArea(
         child: child,
       ),
+      floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
     );
   }

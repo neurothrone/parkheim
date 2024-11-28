@@ -4,8 +4,8 @@ class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
     super.key,
     required this.controller,
-    required this.validator,
     required this.labelText,
+    this.validator,
     this.onFieldSubmitted,
     this.obscureText = false,
     this.focusNode,
@@ -16,7 +16,7 @@ class CustomTextFormField extends StatelessWidget {
   });
 
   final Function(String)? onFieldSubmitted;
-  final String? Function(String?) validator;
+  final String? Function(String?)? validator;
   final TextEditingController controller;
   final String labelText;
   final bool obscureText;

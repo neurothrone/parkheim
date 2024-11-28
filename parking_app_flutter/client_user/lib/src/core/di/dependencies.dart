@@ -9,6 +9,7 @@ import '../../data/repositories/firebase_auth_repository.dart';
 import '../../domain/interfaces/auth_repository.dart';
 import '../../domain/use_cases/auth.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
+import '../../features/settings/state/dark_mode_cubit.dart';
 import '../cubits/app_user/app_user_cubit.dart';
 import '../cubits/navigation/bottom_navigation_cubit.dart';
 
@@ -63,4 +64,7 @@ Future<void> initDependencies() async {
 
   // !: Bottom Navigation
   serviceLocator.registerLazySingleton(() => BottomNavigationCubit());
+
+  // !: Bottom Navigation
+  serviceLocator.registerLazySingleton(() => DarkModeCubit());
 }

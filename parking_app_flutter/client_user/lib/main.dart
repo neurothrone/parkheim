@@ -7,6 +7,7 @@ import 'src/core/cubits/navigation/bottom_navigation_cubit.dart';
 import 'src/core/di/dependencies.dart';
 import 'src/core/cubits/app_user/app_user_cubit.dart';
 import 'src/features/auth/bloc/auth_bloc.dart';
+import 'src/features/settings/state/dark_mode_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,9 @@ Future<void> main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<BottomNavigationCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<DarkModeCubit>(),
         ),
       ],
       child: const MainApp(),

@@ -3,16 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../cubits/navigation/bottom_navigation_cubit.dart';
-import '../cubits/navigation/bottom_tab.dart';
+import 'package:shared/shared.dart';
+
 import '../../features/auth/auth.dart';
+import '../../features/people/views/add_person_screen.dart';
+import '../../features/people/views/people_screen.dart';
+import '../../features/people/views/person_details_screen.dart';
+import '../../features/parkings/parkings_screen.dart';
+import '../../features/settings/views/settings_screen.dart';
+import '../../features/spaces/add_space_screen.dart';
+import '../../features/spaces/spaces_screen.dart';
+import '../../features/vehicles/views/add_vehicle_screen.dart';
+import '../../features/vehicles/views/vehicle_details_screen.dart';
+import '../../features/vehicles/views/vehicles_screen.dart';
 import '../cubits/app_user/app_user_cubit.dart';
 import '../cubits/app_user/app_user_state.dart';
-import '../../features/parkings/parkings_screen.dart';
-import '../../features/people/people_screen.dart';
-import '../../features/settings/settings_screen.dart';
-import '../../features/spaces/spaces_screen.dart';
-import '../../features/vehicles/vehicles_screen.dart';
+import '../cubits/navigation/bottom_navigation_cubit.dart';
+import '../cubits/navigation/bottom_tab.dart';
 import 'app_route.dart';
 
 class AppRouter {
@@ -22,10 +29,14 @@ class AppRouter {
     BuildContext context,
     AppRoute route, {
     Map<String, String> pathParameters = const {},
+    Map<String, String> queryParameters = const {},
+    Object? extra,
   }) {
     return GoRouter.of(context).pushNamed<T>(
       route.name,
       pathParameters: pathParameters,
+      queryParameters: queryParameters,
+      extra: extra,
     );
   }
 
@@ -72,6 +83,37 @@ class AppRouter {
               BottomTab.settings => SettingsScreen(),
             };
           },
+          routes: [
+            GoRoute(
+              path: "add-person",
+              name: AppRoute.addPerson.name,
+              builder: (context, state) => const AddPersonScreen(),
+            ),
+            GoRoute(
+              path: "person-details",
+              name: AppRoute.personDetails.name,
+              builder: (context, state) => PersonDetailsScreen(
+                person: state.extra as Person,
+              ),
+            ),
+            GoRoute(
+              path: "add-vehicle",
+              name: AppRoute.addVehicle.name,
+              builder: (context, state) => const AddVehicleScreen(),
+            ),
+            GoRoute(
+              path: "vehicle-details",
+              name: AppRoute.vehicleDetails.name,
+              builder: (context, state) => VehicleDetailsScreen(
+                vehicle: state.extra as Vehicle,
+              ),
+            ),
+            GoRoute(
+              path: "add-space",
+              name: AppRoute.addSpace.name,
+              builder: (context, state) => const AddSpaceScreen(),
+            ),
+          ],
         ),
       ],
     );

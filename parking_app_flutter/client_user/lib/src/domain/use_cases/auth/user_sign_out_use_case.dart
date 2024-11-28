@@ -1,3 +1,5 @@
+import 'package:shared/shared.dart';
+
 import '../../../core/utils/utils.dart';
 import '../../interfaces/auth_repository.dart';
 

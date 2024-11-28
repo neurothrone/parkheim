@@ -5,8 +5,8 @@ import '../../../core/validators/validators.dart';
 import '../../../core/widgets/widgets.dart';
 import '../bloc/auth_bloc.dart';
 
-class AuthForm extends StatefulWidget with EmailValidator, PasswordValidator {
-  AuthForm({
+class AuthForm extends StatefulWidget {
+  const AuthForm({
     super.key,
     required this.onFormSubmitted,
     required this.buttonText,
@@ -19,7 +19,8 @@ class AuthForm extends StatefulWidget with EmailValidator, PasswordValidator {
   State<AuthForm> createState() => _AuthFormState();
 }
 
-class _AuthFormState extends State<AuthForm> {
+class _AuthFormState extends State<AuthForm>
+    with EmailValidator, PasswordValidator {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _emailController;
@@ -50,12 +51,12 @@ class _AuthFormState extends State<AuthForm> {
     super.dispose();
   }
 
-  void _onFormSubmitted(String email, String password) {
+  void _onFormSubmitted() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    widget.onFormSubmitted(email, password);
+    widget.onFormSubmitted(_emailController.text, _passwordController.text);
   }
 
   @override
@@ -87,7 +88,7 @@ class _AuthFormState extends State<AuthForm> {
                   _passwordNode,
                 ),
                 controller: _emailController,
-                validator: widget.validateEmail,
+                validator: validateEmail,
                 labelText: "Email",
                 focusNode: _emailNode,
                 keyboardType: TextInputType.emailAddress,
@@ -95,12 +96,9 @@ class _AuthFormState extends State<AuthForm> {
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
-                onFieldSubmitted: (_) => _onFormSubmitted(
-                  _emailController.text,
-                  _passwordController.text,
-                ),
+                onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                 controller: _passwordController,
-                validator: widget.validatePassword,
+                validator: validatePassword,
                 labelText: "Password",
                 obscureText: true,
                 focusNode: _passwordNode,
@@ -108,10 +106,7 @@ class _AuthFormState extends State<AuthForm> {
               ),
               const SizedBox(height: 20),
               CustomFilledButton(
-                onPressed: () => _onFormSubmitted(
-                  _emailController.text,
-                  _passwordController.text,
-                ),
+                onPressed: _onFormSubmitted,
                 text: widget.buttonText,
               ),
             ],

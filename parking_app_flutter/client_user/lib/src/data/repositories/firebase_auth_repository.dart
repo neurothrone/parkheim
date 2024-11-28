@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:shared/shared.dart';
+
 import '../../core/entities/user_entity.dart';
 import '../../core/utils/utils.dart';
 import '../../domain/interfaces/auth_repository.dart';
