@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shared/shared.dart';
 
-import '../../core/widgets/widgets.dart';
+import '../../../core/widgets/widgets.dart';
 import 'add_space_screen.dart';
 
 class SpacesScreen extends StatelessWidget {
