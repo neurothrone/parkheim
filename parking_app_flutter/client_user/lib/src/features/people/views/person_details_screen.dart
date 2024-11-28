@@ -18,28 +18,12 @@ class PersonDetailsScreen extends StatelessWidget {
   final Person person;
 
   Future<void> _deletePerson(BuildContext context) async {
-    final bool confirmDelete = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Confirm Deletion"),
-              content: Text("Are you sure you want to delete this person?"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text("Delete"),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
+    final deleteConfirmed = await showConfirmDialog(
+      context,
+      "Are you sure you want to delete this person?",
+    );
 
-    if (!confirmDelete) {
+    if (!deleteConfirmed) {
       return;
     }
 
@@ -74,13 +58,7 @@ class PersonDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            CircleAvatar(
-              radius: 50.0,
-              child: Icon(
-                Icons.person_rounded,
-                size: 50.0,
-              ),
-            ),
+            CustomCircleAvatar(icon: Icons.person_rounded),
             const SizedBox(height: 20.0),
             PersonDetails(person: person),
             const SizedBox(height: 10.0),

@@ -18,28 +18,12 @@ class VehicleDetailsScreen extends StatelessWidget {
   final Vehicle vehicle;
 
   Future<void> _deleteVehicle(BuildContext context) async {
-    final bool confirmDelete = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Confirm Deletion"),
-              content: Text("Are you sure you want to delete this vehicle?"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text("Delete"),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
+    final deleteConfirmed = await showConfirmDialog(
+      context,
+      "Are you sure you want to delete this vehicle?",
+    );
 
-    if (!confirmDelete) {
+    if (!deleteConfirmed) {
       return;
     }
 
@@ -74,14 +58,10 @@ class VehicleDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            CircleAvatar(
-              radius: 50.0,
-              child: Icon(
-                vehicle.vehicleType == VehicleType.car
-                    ? Icons.directions_car_rounded
-                    : Icons.motorcycle_rounded,
-                size: 50.0,
-              ),
+            CustomCircleAvatar(
+              icon: vehicle.vehicleType == VehicleType.car
+                  ? Icons.directions_car_rounded
+                  : Icons.motorcycle_rounded,
             ),
             const SizedBox(height: 10.0),
             VehicleDetails(vehicle: vehicle),
