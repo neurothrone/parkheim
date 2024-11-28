@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-enum Screen {
+enum NavigationRailTab {
   people,
   vehicles,
   spaces,
   parkings;
 
-  factory Screen.fromIndex(int index) => switch (index) {
+  factory NavigationRailTab.fromIndex(int index) => switch (index) {
         0 => people,
         1 => vehicles,
         2 => spaces,
