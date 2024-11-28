@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
-
-import '../../../core/services/services.dart';
-import '../../../core/validators/validators.dart';
-import '../../../core/widgets/widgets.dart';
+import 'package:shared_widgets/shared_widgets.dart';
 
 class AddVehicleForm extends StatefulWidget {
   const AddVehicleForm({super.key});

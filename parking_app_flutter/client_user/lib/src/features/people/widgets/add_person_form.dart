@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
+import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/routing/routing.dart';
-import '../../../core/services/services.dart';
-import '../../../core/validators/validators.dart';
-import '../../../core/widgets/widgets.dart';
 
 class AddPersonForm extends StatefulWidget {
   const AddPersonForm({super.key});

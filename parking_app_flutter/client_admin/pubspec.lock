@@ -185,6 +185,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  shared_widgets:
+    dependency: "direct main"
+    description:
+      path: "../shared_widgets"
+      relative: true
+    source: path
+    version: "0.0.1"
   sky_engine:
     dependency: transitive
     description: flutter

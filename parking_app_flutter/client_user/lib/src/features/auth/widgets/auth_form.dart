@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/validators/validators.dart';
-import '../../../core/widgets/widgets.dart';
+import 'package:shared_widgets/shared_widgets.dart';
+
 import '../bloc/auth_bloc.dart';
 
 class AuthForm extends StatefulWidget {

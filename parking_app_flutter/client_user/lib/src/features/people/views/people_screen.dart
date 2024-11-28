@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
+import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/routing/routing.dart';
-import '../../../core/services/services.dart';
 import '../../../core/widgets/widgets.dart';
 import '../widgets/people_list.dart';
 
@@ -18,20 +18,6 @@ class PeopleScreen extends StatefulWidget {
 class _PeopleScreenState extends State<PeopleScreen> {
   final RemotePersonRepository _personRepository =
       RemotePersonRepository.instance;
-
-  Future<void> _deletePerson(Person person) async {
-    // TODO: Show confirmation dialog
-
-    final result = await _personRepository.delete(person.id);
-    result.when(
-      success: (_) {
-        SnackBarService.showSuccess(context, "Person Deleted");
-      },
-      failure: (error) {
-        SnackBarService.showError(context, "Error: $error");
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
