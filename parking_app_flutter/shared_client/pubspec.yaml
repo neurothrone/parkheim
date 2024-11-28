@@ -1,0 +1,20 @@
+name: shared_client
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+publish_to: 'none'
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.5.4
+
+# Add regular dependencies here.
+dependencies:
+  shared:
+    path: ../shared
+
+  # !: Networking
+  http: ^1.2.2
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.25.8
