@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:shared/shared.dart';
-
 import '../../../core/widgets/widgets.dart';
+import '../widgets/parking_space_list.dart';
 import 'add_space_screen.dart';
 
 class SpacesScreen extends StatelessWidget {
@@ -31,31 +30,6 @@ class SpacesScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-final List<ParkingSpace> parkingSpaces = [
-  ParkingSpace(id: 1, address: "Address 1", pricePerHour: 2.5),
-  ParkingSpace(id: 2, address: "Address 2", pricePerHour: 3.5),
-  ParkingSpace(id: 3, address: "Address 3", pricePerHour: 5.5),
-];
-
-class ParkingSpaceList extends StatelessWidget {
-  const ParkingSpaceList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      itemCount: parkingSpaces.length,
-      itemBuilder: (_, int index) {
-        return ListTile(
-          title: Text(parkingSpaces[index].address),
-          subtitle:
-              Text("Price per hour: \$${parkingSpaces[index].pricePerHour}"),
-        );
-      },
-      separatorBuilder: (_, __) => const Divider(),
     );
   }
 }
