@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import 'core/navigation/navigation_rail_provider.dart';
 import 'features/parkings/parkings_screen.dart';
 import 'features/people/people_screen.dart';
-import 'core/enums/screen.dart';
-import 'features/spaces/spaces_screen.dart';
+import 'core/navigation/navigation_rail_tab.dart';
+import 'features/spaces/views/spaces_screen.dart';
 import 'features/vehicles/vehicles_screen.dart';
 
-class MainApp extends StatefulWidget {
+class MainApp extends StatelessWidget {
   const MainApp({super.key});
-
-  @override
-  State<MainApp> createState() => _MainAppState();
-}
-
-class _MainAppState extends State<MainApp> {
-  Screen _selectedScreen = Screen.people;
 
   @override
   Widget build(BuildContext context) {
@@ -25,32 +21,14 @@ class _MainAppState extends State<MainApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: switch (_selectedScreen) {
-        Screen.people => PeopleScreen(
-            selectedScreen: _selectedScreen,
-            onScreenSelected: (Screen newScreen) {
-              setState(() => _selectedScreen = newScreen);
-            },
-          ),
-        Screen.vehicles => VehiclesScreen(
-            selectedScreen: _selectedScreen,
-            onScreenSelected: (Screen newScreen) {
-              setState(() => _selectedScreen = newScreen);
-            },
-          ),
-        Screen.spaces => SpacesScreen(
-            selectedScreen: _selectedScreen,
-            onScreenSelected: (Screen newScreen) {
-              setState(() => _selectedScreen = newScreen);
-            },
-          ),
-        Screen.parkings => ParkingsScreen(
-            selectedScreen: _selectedScreen,
-            onScreenSelected: (Screen newScreen) {
-              setState(() => _selectedScreen = newScreen);
-            },
-          ),
-      },
+      home: Consumer(builder: (context, NavigationRailProvider provider, _) {
+        return switch (provider.selectedTab) {
+          NavigationRailTab.people => PeopleScreen(),
+          NavigationRailTab.vehicles => VehiclesScreen(),
+          NavigationRailTab.spaces => SpacesScreen(),
+          NavigationRailTab.parkings => ParkingsScreen(),
+        };
+      }),
     );
   }
 }

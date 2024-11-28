@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 
-import '../enums/screen.dart';
+import 'package:provider/provider.dart';
+
+import '../navigation/navigation_rail_tab.dart';
+import '../navigation/navigation_rail_provider.dart';
 
 class CustomNavigationRail extends StatelessWidget {
-  const CustomNavigationRail({
-    super.key,
-    required this.selectedScreen,
-    required this.onScreenSelected,
-  });
-
-  final Screen selectedScreen;
-  final Function(Screen) onScreenSelected;
+  const CustomNavigationRail({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final selection =
+        Provider.of<NavigationRailProvider>(context, listen: false).selectedTab;
     return NavigationRail(
-      selectedIndex: selectedScreen.index,
+      selectedIndex: selection.index,
       groupAlignment: -1.0,
       onDestinationSelected: (int index) {
-        onScreenSelected(Screen.fromIndex(index));
+        Provider.of<NavigationRailProvider>(context, listen: false)
+            .changeTab(NavigationRailTab.fromIndex(index));
       },
       labelType: NavigationRailLabelType.all,
-      destinations: Screen.values
+      destinations: NavigationRailTab.values
           .map((screen) => NavigationRailDestination(
                 icon: Icon(screen.icon),
                 selectedIcon: Icon(screen.selectedIcon),
