@@ -1,11 +1,9 @@
 import 'dart:io';
 
 import 'package:shared/shared.dart';
+import 'package:shared_client/shared_client.dart';
+
 import '../enums/sub_menu_command.dart';
-import '../repositories/remote/remote_parking_repository.dart';
-import '../repositories/remote/remote_parking_space_repository.dart';
-import '../repositories/remote/remote_person_repository.dart';
-import '../repositories/remote/remote_vehicle_repository.dart';
 import '../ui/constants.dart';
 import '../ui/menu.dart';
 import '../utils/input_helper.dart';

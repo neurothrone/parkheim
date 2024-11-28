@@ -1,4 +1,4 @@
-import 'package:cli/src/app.dart';
+import 'package:client_cli/src/app.dart';
 
 Future<void> main(List<String> arguments) async {
   final app = App();
