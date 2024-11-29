@@ -24,6 +24,11 @@ class AppTheme {
           backgroundColor: Colors.deepPurple.shade100,
           surfaceTintColor: Colors.deepPurple.shade100,
         ),
+        listTileTheme: ListTileThemeData(
+          tileColor: Colors.deepPurple.shade50,
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+          horizontalTitleGap: 10.0,
+        ),
       );
 
   static ThemeData get darkTheme => ThemeData(
@@ -60,6 +65,11 @@ class AppTheme {
           labelTextStyle: WidgetStatePropertyAll(
             TextStyle(color: Colors.deepPurple.shade100),
           ),
+        ),
+        listTileTheme: ListTileThemeData(
+          tileColor: Colors.deepPurple.shade100,
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+          horizontalTitleGap: 10.0,
         ),
       );
 }

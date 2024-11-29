@@ -8,16 +8,8 @@ import '../../../core/routing/routing.dart';
 import '../../../core/widgets/widgets.dart';
 import '../widgets/people_list.dart';
 
-class PeopleScreen extends StatefulWidget {
+class PeopleScreen extends StatelessWidget {
   const PeopleScreen({super.key});
-
-  @override
-  State<PeopleScreen> createState() => _PeopleScreenState();
-}
-
-class _PeopleScreenState extends State<PeopleScreen> {
-  final RemotePersonRepository _personRepository =
-      RemotePersonRepository.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +23,35 @@ class _PeopleScreenState extends State<PeopleScreen> {
         ),
       ],
       bottomNavigationBar: CustomNavigationBar(),
-      child: FutureBuilder<Result<List<Person>, String>>(
-        future: _personRepository.getAll(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final result = snapshot.data!;
-            return result.when(
-              success: (List<Person> people) => PeopleList(people: people),
-              failure: (error) => Center(child: Text("Error: $error")),
-            );
-          }
+      child: PeopleScreenContent(),
+    );
+  }
+}
 
-          if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          }
+class PeopleScreenContent extends StatelessWidget {
+  const PeopleScreenContent({
+    super.key,
+  });
 
-          return CenteredProgressIndicator();
-        },
-      ),
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Result<List<Person>, String>>(
+      future: RemotePersonRepository.instance.getAll(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final result = snapshot.data!;
+          return result.when(
+            success: (List<Person> people) => PeopleList(people: people),
+            failure: (error) => Center(child: Text("Error: $error")),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
+
+        return CenteredProgressIndicator();
+      },
     );
   }
 }

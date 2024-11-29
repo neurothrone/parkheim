@@ -23,7 +23,9 @@ class VehicleDetails extends StatelessWidget {
             ),
             Text(
               vehicle.vehicleType.name.capitalized,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ],
         ),
@@ -36,7 +38,9 @@ class VehicleDetails extends StatelessWidget {
             ),
             Text(
               vehicle.registrationNumber,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ],
         ),

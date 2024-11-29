@@ -13,8 +13,8 @@ class OwnedVehicleListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      tileColor: Colors.transparent,
       contentPadding: EdgeInsets.all(0.0),
-      horizontalTitleGap: 10.0,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -24,7 +24,9 @@ class OwnedVehicleListTile extends StatelessWidget {
           ),
           Text(
             vehicle.vehicleType.name.capitalized,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ],
       ),
@@ -37,7 +39,9 @@ class OwnedVehicleListTile extends StatelessWidget {
           ),
           Text(
             vehicle.registrationNumber,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ],
       ),

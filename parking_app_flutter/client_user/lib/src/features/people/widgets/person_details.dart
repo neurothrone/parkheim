@@ -23,7 +23,9 @@ class PersonDetails extends StatelessWidget {
             ),
             Text(
               person.name,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -36,7 +38,9 @@ class PersonDetails extends StatelessWidget {
             ),
             Text(
               person.socialSecurityNumber,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

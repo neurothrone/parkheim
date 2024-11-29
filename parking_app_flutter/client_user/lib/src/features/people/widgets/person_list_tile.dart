@@ -20,9 +20,6 @@ class PersonListTile extends StatelessWidget {
         AppRoute.personDetails,
         extra: person,
       ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-      horizontalTitleGap: 10.0,
-      tileColor: Colors.deepPurple.shade50,
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
