@@ -28,4 +28,18 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
       },
     );
   }
+
+  Future<List<Parking>> findActiveParkings() async {
+    final result = await getAll();
+    return result.when(
+      success: (List<Parking> parkings) {
+        return parkings
+            .where((Parking parking) => parking.endTime != null)
+            .toList();
+      },
+      failure: (error) {
+        return [];
+      },
+    );
+  }
 }
