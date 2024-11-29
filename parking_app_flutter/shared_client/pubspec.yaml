@@ -12,6 +12,9 @@ dependencies:
   shared:
     path: ../shared
 
+  # !: Date Formatting
+  intl: ^0.20.1
+
   # !: Networking
   http: ^1.2.2
 
