@@ -8,8 +8,6 @@ import '../../../core/widgets/widgets.dart';
 import '../widgets/parking_space_list.dart';
 import 'add_space_screen.dart';
 
-enum ParkingSpaceTab { active, all, search }
-
 Future<void> _generateFakeSpaces() async {
   final spaces = List.generate(
     10,
