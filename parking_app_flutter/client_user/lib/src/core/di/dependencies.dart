@@ -65,6 +65,6 @@ Future<void> initDependencies() async {
   // !: Bottom Navigation
   serviceLocator.registerLazySingleton(() => BottomNavigationCubit());
 
-  // !: Bottom Navigation
+  // !: Dark Mode Cubit
   serviceLocator.registerLazySingleton(() => DarkModeCubit());
 }
