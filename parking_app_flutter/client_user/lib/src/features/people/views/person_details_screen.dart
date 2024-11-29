@@ -58,7 +58,10 @@ class PersonDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            CustomCircleAvatar(icon: Icons.person_rounded),
+            Hero(
+              tag: person.id,
+              child: CustomCircleAvatar(icon: Icons.person_rounded),
+            ),
             const SizedBox(height: 20.0),
             PersonDetails(person: person),
             const SizedBox(height: 10.0),

@@ -58,10 +58,13 @@ class VehicleDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            CustomCircleAvatar(
-              icon: vehicle.vehicleType == VehicleType.car
-                  ? Icons.directions_car_rounded
-                  : Icons.motorcycle_rounded,
+            Hero(
+              tag: vehicle.id,
+              child: CustomCircleAvatar(
+                icon: vehicle.vehicleType == VehicleType.car
+                    ? Icons.directions_car_rounded
+                    : Icons.motorcycle_rounded,
+              ),
             ),
             const SizedBox(height: 10.0),
             VehicleDetails(vehicle: vehicle),

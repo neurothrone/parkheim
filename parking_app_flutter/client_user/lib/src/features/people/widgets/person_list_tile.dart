@@ -20,19 +20,33 @@ class PersonListTile extends StatelessWidget {
         AppRoute.personDetails,
         extra: person,
       ),
-      leading: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.person_rounded),
-          Icon(Icons.numbers_rounded),
-        ],
-      ),
       title: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(person.name),
-          Text(person.socialSecurityNumber),
+          Row(
+            children: [
+              Hero(
+                tag: person.id,
+                child: Icon(Icons.person_rounded),
+              ),
+              const SizedBox(width: 10.0),
+              Text(
+                person.name,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Icon(Icons.numbers_rounded),
+              const SizedBox(width: 10.0),
+              Text(
+                person.socialSecurityNumber,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ),
         ],
       ),
       trailing: Icon(

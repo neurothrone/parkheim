@@ -87,7 +87,7 @@ class AppRouter {
               path: "parking-details",
               name: AppRoute.parkingDetails.name,
               builder: (context, state) => ParkingDetailsScreen(
-                parkingSpace: state.extra as ParkingSpace,
+                space: state.extra as ParkingSpace,
               ),
             ),
             GoRoute(

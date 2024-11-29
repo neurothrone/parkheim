@@ -24,7 +24,10 @@ class ActiveParkingScreen extends StatelessWidget {
         padding: EdgeInsets.all(20.0),
         child: Column(
           children: [
-            CustomCircleAvatar(icon: Icons.local_parking_rounded),
+            Hero(
+              tag: parking.id,
+              child: CustomCircleAvatar(icon: Icons.local_parking_rounded),
+            ),
             const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -44,7 +47,7 @@ class ActiveParkingScreen extends StatelessWidget {
             Divider(),
             const SizedBox(height: 10.0),
             if (parking.parkingSpace != null) ...[
-              ParkingSpaceDetails(parkingSpace: parking.parkingSpace!),
+              ParkingSpaceDetails(space: parking.parkingSpace!),
               Divider(),
               const SizedBox(height: 10.0),
             ],

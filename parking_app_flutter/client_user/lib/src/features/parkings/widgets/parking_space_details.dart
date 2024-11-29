@@ -5,10 +5,10 @@ import 'package:shared/shared.dart';
 class ParkingSpaceDetails extends StatelessWidget {
   const ParkingSpaceDetails({
     super.key,
-    required this.parkingSpace,
+    required this.space,
   });
 
-  final ParkingSpace parkingSpace;
+  final ParkingSpace space;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class ParkingSpaceDetails extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
-              parkingSpace.address,
+              space.address,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -37,7 +37,7 @@ class ParkingSpaceDetails extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
-              "\$${parkingSpace.pricePerHour}",
+              "\$${space.pricePerHour}",
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

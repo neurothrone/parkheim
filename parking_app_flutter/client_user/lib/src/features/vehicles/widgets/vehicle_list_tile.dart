@@ -23,9 +23,12 @@ class VehicleListTile extends StatelessWidget {
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(vehicle.vehicleType == VehicleType.car
-              ? Icons.directions_car_rounded
-              : Icons.motorcycle_rounded),
+          Hero(
+            tag: vehicle.id,
+            child: Icon(vehicle.vehicleType == VehicleType.car
+                ? Icons.directions_car_rounded
+                : Icons.motorcycle_rounded),
+          ),
           Icon(Icons.numbers_rounded),
         ],
       ),
