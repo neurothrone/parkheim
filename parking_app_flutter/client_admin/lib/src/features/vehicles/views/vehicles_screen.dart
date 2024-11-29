@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/widgets/widgets.dart';
+import '../../../core/widgets/widgets.dart';
 
 class VehiclesScreen extends StatelessWidget {
   const VehiclesScreen({super.key});

@@ -65,7 +65,10 @@ class _AddSpaceFormState extends State<AddSpaceForm>
     result.when(
       success: (ParkingSpace space) {
         Navigator.of(context).pop();
-        SnackBarService.showSuccess(context, "Person added successfully");
+        SnackBarService.showSuccess(
+          context,
+          "Parking space added successfully",
+        );
       },
       failure: (String error) => SnackBarService.showError(context, error),
     );

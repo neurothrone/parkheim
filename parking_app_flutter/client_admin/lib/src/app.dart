@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'core/navigation/navigation_rail_provider.dart';
-import 'features/parkings/parkings_screen.dart';
-import 'features/people/people_screen.dart';
-import 'core/navigation/navigation_rail_tab.dart';
+import 'core/navigation/navigation.dart';
+import 'features/auth/state/auth_provider.dart';
+import 'features/auth/views/auth_screen.dart';
+import 'features/parkings/views/parkings_screen.dart';
+import 'features/people/views/people_screen.dart';
 import 'features/spaces/views/spaces_screen.dart';
-import 'features/vehicles/vehicles_screen.dart';
+import 'features/vehicles/views/vehicles_screen.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -16,19 +17,34 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Parking App - Admin",
+      title: "Parkheim - Admin",
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Consumer(builder: (context, NavigationRailProvider provider, _) {
-        return switch (provider.selectedTab) {
-          NavigationRailTab.people => PeopleScreen(),
-          NavigationRailTab.vehicles => VehiclesScreen(),
-          NavigationRailTab.spaces => SpacesScreen(),
-          NavigationRailTab.parkings => ParkingsScreen(),
-        };
-      }),
+      home: Consumer(
+        builder: (context, AuthProvider provider, _) {
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: provider.isAuthenticated ? MainContent() : AuthScreen(),
+          );
+        },
+      ),
     );
+  }
+}
+
+class MainContent extends StatelessWidget {
+  const MainContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedTab = context.watch<NavigationRailProvider>().selectedTab;
+    return switch (selectedTab) {
+      NavigationRailTab.people => PeopleScreen(),
+      NavigationRailTab.vehicles => VehiclesScreen(),
+      NavigationRailTab.spaces => SpacesScreen(),
+      NavigationRailTab.parkings => ParkingsScreen(),
+    };
   }
 }

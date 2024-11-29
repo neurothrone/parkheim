@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'navigation_rail_tab.dart';
 
 class NavigationRailProvider extends ChangeNotifier {
-  NavigationRailTab _selectedTab = NavigationRailTab.people;
+  NavigationRailTab _selectedTab = NavigationRailTab.defaultTab;
 
   NavigationRailTab get selectedTab => _selectedTab;
 
