@@ -9,10 +9,8 @@ import '../../features/auth/auth.dart';
 import '../../features/people/views/add_person_screen.dart';
 import '../../features/people/views/people_screen.dart';
 import '../../features/people/views/person_details_screen.dart';
-import '../../features/parkings/parkings_screen.dart';
+import '../../features/parkings/views/parkings_screen.dart';
 import '../../features/settings/views/settings_screen.dart';
-import '../../features/spaces/add_space_screen.dart';
-import '../../features/spaces/spaces_screen.dart';
 import '../../features/vehicles/views/add_vehicle_screen.dart';
 import '../../features/vehicles/views/vehicle_details_screen.dart';
 import '../../features/vehicles/views/vehicles_screen.dart';
@@ -76,26 +74,13 @@ class AppRouter {
           builder: (context, state) {
             final currentTab = context.watch<BottomNavigationCubit>();
             return switch (currentTab.state) {
-              BottomTab.people => PeopleScreen(),
-              BottomTab.vehicles => VehiclesScreen(),
-              BottomTab.spaces => SpacesScreen(),
               BottomTab.parkings => ParkingsScreen(),
+              BottomTab.vehicles => VehiclesScreen(),
+              BottomTab.people => PeopleScreen(),
               BottomTab.settings => SettingsScreen(),
             };
           },
           routes: [
-            GoRoute(
-              path: "add-person",
-              name: AppRoute.addPerson.name,
-              builder: (context, state) => const AddPersonScreen(),
-            ),
-            GoRoute(
-              path: "person-details",
-              name: AppRoute.personDetails.name,
-              builder: (context, state) => PersonDetailsScreen(
-                person: state.extra as Person,
-              ),
-            ),
             GoRoute(
               path: "add-vehicle",
               name: AppRoute.addVehicle.name,
@@ -109,9 +94,16 @@ class AppRouter {
               ),
             ),
             GoRoute(
-              path: "add-space",
-              name: AppRoute.addSpace.name,
-              builder: (context, state) => const AddSpaceScreen(),
+              path: "add-person",
+              name: AppRoute.addPerson.name,
+              builder: (context, state) => const AddPersonScreen(),
+            ),
+            GoRoute(
+              path: "person-details",
+              name: AppRoute.personDetails.name,
+              builder: (context, state) => PersonDetailsScreen(
+                person: state.extra as Person,
+              ),
             ),
           ],
         ),

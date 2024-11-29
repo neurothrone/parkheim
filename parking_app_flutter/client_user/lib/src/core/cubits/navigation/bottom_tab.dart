@@ -1,41 +1,38 @@
 import 'package:flutter/material.dart';
 
 enum BottomTab {
-  people,
-  vehicles,
-  spaces,
   parkings,
+  vehicles,
+  people,
   settings;
 
   factory BottomTab.fromIndex(int index) => switch (index) {
-        0 => people,
+        0 => parkings,
         1 => vehicles,
-        2 => spaces,
-        3 => parkings,
+        2 => people,
         _ => settings,
       };
 
+  static BottomTab get defaultTab => parkings;
+
   String get label => switch (this) {
-        people => "People",
-        vehicles => "Vehicles",
-        spaces => "Spaces",
         parkings => "Parkings",
+        vehicles => "Vehicles",
+        people => "People",
         settings => "Settings",
       };
 
   IconData get icon => switch (this) {
-        people => Icons.people_outline,
-        vehicles => Icons.car_rental_outlined,
-        spaces => Icons.space_dashboard_outlined,
         parkings => Icons.local_parking_outlined,
+        vehicles => Icons.car_rental_outlined,
+        people => Icons.people_outline,
         settings => Icons.settings_outlined,
       };
 
   IconData get selectedIcon => switch (this) {
-        people => Icons.people_rounded,
-        vehicles => Icons.car_rental_rounded,
-        spaces => Icons.space_dashboard_rounded,
         parkings => Icons.local_parking_rounded,
+        vehicles => Icons.car_rental_rounded,
+        people => Icons.people_rounded,
         settings => Icons.settings_rounded,
       };
 }

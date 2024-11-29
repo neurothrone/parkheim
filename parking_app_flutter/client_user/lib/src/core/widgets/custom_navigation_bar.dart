@@ -24,7 +24,6 @@ class CustomNavigationBar extends StatelessWidget {
             (screen) => NavigationDestination(
               icon: Icon(
                 screen.icon,
-                // color: Colors.grey,
               ),
               selectedIcon: Icon(
                 screen.selectedIcon,
