@@ -9,6 +9,7 @@ class CustomScaffold extends StatelessWidget {
     this.centerTitle = true,
     this.leading,
     this.actions,
+    this.bottom,
     this.floatingActionButton,
     this.bottomNavigationBar,
   });
@@ -19,6 +20,7 @@ class CustomScaffold extends StatelessWidget {
   final bool centerTitle;
   final Widget? leading;
   final List<Widget>? actions;
+  final PreferredSizeWidget? bottom;
   final Widget? bottomNavigationBar;
   final Widget? floatingActionButton;
 
@@ -33,6 +35,7 @@ class CustomScaffold extends StatelessWidget {
         centerTitle: centerTitle,
         title: Text(title),
         actions: actions,
+        bottom: bottom,
       ),
       body: SafeArea(
         child: child,

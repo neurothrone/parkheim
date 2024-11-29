@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shared/shared.dart';
 
 import '../../features/auth/auth.dart';
+import '../../features/parkings/views/active_parking_screen.dart';
+import '../../features/parkings/views/parking_details_screen.dart';
 import '../../features/people/views/add_person_screen.dart';
 import '../../features/people/views/people_screen.dart';
 import '../../features/people/views/person_details_screen.dart';
@@ -81,6 +83,20 @@ class AppRouter {
             };
           },
           routes: [
+            GoRoute(
+              path: "parking-details",
+              name: AppRoute.parkingDetails.name,
+              builder: (context, state) => ParkingDetailsScreen(
+                parkingSpace: state.extra as ParkingSpace,
+              ),
+            ),
+            GoRoute(
+              path: "active-parking",
+              name: AppRoute.activeParking.name,
+              builder: (context, state) => ActiveParkingScreen(
+                parking: state.extra as Parking,
+              ),
+            ),
             GoRoute(
               path: "add-vehicle",
               name: AppRoute.addVehicle.name,
