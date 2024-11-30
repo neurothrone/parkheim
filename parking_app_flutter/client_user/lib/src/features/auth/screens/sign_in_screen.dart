@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/constants/constants.dart';
 import '../../../core/routing/routing.dart';
 import '../../../core/widgets/widgets.dart';
 import '../bloc/auth_bloc.dart';
@@ -15,7 +16,7 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      title: "Parko",
+      title: AppConstants.appName,
       child: SingleChildScrollView(
         keyboardDismissBehavior: Platform.isIOS
             ? ScrollViewKeyboardDismissBehavior.onDrag

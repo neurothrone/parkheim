@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'core/constants/constants.dart';
 import 'core/routing/routing.dart';
 import 'core/theme/theme.dart';
 import 'features/auth/bloc/auth_bloc.dart';
@@ -27,7 +28,7 @@ class _MainAppState extends State<MainApp> {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: "Parking App - User",
+      title: AppConstants.appName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: darkModeCubit.isDarkMode ? ThemeMode.dark : ThemeMode.light,
