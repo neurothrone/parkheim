@@ -17,7 +17,7 @@ class ActiveParkingItems extends StatelessWidget {
           return [];
         }
         return await RemoteParkingRepository.instance
-            .findActiveParkingsByVehicle(vehicles.first);
+            .findActiveParkingsForVehicle(vehicles.first);
       },
       failure: (error) => [],
     );

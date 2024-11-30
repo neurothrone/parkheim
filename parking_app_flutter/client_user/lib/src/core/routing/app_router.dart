@@ -7,6 +7,7 @@ import 'package:shared/shared.dart';
 
 import '../../features/auth/auth.dart';
 import '../../features/parkings/views/active_parking_screen.dart';
+import '../../features/parkings/views/finished_parking_screen.dart';
 import '../../features/parkings/views/parking_details_screen.dart';
 import '../../features/people/views/add_person_screen.dart';
 import '../../features/people/views/people_screen.dart';
@@ -94,6 +95,13 @@ class AppRouter {
               path: "active-parking",
               name: AppRoute.activeParking.name,
               builder: (context, state) => ActiveParkingScreen(
+                parking: state.extra as Parking,
+              ),
+            ),
+            GoRoute(
+              path: "finished-parking",
+              name: AppRoute.finishedParking.name,
+              builder: (context, state) => FinishedParkingScreen(
                 parking: state.extra as Parking,
               ),
             ),

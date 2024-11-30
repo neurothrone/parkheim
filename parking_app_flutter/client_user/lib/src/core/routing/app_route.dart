@@ -4,6 +4,7 @@ enum AppRoute {
   home,
   parkingDetails,
   activeParking,
+  finishedParking,
   addPerson,
   personDetails,
   addVehicle,

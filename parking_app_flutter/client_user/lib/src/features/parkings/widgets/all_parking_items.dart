@@ -26,11 +26,11 @@ class AllParkingItems extends StatelessWidget {
 
               return ListView.separated(
                 itemCount: spaces.length,
-                separatorBuilder: (context, index) => const Divider(height: 0),
                 itemBuilder: (context, index) {
                   final space = spaces[index];
                   return AllParkingListTile(space: space);
                 },
+                separatorBuilder: (context, index) => const Divider(height: 0),
               );
             },
             failure: (error) => Center(child: Text("Error: $error")),

@@ -591,7 +591,7 @@ abstract class BaseManager {
   }
 
   Future<List<ParkingSpace>> findParkingSpacesByVehicle(Vehicle vehicle) async {
-    return await parkingRepository.findParkingSpacesByVehicle(vehicle);
+    return await parkingRepository.findParkingSpacesForVehicle(vehicle);
   }
 
 // endregion

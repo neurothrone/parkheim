@@ -4,31 +4,17 @@ import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../../../core/routing/routing.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../vehicles/widgets/vehicle_details.dart';
 import '../widgets/parking_space_details.dart';
 
-class ActiveParkingScreen extends StatelessWidget {
-  const ActiveParkingScreen({
+class FinishedParkingScreen extends StatelessWidget {
+  const FinishedParkingScreen({
     super.key,
     required this.parking,
   });
 
   final Parking parking;
-
-  Future<void> _endParking(BuildContext context) async {
-    final result = await RemoteParkingRepository.instance.endParking(parking);
-    result.when(
-      success: (Parking parking) {
-        AppRouter.pop(context);
-        SnackBarService.showSuccess(context, "Parking ended successfully");
-      },
-      failure: (error) {
-        SnackBarService.showError(context, "Failed to end parking");
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +44,36 @@ class ActiveParkingScreen extends StatelessWidget {
                 ),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Ended parking:",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Text(
+                  parking.endTime!.formatted,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Total cost:",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Text(
+                  "\$${parking.parkingCosts()}",
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ),
             Divider(),
             const SizedBox(height: 10.0),
             if (parking.parkingSpace != null) ...[
@@ -70,10 +86,6 @@ class ActiveParkingScreen extends StatelessWidget {
               Divider(),
               const SizedBox(height: 20.0),
             ],
-            CustomFilledButton(
-              onPressed: () async => await _endParking(context),
-              text: "End Parking",
-            ),
           ],
         ),
       ),
