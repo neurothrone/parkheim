@@ -91,6 +91,9 @@ class Parking extends BaseModel {
     }
 
     int elapsedHours = end.difference(startTime).inHours;
+    if (elapsedHours == 0) {
+      return parkingSpace!.pricePerHour;
+    }
     double totalCost = parkingSpace!.pricePerHour * elapsedHours;
 
     return totalCost > 0 ? totalCost : 0;
