@@ -1,6 +1,7 @@
 enum AppRoute {
   login,
   register,
+  createProfile,
   home,
   parkingDetails,
   activeParking,

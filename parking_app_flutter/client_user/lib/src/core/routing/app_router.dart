@@ -13,6 +13,8 @@ import '../../features/people/views/add_person_screen.dart';
 import '../../features/people/views/people_screen.dart';
 import '../../features/people/views/person_details_screen.dart';
 import '../../features/parkings/views/parkings_screen.dart';
+import '../../features/profile/views/create_profile_screen.dart';
+import '../../features/profile/views/profile_screen.dart';
 import '../../features/settings/views/settings_screen.dart';
 import '../../features/vehicles/views/add_vehicle_screen.dart';
 import '../../features/vehicles/views/vehicle_details_screen.dart';
@@ -56,6 +58,11 @@ class AppRouter {
           return "/auth";
         }
 
+        if (authState is AppUserSignedIn &&
+            authState.user.displayName == null) {
+          return "/create-profile";
+        }
+
         return null;
       },
       routes: [
@@ -72,15 +79,21 @@ class AppRouter {
           ],
         ),
         GoRoute(
+          path: "/create-profile",
+          name: AppRoute.createProfile.name,
+          builder: (context, state) => CreateProfileScreen(),
+        ),
+        GoRoute(
           path: "/",
           name: AppRoute.home.name,
           builder: (context, state) {
             final currentTab = context.watch<BottomNavigationCubit>();
             return switch (currentTab.state) {
-              BottomTab.parkings => ParkingsScreen(),
-              BottomTab.vehicles => VehiclesScreen(),
-              BottomTab.people => PeopleScreen(),
-              BottomTab.settings => SettingsScreen(),
+              BottomTab.parkings => const ParkingsScreen(),
+              BottomTab.vehicles => const VehiclesScreen(),
+              BottomTab.people => const PeopleScreen(),
+              BottomTab.profile => const ProfileScreen(),
+              BottomTab.settings => const SettingsScreen(),
             };
           },
           routes: [
