@@ -1,49 +1,43 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
+import '../../../core/cubits/app_user/app_user_cubit.dart';
+import '../../../core/cubits/app_user/app_user_state.dart';
 import 'history_parking_list_tile.dart';
 
 class HistoryParkingItems extends StatelessWidget {
   const HistoryParkingItems({super.key});
 
-  Future<List<Parking>> _findFinishedParkings() async {
-    final vehicleResult = await RemoteVehicleRepository.instance.getAll();
-    final vehicle = vehicleResult.when(
-      success: (List<Vehicle> vehicles) {
-        return vehicles.first;
-      },
+  Future<List<Parking>> _findFinishedParkings(BuildContext context) async {
+    final appUserCubit = context.read<AppUserCubit>();
+    final user = (appUserCubit.state as AppUserSignedIn).user;
+
+    final ownerResult = await RemotePersonRepository.instance
+        .findPersonByName(user.displayName!);
+    final owner = ownerResult.when(
+      success: (person) => person,
       failure: (error) {
+        SnackBarService.showError(context, "Error: Owner not found");
         return null;
       },
     );
-
-    if (vehicle == null) {
+    if (owner == null) {
       return [];
     }
 
-    final parkingResults = await RemoteParkingRepository.instance
-        .findFinishedParkingsForVehicle(vehicle);
-    return parkingResults.when(
-      success: (List<Parking> parkings) {
-        return parkings;
-      },
-      failure: (error) {
-        return [];
-      },
-    );
+    return await RemoteParkingRepository.instance
+        .findFinishedParkingsForOwner(owner);
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: get current user and find parkings for that user
-    // final vehicleResult = await RemoteVehicleRepository.instance.findVehicleByUser
-    // (AppUserCubit.instance.state.user!);
-
     return FutureBuilder<List<Parking>>(
-      future: _findFinishedParkings(),
+      future: _findFinishedParkings(context),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final parkings = snapshot.data!;

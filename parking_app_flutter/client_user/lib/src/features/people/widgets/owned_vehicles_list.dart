@@ -24,16 +24,27 @@ class _OwnedVehiclesListState extends State<OwnedVehiclesList> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Vehicle>>(
+    return FutureBuilder<Result<List<Vehicle>, String>>(
       future: _vehicleRepository.findVehiclesByOwner(widget.owner),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final vehicles = snapshot.data!;
-          return VehicleList(
-            vehicles: vehicles,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            listType: VehicleListType.owned,
+          final result = snapshot.data!;
+          return result.when(
+            success: (vehicles) {
+              if (vehicles.isEmpty) {
+                return SizedBox.shrink();
+              }
+
+              return VehicleList(
+                vehicles: vehicles,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                listType: VehicleListType.owned,
+              );
+            },
+            failure: (error) => Center(
+              child: Text("Error: ${snapshot.error}"),
+            ),
           );
         }
 

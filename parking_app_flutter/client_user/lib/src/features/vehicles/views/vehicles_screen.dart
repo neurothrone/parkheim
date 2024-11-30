@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
+import '../../../core/cubits/app_user/app_user_cubit.dart';
+import '../../../core/cubits/app_user/app_user_state.dart';
 import '../../../core/routing/routing.dart';
 import '../../../core/widgets/widgets.dart';
 import '../widgets/vehicle_list.dart';
@@ -33,17 +37,45 @@ class VehiclesScreenContent extends StatelessWidget {
     super.key,
   });
 
+  Future<List<Vehicle>> _getVehicles(BuildContext context) async {
+    final appUserCubit = context.read<AppUserCubit>();
+    final user = (appUserCubit.state as AppUserSignedIn).user;
+
+    final ownerResult = await RemotePersonRepository.instance
+        .findPersonByName(user.displayName!);
+    final owner = ownerResult.when(
+      success: (person) => person,
+      failure: (error) {
+        SnackBarService.showError(context, "Error: Owner not found");
+        return null;
+      },
+    );
+    if (owner == null) {
+      return [];
+    }
+
+    final vehicleResults =
+        await RemoteVehicleRepository.instance.findVehiclesByOwner(owner);
+    return vehicleResults.when(
+      success: (vehicles) => vehicles,
+      failure: (_) => [],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Result<List<Vehicle>, String>>(
-      future: RemoteVehicleRepository.instance.getAll(),
+    return FutureBuilder<List<Vehicle>>(
+      future: _getVehicles(context),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final result = snapshot.data!;
-          return result.when(
-            success: (List<Vehicle> v) => VehicleList(vehicles: v),
-            failure: (error) => Center(child: Text("Error: $error")),
-          );
+          final vehicles = snapshot.data!;
+          if (vehicles.isEmpty) {
+            return Center(
+              child: Text("No vehicles registered."),
+            );
+          }
+
+          return VehicleList(vehicles: vehicles);
         }
 
         if (snapshot.hasError) {

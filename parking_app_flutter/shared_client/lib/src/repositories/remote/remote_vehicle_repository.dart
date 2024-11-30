@@ -12,16 +12,19 @@ class RemoteVehicleRepository extends BaseRemoteRepository<Vehicle, String> {
 
   static RemoteVehicleRepository get instance => _instance;
 
-  Future<List<Vehicle>> findVehiclesByOwner(Person owner) async {
+  Future<Result<List<Vehicle>, String>> findVehiclesByOwner(
+      Person owner) async {
     final result = await getAll();
     return result.when(
       success: (List<Vehicle> vehicles) {
-        return vehicles
-            .where((Vehicle vehicle) => vehicle.owner?.id == owner.id)
-            .toList();
+        return Result.success(
+          value: vehicles
+              .where((Vehicle vehicle) => vehicle.owner?.id == owner.id)
+              .toList(),
+        );
       },
       failure: (error) {
-        return [];
+        return Result.failure(error: error);
       },
     );
   }

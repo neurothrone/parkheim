@@ -16,10 +16,34 @@ class RemotePersonRepository extends BaseRemoteRepository<Person, String> {
     final result = await getAll();
     return result.when(
       success: (List<Person> people) {
-        return people.every((person) => person.name != name);
+        return people.every(
+          (person) => person.name.toLowerCase() != name.toLowerCase(),
+        );
       },
       failure: (error) {
         return false;
+      },
+    );
+  }
+
+  Future<Result<Person, String>> findPersonByName(String name) async {
+    final result = await getAll();
+    return result.when(
+      success: (List<Person> people) {
+        final person = people
+            .where(
+              (person) =>
+                  person.name.toLowerCase().contains(name.toLowerCase()),
+            )
+            .toList()
+            .firstOrNull;
+        if (person == null) {
+          return Result.failure(error: "Person not found.");
+        }
+        return Result.success(value: person);
+      },
+      failure: (error) {
+        return Result.failure(error: error);
       },
     );
   }

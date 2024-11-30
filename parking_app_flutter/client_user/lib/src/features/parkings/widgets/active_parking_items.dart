@@ -1,32 +1,43 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
+import '../../../core/cubits/app_user/app_user_cubit.dart';
+import '../../../core/cubits/app_user/app_user_state.dart';
 import 'active_parking_list_tile.dart';
 
 class ActiveParkingItems extends StatelessWidget {
   const ActiveParkingItems({super.key});
 
-  Future<List<Parking>> _getActiveParkings() async {
-    final vehicleResult = await RemoteVehicleRepository.instance.getAll();
-    return vehicleResult.when(
-      success: (List<Vehicle> vehicles) async {
-        if (vehicles.isEmpty) {
-          return [];
-        }
-        return await RemoteParkingRepository.instance
-            .findActiveParkingsForVehicle(vehicles.first);
+  Future<List<Parking>> _getActiveParkings(BuildContext context) async {
+    final appUserCubit = context.read<AppUserCubit>();
+    final user = (appUserCubit.state as AppUserSignedIn).user;
+
+    final ownerResult = await RemotePersonRepository.instance
+        .findPersonByName(user.displayName!);
+    final owner = ownerResult.when(
+      success: (person) => person,
+      failure: (error) {
+        SnackBarService.showError(context, "Error: Owner not found");
+        return null;
       },
-      failure: (error) => [],
     );
+    if (owner == null) {
+      return [];
+    }
+
+    return await RemoteParkingRepository.instance
+        .findActiveParkingsForOwner(owner);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Parking>>(
-      future: _getActiveParkings(),
+      future: _getActiveParkings(context),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final parkings = snapshot.data!;
@@ -55,4 +66,3 @@ class ActiveParkingItems extends StatelessWidget {
     );
   }
 }
-

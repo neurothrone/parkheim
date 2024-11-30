@@ -1,4 +1,5 @@
 import 'package:shared/shared.dart';
+import '../../../shared_client.dart';
 import 'base_remote_repository.dart';
 
 class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
@@ -61,6 +62,29 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     );
   }
 
+  Future<List<Parking>> findActiveParkingsForOwner(Person owner) async {
+    final vehicleResults =
+        await RemoteVehicleRepository.instance.findVehiclesByOwner(owner);
+
+    final vehicles = vehicleResults.when(
+      success: (vehicles) => vehicles,
+      failure: (_) => [],
+    );
+
+    final parkings = await getAll();
+    return parkings.when(
+      success: (parkings) {
+        return parkings
+            .where((parking) =>
+                parking.vehicle != null &&
+                vehicles.any((vehicle) => vehicle.id == parking.vehicle!.id) &&
+                parking.endTime == null)
+            .toList();
+      },
+      failure: (_) => [],
+    );
+  }
+
   Future<Result<Parking, String>> startParking(
     ParkingSpace parkingSpace,
     Vehicle vehicle,
@@ -96,6 +120,31 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
       failure: (error) {
         return Result.failure(error: error);
       },
+    );
+  }
+
+  Future<List<Parking>> findFinishedParkingsForOwner(
+    Person owner,
+  ) async {
+    final vehicleResults =
+        await RemoteVehicleRepository.instance.findVehiclesByOwner(owner);
+
+    final vehicles = vehicleResults.when(
+      success: (vehicles) => vehicles,
+      failure: (_) => [],
+    );
+
+    final parkings = await getAll();
+    return parkings.when(
+      success: (parkings) {
+        return parkings
+            .where((parking) =>
+                parking.vehicle != null &&
+                vehicles.any((vehicle) => vehicle.id == parking.vehicle!.id) &&
+                parking.endTime != null)
+            .toList();
+      },
+      failure: (_) => [],
     );
   }
 }

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
+
+import '../../../core/cubits/app_user/app_user_cubit.dart';
+import '../../../core/cubits/app_user/app_user_state.dart';
 
 class AddParkingForm extends StatefulWidget {
   const AddParkingForm({
@@ -33,20 +38,38 @@ class _AddParkingFormState extends State<AddParkingForm> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // TODO: get all vehicles for the user
-      final result = await _vehicleRepository.getAll();
-      result.when(
-        success: (vehicles) {
-          _vehicles = vehicles;
-          _vehicleId = _vehicles.first.id;
-          _vehicle = _vehicles.first;
-          setState(() {});
-        },
-        failure: (error) {
-          SnackBarService.showError(context, "Error: $error");
-        },
-      );
+      await _loadVehicles();
     });
+  }
+
+  Future<void> _loadVehicles() async {
+    final appUserCubit = context.read<AppUserCubit>();
+    final user = (appUserCubit.state as AppUserSignedIn).user;
+    final ownerResult = await RemotePersonRepository.instance
+        .findPersonByName(user.displayName!);
+    final owner = ownerResult.when(
+      success: (person) => person,
+      failure: (error) {
+        SnackBarService.showError(context, "Error: Owner not found");
+        return null;
+      },
+    );
+    if (owner == null) {
+      return;
+    }
+
+    final result = await _vehicleRepository.findVehiclesByOwner(owner);
+    result.when(
+      success: (vehicles) {
+        _vehicles = vehicles;
+        _vehicleId = _vehicles.first.id;
+        _vehicle = _vehicles.first;
+        setState(() {});
+      },
+      failure: (error) {
+        SnackBarService.showError(context, "Error: $error");
+      },
+    );
   }
 
   Future<void> _onFormSubmitted() async {
