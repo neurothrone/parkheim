@@ -586,7 +586,8 @@ abstract class BaseManager {
 
   // region Search
 
-  Future<List<Vehicle>> findVehiclesByOwner(Person owner) async {
+  Future<Result<List<Vehicle>, String>> findVehiclesByOwner(
+      Person owner) async {
     return await vehicleRepository.findVehiclesByOwner(owner);
   }
 
