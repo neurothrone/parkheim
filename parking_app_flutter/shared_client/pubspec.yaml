@@ -12,6 +12,9 @@ dependencies:
   shared:
     path: ../shared
 
+  # !: Group by functionality
+  collection: ^1.18.0
+
   # !: Date Formatting
   intl: ^0.20.1
 

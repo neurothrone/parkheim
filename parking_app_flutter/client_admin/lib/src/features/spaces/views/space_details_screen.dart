@@ -5,6 +5,7 @@ import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/widgets/widgets.dart';
+import '../widgets/parking_history_list.dart';
 import '../widgets/space_details.dart';
 
 class SpaceDetailsScreen extends StatelessWidget {
@@ -68,6 +69,8 @@ class SpaceDetailsScreen extends StatelessWidget {
               "History",
               style: Theme.of(context).textTheme.labelLarge,
             ),
+            const SizedBox(height: 10.0),
+            ParkingHistoryList(space: space),
           ],
         ),
       ),

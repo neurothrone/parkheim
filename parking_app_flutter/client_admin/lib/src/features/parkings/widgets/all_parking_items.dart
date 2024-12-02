@@ -12,23 +12,18 @@ class AllParkingItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: FutureBuilder<Result<List<Parking>, String>>(
-        future: RemoteParkingRepository.instance.getAll(),
+      child: FutureBuilder<List<Parking>>(
+        future: RemoteParkingRepository.instance.findAllParkingsSortedByStartTime(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final result = snapshot.data!;
-            return result.when(
-              success: (List<Parking> parkings) {
-                if (parkings.isEmpty) {
-                  return const Center(
-                    child: Text("No parkings available."),
-                  );
-                }
+            final parkings = snapshot.data!;
+            if (parkings.isEmpty) {
+              return const Center(
+                child: Text("No parkings available."),
+              );
+            }
 
-                return ParkingList(parkings: parkings);
-              },
-              failure: (error) => Center(child: Text("Error: $error")),
-            );
+            return ParkingList(parkings: parkings);
           }
 
           if (snapshot.hasError) {
