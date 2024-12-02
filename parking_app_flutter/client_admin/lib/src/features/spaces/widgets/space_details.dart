@@ -23,7 +23,10 @@ class SpaceDetails extends StatelessWidget {
             ),
             Text(
               space.address,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -36,7 +39,10 @@ class SpaceDetails extends StatelessWidget {
             ),
             Text(
               space.pricePerHour.toString(),
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
