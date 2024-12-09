@@ -38,7 +38,8 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     return result.when(
       success: (List<Parking> parkings) {
         return parkings
-            .where((Parking parking) => parking.endTime == null)
+            .where((Parking parking) =>
+                parking.endTime == null && parking.parkingSpace != null)
             .toList()
           ..sort((a, b) => b.startTime.compareTo(a.startTime));
       },
@@ -51,8 +52,10 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
   Future<int> getActiveParkingsCount() async {
     final result = await getAll();
     return result.when(
-      success: (List<Parking> parkings) =>
-          parkings.where((Parking parking) => parking.endTime == null).length,
+      success: (List<Parking> parkings) => parkings
+          .where((Parking parking) =>
+              parking.endTime == null && parking.parkingSpace != null)
+          .length,
       failure: (error) => 0,
     );
   }
