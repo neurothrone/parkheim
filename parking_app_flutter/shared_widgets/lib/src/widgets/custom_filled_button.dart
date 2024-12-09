@@ -20,14 +20,7 @@ class CustomFilledButton extends StatelessWidget {
           48.0,
         ),
       ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.w600,
-            ),
-      ),
+      child: Text(text),
     );
   }
 }
