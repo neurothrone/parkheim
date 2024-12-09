@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/widgets/widgets.dart';
+import '../state/spaces_list_provider.dart';
 import '../widgets/parking_history_list.dart';
 import '../widgets/space_details.dart';
 
@@ -29,6 +32,7 @@ class SpaceDetailsScreen extends StatelessWidget {
     final result = await RemoteParkingSpaceRepository.instance.delete(space.id);
     result.when(
       success: (_) {
+        context.read<SpacesListProvider>().fetchAllSpaces();
         Navigator.of(context).pop();
         SnackBarService.showSuccess(context, "Vehicle Deleted");
       },
