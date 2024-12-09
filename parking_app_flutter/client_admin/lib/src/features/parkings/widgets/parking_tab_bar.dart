@@ -21,9 +21,12 @@ class _ParkingTabBarState extends State<ParkingTabBar>
   @override
   void initState() {
     super.initState();
+    final parkingTabProvider =
+        Provider.of<ParkingTabProvider>(context, listen: false);
     _tabController = TabController(
       length: ParkingTab.values.length,
       vsync: this,
+      initialIndex: parkingTabProvider.selectedTab.index,
     );
   }
 
