@@ -221,8 +221,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     return result.when(
       success: (List<Parking> parkings) {
         return parkings
-            .where((Parking parking) =>
-                parking.parkingSpace?.id == space.id)
+            .where((Parking parking) => parking.parkingSpace?.id == space.id)
             .toList()
           ..sort((a, b) => b.startTime.compareTo(a.startTime));
       },
@@ -237,18 +236,20 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
       return [];
     }
 
+    searchText = searchText.toLowerCase();
+
     final result = await getAll();
     return result.when(
       success: (List<Parking> parkings) {
         return parkings
             .where((Parking parking) =>
                 parking.parkingSpace != null &&
-                parking.parkingSpace!.address.contains(searchText))
+                parking.parkingSpace!.address
+                    .toLowerCase()
+                    .contains(searchText))
             .toList();
       },
-      failure: (error) {
-        return [];
-      },
+      failure: (error) => [],
     );
   }
 }
