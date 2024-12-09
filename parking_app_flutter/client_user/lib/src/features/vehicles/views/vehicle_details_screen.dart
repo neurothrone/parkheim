@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
@@ -7,6 +9,7 @@ import 'package:shared_widgets/shared_widgets.dart';
 import '../../../core/routing/routing.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../people/widgets/person_details.dart';
+import '../state/vehicle_list_bloc.dart';
 import '../widgets/vehicle_details.dart';
 
 class VehicleDetailsScreen extends StatelessWidget {
@@ -30,6 +33,7 @@ class VehicleDetailsScreen extends StatelessWidget {
     final result = await RemoteVehicleRepository.instance.delete(vehicle.id);
     result.when(
       success: (_) {
+        context.read<VehicleListBloc>().add(VehicleListUpdate());
         AppRouter.pop(context);
         SnackBarService.showSuccess(context, "Vehicle Deleted");
       },

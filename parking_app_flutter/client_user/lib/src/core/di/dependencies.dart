@@ -12,6 +12,7 @@ import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/parkings/state/active_parkings/active_parkings_bloc.dart';
 import '../../features/parkings/state/available_spaces/available_spaces_bloc.dart';
 import '../../features/settings/state/dark_mode_cubit.dart';
+import '../../features/vehicles/state/vehicle_list_bloc.dart';
 import '../cubits/app_user/app_user_cubit.dart';
 import '../cubits/navigation/bottom_navigation_cubit.dart';
 
@@ -80,4 +81,11 @@ Future<void> initDependencies() async {
     ..registerLazySingleton(
       () => AvailableSpacesBloc(),
     );
+
+  // !: Vehicles
+  serviceLocator.registerLazySingleton(
+    () => VehicleListBloc(
+      appUserCubit: serviceLocator(),
+    ),
+  );
 }

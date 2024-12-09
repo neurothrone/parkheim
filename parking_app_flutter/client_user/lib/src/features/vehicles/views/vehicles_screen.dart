@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../../../core/cubits/app_user/app_user_cubit.dart';
-import '../../../core/cubits/app_user/app_user_state.dart';
 import '../../../core/routing/routing.dart';
 import '../../../core/widgets/widgets.dart';
+import '../state/vehicle_list_bloc.dart';
 import '../widgets/vehicle_list.dart';
 
 class VehiclesScreen extends StatelessWidget {
@@ -27,59 +24,44 @@ class VehiclesScreen extends StatelessWidget {
         ),
       ],
       bottomNavigationBar: CustomNavigationBar(),
-      child: VehiclesScreenContent(),
+      child: OwnedVehiclesList(),
     );
   }
 }
 
-class VehiclesScreenContent extends StatelessWidget {
-  const VehiclesScreenContent({
+class OwnedVehiclesList extends StatefulWidget {
+  const OwnedVehiclesList({
     super.key,
   });
 
-  Future<List<Vehicle>> _getVehicles(BuildContext context) async {
-    final appUserCubit = context.read<AppUserCubit>();
-    final user = (appUserCubit.state as AppUserSignedIn).user;
+  @override
+  State<OwnedVehiclesList> createState() => _OwnedVehiclesListState();
+}
 
-    final ownerResult = await RemotePersonRepository.instance
-        .findPersonByName(user.displayName!);
-    final owner = ownerResult.when(
-      success: (person) => person,
-      failure: (error) {
-        SnackBarService.showError(context, "Error: Owner not found");
-        return null;
-      },
-    );
-    if (owner == null) {
-      return [];
-    }
-
-    final vehicleResults =
-        await RemoteVehicleRepository.instance.findVehiclesByOwner(owner);
-    return vehicleResults.when(
-      success: (vehicles) => vehicles,
-      failure: (_) => [],
-    );
+class _OwnedVehiclesListState extends State<OwnedVehiclesList> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<VehicleListBloc>().add(VehicleListLoad());
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Vehicle>>(
-      future: _getVehicles(context),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final vehicles = snapshot.data!;
+    return BlocBuilder<VehicleListBloc, VehicleListState>(
+      builder: (context, state) {
+        if (state is VehicleListLoading) {
+          return CenteredProgressIndicator();
+        } else if (state is VehicleListLoaded) {
+          final vehicles = state.vehicles;
           if (vehicles.isEmpty) {
             return Center(
-              child: Text("No vehicles registered."),
+              child: Text("No vehicles available."),
             );
           }
 
           return VehicleList(vehicles: vehicles);
-        }
-
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (state is VehicleListFailure) {
+          return Center(child: Text("Error: ${state.message}"));
         }
 
         return CenteredProgressIndicator();

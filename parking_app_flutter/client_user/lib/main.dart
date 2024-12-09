@@ -10,6 +10,7 @@ import 'src/features/auth/bloc/auth_bloc.dart';
 import 'src/features/parkings/state/active_parkings/active_parkings_bloc.dart';
 import 'src/features/parkings/state/available_spaces/available_spaces_bloc.dart';
 import 'src/features/settings/state/dark_mode_cubit.dart';
+import 'src/features/vehicles/state/vehicle_list_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,9 @@ Future<void> main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<AvailableSpacesBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<VehicleListBloc>(),
         ),
       ],
       child: const MainApp(),
