@@ -48,19 +48,19 @@ class SpacesScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: "Spaces",
         actions: [
-          IconButton(
-            onPressed: () async => await _generateFakeSpaces(),
-            tooltip: "Generate Demo Data",
-            icon: Icon(Icons.refresh_rounded),
-          ),
-          IconButton(
-            onPressed: () async => await _clearItems(),
-            tooltip: "Clear Spaces",
-            icon: Icon(
-              Icons.delete_rounded,
-              color: Colors.red,
-            ),
-          ),
+          // IconButton(
+          //   onPressed: () async => await _generateFakeSpaces(),
+          //   tooltip: "Generate Demo Data",
+          //   icon: Icon(Icons.refresh_rounded),
+          // ),
+          // IconButton(
+          //   onPressed: () async => await _clearItems(),
+          //   tooltip: "Clear Spaces",
+          //   icon: Icon(
+          //     Icons.delete_rounded,
+          //     color: Colors.red,
+          //   ),
+          // ),
           IconButton(
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
