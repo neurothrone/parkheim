@@ -1,6 +1,5 @@
 import 'package:shared/shared.dart';
 import '../../../shared_client.dart';
-import 'base_remote_repository.dart';
 
 class RemoteParkingSpaceRepository
     extends BaseRemoteRepository<ParkingSpace, String> {
