@@ -22,7 +22,8 @@ class RemoteParkingSpaceRepository
     );
 
     final unavailableSpaces = parkings
-        .where((Parking parking) => parking.parkingSpace != null)
+        .where((Parking parking) =>
+            parking.parkingSpace != null && parking.endTime == null)
         .map((Parking parking) => parking.parkingSpace!)
         .toList();
 
