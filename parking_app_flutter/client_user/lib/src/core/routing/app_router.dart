@@ -91,7 +91,6 @@ class AppRouter {
             return switch (currentTab.state) {
               BottomTab.parkings => const ParkingsScreen(),
               BottomTab.vehicles => const VehiclesScreen(),
-              BottomTab.people => const PeopleScreen(),
               BottomTab.profile => const ProfileScreen(),
               BottomTab.settings => const SettingsScreen(),
             };
