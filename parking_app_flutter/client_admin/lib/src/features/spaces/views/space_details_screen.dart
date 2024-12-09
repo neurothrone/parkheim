@@ -34,7 +34,7 @@ class SpaceDetailsScreen extends StatelessWidget {
       success: (_) {
         context.read<SpacesListProvider>().fetchAllSpaces();
         Navigator.of(context).pop();
-        SnackBarService.showSuccess(context, "Vehicle Deleted");
+        SnackBarService.showSuccess(context, "Parking space deleted");
       },
       failure: (error) {
         SnackBarService.showError(context, "Error: $error");
