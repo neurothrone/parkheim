@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
@@ -7,6 +9,7 @@ import 'package:shared_widgets/shared_widgets.dart';
 import '../../../core/routing/routing.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../vehicles/widgets/vehicle_details.dart';
+import '../state/active_parkings/active_parkings_bloc.dart';
 import '../widgets/parking_space_details.dart';
 
 class ActiveParkingScreen extends StatelessWidget {
@@ -21,6 +24,7 @@ class ActiveParkingScreen extends StatelessWidget {
     final result = await RemoteParkingRepository.instance.endParking(parking);
     result.when(
       success: (Parking parking) {
+        context.read<ActiveParkingsBloc>().add(ActiveParkingUpdate());
         AppRouter.pop(context);
         SnackBarService.showSuccess(context, "Parking ended successfully");
       },

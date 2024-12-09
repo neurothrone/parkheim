@@ -1,5 +1,5 @@
 enum ParkingTab {
   active,
-  all,
+  available,
   history;
 }

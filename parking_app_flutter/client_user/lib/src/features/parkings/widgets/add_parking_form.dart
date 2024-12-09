@@ -8,6 +8,7 @@ import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/cubits/app_user/app_user_cubit.dart';
 import '../../../core/cubits/app_user/app_user_state.dart';
+import '../state/available_spaces/available_spaces_bloc.dart';
 
 class AddParkingForm extends StatefulWidget {
   const AddParkingForm({
@@ -88,6 +89,7 @@ class _AddParkingFormState extends State<AddParkingForm> {
     );
     result.when(
       success: (_) {
+        context.read<AvailableSpacesBloc>().add(AllParkingUpdate());
         Navigator.of(context).pop();
         SnackBarService.showSuccess(context, "Parking started");
       },

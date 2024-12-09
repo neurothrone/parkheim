@@ -2,45 +2,33 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../../../core/cubits/app_user/app_user_cubit.dart';
-import '../../../core/cubits/app_user/app_user_state.dart';
+import '../state/active_parkings/active_parkings_bloc.dart';
 import 'active_parking_list_tile.dart';
 
-class ActiveParkingItems extends StatelessWidget {
+class ActiveParkingItems extends StatefulWidget {
   const ActiveParkingItems({super.key});
 
-  Future<List<Parking>> _getActiveParkings(BuildContext context) async {
-    final appUserCubit = context.read<AppUserCubit>();
-    final user = (appUserCubit.state as AppUserSignedIn).user;
+  @override
+  State<ActiveParkingItems> createState() => _ActiveParkingItemsState();
+}
 
-    final ownerResult = await RemotePersonRepository.instance
-        .findPersonByName(user.displayName!);
-    final owner = ownerResult.when(
-      success: (person) => person,
-      failure: (error) {
-        SnackBarService.showError(context, "Error: Owner not found");
-        return null;
-      },
-    );
-    if (owner == null) {
-      return [];
-    }
-
-    return await RemoteParkingRepository.instance
-        .findActiveParkingsForOwner(owner);
+class _ActiveParkingItemsState extends State<ActiveParkingItems> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ActiveParkingsBloc>().add(ActiveParkingLoad());
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Parking>>(
-      future: _getActiveParkings(context),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final parkings = snapshot.data!;
+    return BlocBuilder<ActiveParkingsBloc, ActiveParkingsState>(
+      builder: (context, state) {
+        if (state is ActiveParkingLoading) {
+          return CenteredProgressIndicator();
+        } else if (state is ActiveParkingLoaded) {
+          final parkings = state.parkings;
           if (parkings.isEmpty) {
             return Center(
               child: Text("No active parkings available."),
@@ -55,10 +43,8 @@ class ActiveParkingItems extends StatelessWidget {
             },
             separatorBuilder: (context, index) => const Divider(height: 0),
           );
-        }
-
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (state is ActiveParkingFailure) {
+          return Center(child: Text("Error: ${state.message}"));
         }
 
         return CenteredProgressIndicator();

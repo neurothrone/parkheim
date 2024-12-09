@@ -9,6 +9,8 @@ import '../../data/repositories/firebase_auth_repository.dart';
 import '../../domain/interfaces/auth_repository.dart';
 import '../../domain/use_cases/auth.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
+import '../../features/parkings/state/active_parkings/active_parkings_bloc.dart';
+import '../../features/parkings/state/available_spaces/available_spaces_bloc.dart';
 import '../../features/settings/state/dark_mode_cubit.dart';
 import '../cubits/app_user/app_user_cubit.dart';
 import '../cubits/navigation/bottom_navigation_cubit.dart';
@@ -31,6 +33,12 @@ Future<void> initDependencies() async {
 
   // !: App User
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+
+  // !: Bottom Navigation
+  serviceLocator.registerLazySingleton(() => BottomNavigationCubit());
+
+  // !: Dark Mode Cubit
+  serviceLocator.registerLazySingleton(() => DarkModeCubit());
 
   // !: Auth
   serviceLocator
@@ -62,9 +70,14 @@ Future<void> initDependencies() async {
       ),
     );
 
-  // !: Bottom Navigation
-  serviceLocator.registerLazySingleton(() => BottomNavigationCubit());
-
-  // !: Dark Mode Cubit
-  serviceLocator.registerLazySingleton(() => DarkModeCubit());
+  // !: Parking
+  serviceLocator
+    ..registerLazySingleton(
+      () => ActiveParkingsBloc(
+        appUserCubit: serviceLocator(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => AvailableSpacesBloc(),
+    );
 }

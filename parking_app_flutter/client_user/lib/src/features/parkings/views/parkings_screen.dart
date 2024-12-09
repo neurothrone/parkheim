@@ -5,7 +5,7 @@ import 'package:shared/shared.dart';
 import '../../../core/widgets/widgets.dart';
 import '../domain/parking_tab.dart';
 import '../widgets/active_parking_items.dart';
-import '../widgets/all_parking_items.dart';
+import '../widgets/available_space_items.dart';
 import '../widgets/history_parking_items.dart';
 
 class ParkingsScreen extends StatelessWidget {
@@ -26,7 +26,7 @@ class ParkingsScreen extends StatelessWidget {
         child: TabBarView(
           children: [
             ActiveParkingItems(),
-            AllParkingItems(),
+            AvailableSpaceItems(),
             HistoryParkingItems(),
           ],
         ),

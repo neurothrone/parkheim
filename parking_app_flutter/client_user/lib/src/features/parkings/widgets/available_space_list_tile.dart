@@ -4,8 +4,8 @@ import 'package:shared/shared.dart';
 
 import '../../../core/routing/routing.dart';
 
-class AllParkingListTile extends StatelessWidget {
-  const AllParkingListTile({
+class AvailableSpaceListTile extends StatelessWidget {
+  const AvailableSpaceListTile({
     super.key,
     required this.space,
   });
