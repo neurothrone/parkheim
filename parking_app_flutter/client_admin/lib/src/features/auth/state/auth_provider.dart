@@ -1,17 +1,28 @@
 import 'package:flutter/foundation.dart';
 
+enum AuthStatus {
+  authenticated,
+  authenticating,
+  unauthenticated,
+}
+
 class AuthProvider extends ChangeNotifier {
-  bool _isAuthenticated = false;
+  AuthStatus _status = AuthStatus.unauthenticated;
 
-  bool get isAuthenticated => _isAuthenticated;
+  AuthStatus get status => _status;
 
-  void signIn() {
-    _isAuthenticated = true;
+  Future<void> signIn() async {
+    _status = AuthStatus.authenticating;
+    notifyListeners();
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    _status = AuthStatus.authenticated;
     notifyListeners();
   }
 
   void signOut() {
-    _isAuthenticated = false;
+    _status = AuthStatus.unauthenticated;
     notifyListeners();
   }
 }

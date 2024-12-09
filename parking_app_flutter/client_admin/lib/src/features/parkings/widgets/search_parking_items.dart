@@ -6,7 +6,7 @@ import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../state/parking_search_provider.dart';
+import '../state/parking_search_text_provider.dart';
 import 'parking_list.dart';
 
 class SearchParkingItems extends StatelessWidget {
@@ -14,21 +14,23 @@ class SearchParkingItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: AddressSearchBar(),
-        ),
-        Divider(height: 0),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: const Text("Results"),
-        ),
-        Divider(height: 0),
-        SearchedParkingsList(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: AddressSearchBar(),
+          ),
+          Divider(height: 0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: const Text("Results"),
+          ),
+          Divider(height: 0),
+          SearchedParkingsList(),
+        ],
+      ),
     );
   }
 }
@@ -39,21 +41,21 @@ class AddressSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = TextEditingController();
-    controller.text = context.watch<ParkingSearchProvider>().searchText;
+    controller.text = context.watch<ParkingSearchTextProvider>().searchText;
 
     return TextField(
       controller: controller,
       autocorrect: false,
       textCapitalization: TextCapitalization.none,
       onSubmitted: (text) {
-        context.read<ParkingSearchProvider>().search(text);
+        context.read<ParkingSearchTextProvider>().search(text);
       },
       decoration: InputDecoration(
         hintText: "Search parkings by address",
         suffixIcon: IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
-            context.read<ParkingSearchProvider>().search(controller.text);
+            context.read<ParkingSearchTextProvider>().search(controller.text);
           },
         ),
         border: OutlineInputBorder(),
@@ -67,7 +69,7 @@ class SearchedParkingsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchText = context.watch<ParkingSearchProvider>().searchText;
+    final searchText = context.watch<ParkingSearchTextProvider>().searchText;
 
     return FutureBuilder<List<Parking>>(
       future: RemoteParkingRepository.instance.searchParkings(searchText),

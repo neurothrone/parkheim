@@ -7,10 +7,8 @@ import 'core/navigation/navigation.dart';
 import 'features/auth/state/auth_provider.dart';
 import 'features/auth/views/auth_screen.dart';
 import 'features/parkings/views/parkings_screen.dart';
-import 'features/people/views/people_screen.dart';
 import 'features/spaces/views/spaces_screen.dart';
 import 'features/statistics/views/statistics_screen.dart';
-import 'features/vehicles/views/vehicles_screen.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -28,7 +26,9 @@ class MainApp extends StatelessWidget {
         builder: (context, AuthProvider provider, _) {
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 500),
-            child: provider.isAuthenticated ? MainContent() : AuthScreen(),
+            child: provider.status == AuthStatus.authenticated
+                ? MainContent()
+                : AuthScreen(),
           );
         },
       ),
@@ -43,8 +43,6 @@ class MainContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedTab = context.watch<NavigationRailProvider>().selectedTab;
     return switch (selectedTab) {
-      NavigationRailTab.people => PeopleScreen(),
-      NavigationRailTab.vehicles => VehiclesScreen(),
       NavigationRailTab.statistics => StatisticsScreen(),
       NavigationRailTab.spaces => SpacesScreen(),
       NavigationRailTab.parkings => ParkingsScreen(),

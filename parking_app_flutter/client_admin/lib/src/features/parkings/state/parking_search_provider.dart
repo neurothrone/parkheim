@@ -1,12 +1,33 @@
 import 'package:flutter/foundation.dart';
 
-class ParkingSearchProvider extends ChangeNotifier {
-  String _searchText = "";
+import 'package:shared/shared.dart';
+import 'package:shared_client/shared_client.dart';
 
-  String get searchText => _searchText;
+class ParkingSearchProvider with ChangeNotifier {
+  final RemoteParkingRepository repository = RemoteParkingRepository.instance;
 
-  void search(String text) {
-    _searchText = text;
+  List<Parking>? _parkings;
+  String _errorMessage = "";
+  bool _isLoading = false;
+
+  List<Parking>? get parkings => _parkings;
+
+  String get errorMessage => _errorMessage;
+
+  bool get isLoading => _isLoading;
+
+  Future<void> search(String searchText) async {
+    _isLoading = true;
+    _errorMessage = "";
     notifyListeners();
+
+    try {
+      _parkings = await repository.searchParkings(searchText);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

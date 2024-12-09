@@ -25,7 +25,9 @@ class ParkingsScreen extends StatelessWidget {
             child: Column(
               children: [
                 ParkingTabBar(),
-                ParkingTabContent(),
+                Expanded(
+                  child: ParkingTabContent(),
+                ),
               ],
             ),
           ),
