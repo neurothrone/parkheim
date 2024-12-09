@@ -7,13 +7,18 @@ import 'package:shared_widgets/shared_widgets.dart';
 import '../../spaces/widgets/parking_space_list.dart';
 
 class MostPopularParkingSpaceList extends StatelessWidget {
-  const MostPopularParkingSpaceList({super.key});
+  const MostPopularParkingSpaceList({
+    super.key,
+    required this.limit,
+  });
+
+  final int limit;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ParkingSpace>>(
       future: RemoteParkingRepository.instance.getMostPopularParkingSpaces(
-        limit: 5,
+        limit: limit,
       ),
       builder: (context, snapshot) {
         if (snapshot.hasData) {

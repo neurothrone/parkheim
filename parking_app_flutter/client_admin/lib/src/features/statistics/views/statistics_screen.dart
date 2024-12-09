@@ -5,6 +5,8 @@ import '../widgets/active_parkings_count_list_tile.dart';
 import '../widgets/most_popular_parking_space_list.dart';
 import '../widgets/parkings_revenue_list_tile.dart';
 
+const kLimit = 5;
+
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
 
@@ -18,7 +20,6 @@ class StatisticsScreen extends StatelessWidget {
           const VerticalDivider(thickness: 1, width: 1),
           Expanded(
             child: ListView(
-              // shrinkWrap: true,
               children: [
                 ActiveParkingsCountListTile(),
                 Divider(height: 0),
@@ -26,7 +27,7 @@ class StatisticsScreen extends StatelessWidget {
                 Divider(height: 0),
                 ListTile(
                   title: Text(
-                    "Most Popular Parking Spaces",
+                    "$kLimit Most Popular Parking Spaces",
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge
@@ -34,7 +35,7 @@ class StatisticsScreen extends StatelessWidget {
                   ),
                 ),
                 Divider(height: 0),
-                MostPopularParkingSpaceList(),
+                MostPopularParkingSpaceList(limit: kLimit),
               ],
             ),
           ),
