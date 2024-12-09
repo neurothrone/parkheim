@@ -8,10 +8,9 @@ class SnackBarService {
       ..showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10.0),
           ),
         ),
       );
@@ -23,8 +22,10 @@ class SnackBarService {
       ..showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
       );
   }
