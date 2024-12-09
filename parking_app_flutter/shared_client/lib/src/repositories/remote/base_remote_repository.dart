@@ -10,10 +10,9 @@ abstract class BaseRemoteRepository<T extends Serializable, E>
   BaseRemoteRepository({
     required String resource,
     required T Function(Map<String, dynamic>) fromJson,
-    // String host = "localhost",
-    String host = "10.0.2.2", // Android Emulator
     String port = "8080",
   }) : _fromJson = fromJson {
+    final host = Platform.isAndroid ? "10.0.2.2" : "localhost";
     _endpoint = "http://$host:$port/$resource";
   }
 
