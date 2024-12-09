@@ -210,6 +210,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
       success: (parkings) {
         return parkings
             .where((parking) =>
+                parking.parkingSpace != null &&
                 parking.vehicle != null &&
                 vehicles.any((vehicle) => vehicle.id == parking.vehicle!.id) &&
                 parking.endTime != null)
