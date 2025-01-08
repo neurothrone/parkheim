@@ -12,7 +12,7 @@ Future<bool> showConfirmDialog(
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
-          content: Text("Are you sure you want to delete this person?"),
+          content: Text(message),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
