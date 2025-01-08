@@ -1,13 +1,18 @@
 part of 'active_parkings_bloc.dart';
 
-@immutable
-abstract class ActiveParkingsState {
+sealed class ActiveParkingsState extends Equatable {
   const ActiveParkingsState();
 }
 
-class ActiveParkingInitial extends ActiveParkingsState {}
+class ActiveParkingInitial extends ActiveParkingsState {
+  @override
+  List<Object?> get props => [];
+}
 
-class ActiveParkingLoading extends ActiveParkingsState {}
+class ActiveParkingLoading extends ActiveParkingsState {
+  @override
+  List<Object?> get props => [];
+}
 
 class ActiveParkingLoaded extends ActiveParkingsState {
   const ActiveParkingLoaded({
@@ -15,6 +20,9 @@ class ActiveParkingLoaded extends ActiveParkingsState {
   });
 
   final List<Parking> parkings;
+
+  @override
+  List<Object?> get props => [parkings];
 }
 
 class ActiveParkingFailure extends ActiveParkingsState {
@@ -23,4 +31,7 @@ class ActiveParkingFailure extends ActiveParkingsState {
   });
 
   final String message;
+
+  @override
+  List<Object?> get props => [message];
 }

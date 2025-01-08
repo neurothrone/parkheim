@@ -1,8 +1,7 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
+
 import 'package:shared_client/shared_client.dart';
 
 import '../../../firebase_options.dart';
@@ -76,17 +75,23 @@ Future<void> initDependencies() async {
   serviceLocator
     ..registerLazySingleton(() => RemotePersonRepository.instance)
     ..registerLazySingleton(() => RemoteVehicleRepository.instance)
-    ..registerLazySingleton(() => RemoteParkingSpaceRepository.instance);
+    ..registerLazySingleton(() => RemoteParkingSpaceRepository.instance)
+    ..registerLazySingleton(() => RemoteParkingRepository.instance);
 
   // !: Parking
   serviceLocator
     ..registerLazySingleton(
       () => ActiveParkingsBloc(
         appUserCubit: serviceLocator(),
+        remotePersonRepository: serviceLocator(),
+        remoteParkingRepository: serviceLocator(),
       ),
     )
     ..registerLazySingleton(
-      () => AvailableSpacesBloc(),
+      () => AvailableSpacesBloc(
+        remoteParkingSpaceRepository: serviceLocator(),
+        remoteParkingRepository: serviceLocator(),
+      ),
     );
 
   // !: Vehicles

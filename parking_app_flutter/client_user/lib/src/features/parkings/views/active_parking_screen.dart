@@ -21,10 +21,9 @@ class ActiveParkingScreen extends StatelessWidget {
   final Parking parking;
 
   Future<void> _endParking(BuildContext context) async {
-    final result = await RemoteParkingRepository.instance.endParking(parking);
+    final result = await context.read<ActiveParkingsBloc>().endParking(parking);
     result.when(
-      success: (Parking parking) {
-        context.read<ActiveParkingsBloc>().add(ActiveParkingUpdate());
+      success: (_) {
         AppRouter.pop(context);
         SnackBarService.showSuccess(context, "Parking ended successfully");
       },

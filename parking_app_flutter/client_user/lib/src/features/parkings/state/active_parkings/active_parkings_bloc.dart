@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,15 +12,22 @@ part 'active_parkings_event.dart';
 
 part 'active_parkings_state.dart';
 
-class ActiveParkingsBloc extends Bloc<ActiveParkingsEvent, ActiveParkingsState> {
+class ActiveParkingsBloc
+    extends Bloc<ActiveParkingsEvent, ActiveParkingsState> {
   ActiveParkingsBloc({
     required this.appUserCubit,
-  }) : super(ActiveParkingInitial()) {
+    required RemotePersonRepository remotePersonRepository,
+    required RemoteParkingRepository remoteParkingRepository,
+  })  : _remotePersonRepository = remotePersonRepository,
+        _remoteParkingRepository = remoteParkingRepository,
+        super(ActiveParkingInitial()) {
     on<ActiveParkingLoad>(_onLoad);
     on<ActiveParkingUpdate>(_onUpdate);
   }
 
   final AppUserCubit appUserCubit;
+  final RemotePersonRepository _remotePersonRepository;
+  final RemoteParkingRepository _remoteParkingRepository;
 
   Future<void> _onLoad(
     ActiveParkingLoad event,
@@ -43,21 +50,30 @@ class ActiveParkingsBloc extends Bloc<ActiveParkingsEvent, ActiveParkingsState> 
 
     final user = (appUserCubit.state as AppUserSignedIn).user;
 
-    final ownerResult = await RemotePersonRepository.instance
-        .findPersonByName(user.displayName!);
+    final ownerResult =
+        await _remotePersonRepository.findPersonByName(user.displayName!);
     final owner = ownerResult.when(
       success: (person) => person,
-      failure: (error) {
-        return null;
-      },
+      failure: (error) => null,
     );
     if (owner == null) {
       emit(ActiveParkingFailure(message: "Owner not found"));
       return;
     }
 
-    final parkings = await RemoteParkingRepository.instance
-        .findActiveParkingsForOwner(owner);
+    final parkings =
+        await _remoteParkingRepository.findActiveParkingsForOwner(owner);
     emit(ActiveParkingLoaded(parkings: parkings));
+  }
+
+  Future<Result<void, String>> endParking(Parking parking) async {
+    final result = await RemoteParkingRepository.instance.endParking(parking);
+    return result.when(
+      success: (_) {
+        add(ActiveParkingUpdate());
+        return Result.success(value: null);
+      },
+      failure: (error) => Result.failure(error: error),
+    );
   }
 }

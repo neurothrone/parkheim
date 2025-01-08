@@ -10,7 +10,6 @@ import '../../features/parkings/views/active_parking_screen.dart';
 import '../../features/parkings/views/finished_parking_screen.dart';
 import '../../features/parkings/views/parking_details_screen.dart';
 import '../../features/people/views/add_person_screen.dart';
-import '../../features/people/views/people_screen.dart';
 import '../../features/people/views/person_details_screen.dart';
 import '../../features/parkings/views/parkings_screen.dart';
 import '../../features/profile/views/create_profile_screen.dart';

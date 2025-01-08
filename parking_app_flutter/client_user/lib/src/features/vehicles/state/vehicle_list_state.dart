@@ -19,10 +19,10 @@ class VehicleListLoaded extends VehicleListState {
     required this.vehicles,
   });
 
+  final List<Vehicle> vehicles;
+
   @override
   List<Object?> get props => [vehicles];
-
-  final List<Vehicle> vehicles;
 }
 
 class VehicleListFailure extends VehicleListState {

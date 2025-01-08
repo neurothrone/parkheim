@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,10 +11,18 @@ part 'available_spaces_state.dart';
 
 class AvailableSpacesBloc
     extends Bloc<AvailableSpacesEvent, AvailableSpacesState> {
-  AvailableSpacesBloc() : super(AllParkingInitial()) {
+  AvailableSpacesBloc({
+    required RemoteParkingRepository remoteParkingRepository,
+    required RemoteParkingSpaceRepository remoteParkingSpaceRepository,
+  })  : _remoteParkingRepository = remoteParkingRepository,
+        _remoteParkingSpaceRepository = remoteParkingSpaceRepository,
+        super(AllParkingInitial()) {
     on<AllParkingLoad>(_onLoad);
     on<AllParkingUpdate>(_onUpdate);
   }
+
+  final RemoteParkingRepository _remoteParkingRepository;
+  final RemoteParkingSpaceRepository _remoteParkingSpaceRepository;
 
   Future<void> _onLoad(
     AllParkingLoad event,
@@ -35,9 +43,36 @@ class AvailableSpacesBloc
   ) async {
     emit(AllParkingLoading());
 
-    List<ParkingSpace> availableSpaces =
-        await RemoteParkingSpaceRepository.instance.findAvailableSpaces();
+    try {
+      List<ParkingSpace> availableSpaces =
+          await _remoteParkingSpaceRepository.findAvailableSpaces();
 
-    emit(AllParkingLoaded(spaces: availableSpaces));
+      emit(AllParkingLoaded(spaces: availableSpaces));
+    } catch (_) {
+      emit(AllParkingFailure(message: "Unexpected error"));
+    }
+  }
+
+  Future<Result<void, String>> startParking({
+    required ParkingSpace space,
+    required Vehicle vehicle,
+  }) async {
+    final result = await _remoteParkingRepository.create(
+      Parking(
+        id: 0,
+        vehicle: vehicle,
+        parkingSpace: space,
+        startTime: DateTime.now(),
+        endTime: null,
+      ),
+    );
+
+    return result.when(
+      success: (_) {
+        add(AllParkingUpdate());
+        return Result.success(value: null);
+      },
+      failure: (error) => Result.failure(error: error),
+    );
   }
 }

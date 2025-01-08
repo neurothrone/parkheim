@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../../../core/cubits/app_user/app_user_cubit.dart';
-import '../../../core/cubits/app_user/app_user_state.dart';
+import '../../vehicles/state/vehicle_list_bloc.dart';
 import '../state/available_spaces/available_spaces_bloc.dart';
 
 class AddParkingForm extends StatefulWidget {
@@ -29,11 +27,6 @@ class _AddParkingFormState extends State<AddParkingForm> {
   List<Vehicle> _vehicles = [];
   Vehicle? _vehicle;
 
-  final RemoteVehicleRepository _vehicleRepository =
-      RemoteVehicleRepository.instance;
-  final RemoteParkingRepository _parkingRepository =
-      RemoteParkingRepository.instance;
-
   @override
   void initState() {
     super.initState();
@@ -44,22 +37,7 @@ class _AddParkingFormState extends State<AddParkingForm> {
   }
 
   Future<void> _loadVehicles() async {
-    final appUserCubit = context.read<AppUserCubit>();
-    final user = (appUserCubit.state as AppUserSignedIn).user;
-    final ownerResult = await RemotePersonRepository.instance
-        .findPersonByName(user.displayName!);
-    final owner = ownerResult.when(
-      success: (person) => person,
-      failure: (error) {
-        SnackBarService.showError(context, "Error: Owner not found");
-        return null;
-      },
-    );
-    if (owner == null) {
-      return;
-    }
-
-    final result = await _vehicleRepository.findVehiclesByOwner(owner);
+    final result = await context.read<VehicleListBloc>().getVehiclesForOwner();
     result.when(
       success: (vehicles) {
         _vehicles = vehicles;
@@ -78,18 +56,13 @@ class _AddParkingFormState extends State<AddParkingForm> {
       return;
     }
 
-    final result = await _parkingRepository.create(
-      Parking(
-        id: 0,
-        vehicle: _vehicle,
-        parkingSpace: widget.space,
-        startTime: DateTime.now(),
-        endTime: null,
-      ),
-    );
+    final result = await context.read<AvailableSpacesBloc>().startParking(
+          space: widget.space,
+          vehicle: _vehicle!,
+        );
+
     result.when(
       success: (_) {
-        context.read<AvailableSpacesBloc>().add(AllParkingUpdate());
         Navigator.of(context).pop();
         SnackBarService.showSuccess(context, "Parking started");
       },

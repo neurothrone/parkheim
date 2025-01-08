@@ -1,13 +1,18 @@
 part of 'available_spaces_bloc.dart';
 
-@immutable
-abstract class AvailableSpacesState {
+sealed class AvailableSpacesState extends Equatable {
   const AvailableSpacesState();
 }
 
-class AllParkingInitial extends AvailableSpacesState {}
+class AllParkingInitial extends AvailableSpacesState {
+  @override
+  List<Object?> get props => [];
+}
 
-class AllParkingLoading extends AvailableSpacesState {}
+class AllParkingLoading extends AvailableSpacesState {
+  @override
+  List<Object?> get props => [];
+}
 
 class AllParkingLoaded extends AvailableSpacesState {
   const AllParkingLoaded({
@@ -15,6 +20,9 @@ class AllParkingLoaded extends AvailableSpacesState {
   });
 
   final List<ParkingSpace> spaces;
+
+  @override
+  List<Object?> get props => [spaces];
 }
 
 class AllParkingFailure extends AvailableSpacesState {
@@ -23,4 +31,7 @@ class AllParkingFailure extends AvailableSpacesState {
   });
 
   final String message;
+
+  @override
+  List<Object?> get props => [message];
 }

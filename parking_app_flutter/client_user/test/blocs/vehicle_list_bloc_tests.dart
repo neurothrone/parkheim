@@ -10,17 +10,8 @@ import 'package:client_user/src/features/vehicles/state/vehicle_list_bloc.dart';
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 
-class MockAppUserCubit extends Mock implements AppUserCubit {}
-
-class MockRemotePersonRepository extends Mock
-    implements RemotePersonRepository {}
-
-class MockRemoteVehicleRepository extends Mock
-    implements RemoteVehicleRepository {}
-
-class FakePerson extends Fake implements Person {}
-
-class FakeVehicle extends Fake implements Vehicle {}
+import '../shared/fakes.dart';
+import '../shared/mocks.dart';
 
 void main() {
   group("VehicleListBloc", () {
@@ -66,7 +57,7 @@ void main() {
       registerFallbackValue(FakeVehicle());
     });
 
-    group("Vehicle tests", () {
+    group("Vehicle List tests", () {
       blocTest<VehicleListBloc, VehicleListState>(
         "list owned vehicles success test",
         setUp: () {
@@ -124,7 +115,7 @@ void main() {
       );
 
       blocTest<VehicleListBloc, VehicleListState>(
-        "add vehicle test",
+        "list owned vehicles after add vehicle test",
         setUp: () {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));

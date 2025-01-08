@@ -21,28 +21,14 @@ Future<void> main() async {
     MultiBlocProvider(
       providers: [
         // !: Cubits
-        BlocProvider(
-          create: (_) => serviceLocator<AppUserCubit>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<BottomNavigationCubit>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<DarkModeCubit>(),
-        ),
+        BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
+        BlocProvider(create: (_) => serviceLocator<BottomNavigationCubit>()),
+        BlocProvider(create: (_) => serviceLocator<DarkModeCubit>()),
         // !: Blocs
-        BlocProvider(
-          create: (_) => serviceLocator<AuthBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<ActiveParkingsBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<AvailableSpacesBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<VehicleListBloc>(),
-        ),
+        BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ActiveParkingsBloc>()),
+        BlocProvider(create: (_) => serviceLocator<AvailableSpacesBloc>()),
+        BlocProvider(create: (_) => serviceLocator<VehicleListBloc>()),
       ],
       child: const MainApp(),
     ),

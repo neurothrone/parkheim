@@ -53,9 +53,7 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
         await _remotePersonRepository.findPersonByName(user.displayName!);
     final owner = ownerResult.when(
       success: (person) => person,
-      failure: (error) {
-        return null;
-      },
+      failure: (error) => null,
     );
     if (owner == null) {
       emit(VehicleListFailure(message: "Owner not found"));
@@ -115,5 +113,21 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
       },
       failure: (error) => Result.failure(error: error),
     );
+  }
+
+  Future<Result<List<Vehicle>, String>> getVehiclesForOwner() async {
+    final user = (appUserCubit.state as AppUserSignedIn).user;
+    final ownerResult =
+        await _remotePersonRepository.findPersonByName(user.displayName!);
+    final owner = ownerResult.when(
+      success: (person) => person,
+      failure: (error) => null,
+    );
+    if (owner == null) {
+      return Result.failure(error: "Owner not found");
+    }
+
+    final result = await _remoteVehicleRepository.findVehiclesByOwner(owner);
+    return result;
   }
 }
