@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/routing/routing.dart';
@@ -26,20 +25,20 @@ class VehicleDetailsScreen extends StatelessWidget {
       "Are you sure you want to delete this vehicle?",
     );
 
-    if (!deleteConfirmed) {
+    if (!deleteConfirmed && !context.mounted) {
       return;
     }
 
-    final result = await RemoteVehicleRepository.instance.delete(vehicle.id);
+    final result = await context.read<VehicleListBloc>().deleteVehicle(
+          vehicleId: vehicle.id,
+        );
+
     result.when(
       success: (_) {
-        context.read<VehicleListBloc>().add(VehicleListUpdate());
         AppRouter.pop(context);
         SnackBarService.showSuccess(context, "Vehicle Deleted");
       },
-      failure: (error) {
-        SnackBarService.showError(context, "Error: $error");
-      },
+      failure: (error) => SnackBarService.showError(context, "Error: $error"),
     );
   }
 

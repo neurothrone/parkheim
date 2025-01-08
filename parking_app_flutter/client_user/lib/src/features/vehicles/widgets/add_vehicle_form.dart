@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../../../core/cubits/app_user/app_user_cubit.dart';
-import '../../../core/cubits/app_user/app_user_state.dart';
 import '../state/vehicle_list_bloc.dart';
 
 class AddVehicleForm extends StatefulWidget {
@@ -22,12 +19,6 @@ class _AddVehicleFormState extends State<AddVehicleForm>
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _registrationNumberController;
-
-  final RemotePersonRepository _personRepository =
-      RemotePersonRepository.instance;
-  final RemoteVehicleRepository _vehicleRepository =
-      RemoteVehicleRepository.instance;
-
   VehicleType _vehicleType = VehicleType.car;
 
   @override
@@ -49,36 +40,20 @@ class _AddVehicleFormState extends State<AddVehicleForm>
       return;
     }
 
-    final appUserCubit = context.read<AppUserCubit>();
-    final user = (appUserCubit.state as AppUserSignedIn).user;
-    final ownerResult =
-        await _personRepository.findPersonByName(user.displayName!);
-    final owner = ownerResult.when(
-      success: (person) => person,
-      failure: (error) {
-        SnackBarService.showError(context, "Owner not found");
-        return null;
-      },
-    );
-    if (owner == null) {
-      return;
-    }
+    final result = await context.read<VehicleListBloc>().addVehicle(
+          registrationNumber: _registrationNumberController.text,
+          vehicleType: _vehicleType,
+        );
 
-    final result = await _vehicleRepository.create(
-      Vehicle(
-        id: 0,
-        registrationNumber: _registrationNumberController.text,
-        vehicleType: _vehicleType,
-        owner: owner,
-      ),
-    );
     result.when(
       success: (_) {
-        context.read<VehicleListBloc>().add(VehicleListUpdate());
         Navigator.of(context).pop();
         SnackBarService.showSuccess(context, "Vehicle Added");
       },
-      failure: (error) => SnackBarService.showError(context, "Error: $error"),
+      failure: (error) => SnackBarService.showError(
+        context,
+        "Error: $error",
+      ),
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_client/shared_client.dart';
 
 import '../../../firebase_options.dart';
 import '../../data/repositories/firebase_auth_repository.dart';
@@ -71,6 +72,12 @@ Future<void> initDependencies() async {
       ),
     );
 
+  // !: Remote Repositories
+  serviceLocator
+    ..registerLazySingleton(() => RemotePersonRepository.instance)
+    ..registerLazySingleton(() => RemoteVehicleRepository.instance)
+    ..registerLazySingleton(() => RemoteParkingSpaceRepository.instance);
+
   // !: Parking
   serviceLocator
     ..registerLazySingleton(
@@ -86,6 +93,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(
     () => VehicleListBloc(
       appUserCubit: serviceLocator(),
+      remotePersonRepository: serviceLocator(),
+      remoteVehicleRepository: serviceLocator(),
     ),
   );
 }

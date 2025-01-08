@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,12 +15,18 @@ part 'vehicle_list_state.dart';
 class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
   VehicleListBloc({
     required this.appUserCubit,
-  }) : super(VehicleListInitial()) {
+    required RemotePersonRepository remotePersonRepository,
+    required RemoteVehicleRepository remoteVehicleRepository,
+  })  : _remotePersonRepository = remotePersonRepository,
+        _remoteVehicleRepository = remoteVehicleRepository,
+        super(VehicleListInitial()) {
     on<VehicleListLoad>(_onLoad);
     on<VehicleListUpdate>(_onUpdate);
   }
 
   final AppUserCubit appUserCubit;
+  final RemotePersonRepository _remotePersonRepository;
+  final RemoteVehicleRepository _remoteVehicleRepository;
 
   Future<void> _onLoad(
     VehicleListLoad event,
@@ -43,8 +49,8 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
 
     final user = (appUserCubit.state as AppUserSignedIn).user;
 
-    final ownerResult = await RemotePersonRepository.instance
-        .findPersonByName(user.displayName!);
+    final ownerResult =
+        await _remotePersonRepository.findPersonByName(user.displayName!);
     final owner = ownerResult.when(
       success: (person) => person,
       failure: (error) {
@@ -56,14 +62,58 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
       return;
     }
 
-    final result =
-        await RemoteVehicleRepository.instance.findVehiclesByOwner(owner);
+    final result = await _remoteVehicleRepository.findVehiclesByOwner(owner);
 
     result.when(
       success: (List<Vehicle> vehicles) => emit(
         VehicleListLoaded(vehicles: vehicles),
       ),
       failure: (error) => emit(VehicleListFailure(message: error)),
+    );
+  }
+
+  Future<Result<void, String>> addVehicle({
+    required String registrationNumber,
+    required VehicleType vehicleType,
+  }) async {
+    final user = (appUserCubit.state as AppUserSignedIn).user;
+    final ownerResult =
+        await _remotePersonRepository.findPersonByName(user.displayName!);
+    final owner = ownerResult.when(
+      success: (person) => person,
+      failure: (error) => null,
+    );
+    if (owner == null) {
+      return Result.failure(error: "Owner not found");
+    }
+
+    final result = await _remoteVehicleRepository.create(
+      Vehicle(
+        id: 0,
+        registrationNumber: registrationNumber,
+        vehicleType: vehicleType,
+        owner: owner,
+      ),
+    );
+    return result.when(
+      success: (_) {
+        add(VehicleListUpdate());
+        return Result.success(value: null);
+      },
+      failure: (error) => Result.failure(error: error),
+    );
+  }
+
+  Future<Result<void, String>> deleteVehicle({
+    required int vehicleId,
+  }) async {
+    final result = await RemoteVehicleRepository.instance.delete(vehicleId);
+    return result.when(
+      success: (_) {
+        add(VehicleListUpdate());
+        return Result.success(value: null);
+      },
+      failure: (error) => Result.failure(error: error),
     );
   }
 }
