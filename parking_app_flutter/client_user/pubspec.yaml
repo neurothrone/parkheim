@@ -31,10 +31,15 @@ dependencies:
 
   # State management
   flutter_bloc: ^8.1.6
+  equatable: ^2.0.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
+
   flutter_lints: ^5.0.0
 
 flutter:
