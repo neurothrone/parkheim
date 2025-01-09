@@ -21,6 +21,8 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
         _remoteVehicleRepository = remoteVehicleRepository,
         super(VehicleListInitial()) {
     on<VehicleListLoad>(_onLoad);
+    on<VehicleListAddItem>(_onAdd);
+    on<VehicleListDeleteItem>(_onDelete);
     on<VehicleListUpdate>(_onUpdate);
   }
 
@@ -35,11 +37,56 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
     await loadOwnedVehicles(emit);
   }
 
+  Future<void> _onAdd(
+    VehicleListAddItem event,
+    Emitter<VehicleListState> emit,
+  ) async {
+    emit(VehicleListLoading());
+
+    final user = (appUserCubit.state as AppUserSignedIn).user;
+    final ownerResult =
+        await _remotePersonRepository.findPersonByName(user.displayName!);
+    final owner = ownerResult.when(
+      success: (person) => person,
+      failure: (error) => null,
+    );
+    if (owner == null) {
+      emit(VehicleListFailure(message: "Owner not found"));
+      return;
+    }
+
+    final result = await _remoteVehicleRepository.create(
+      Vehicle(
+        id: 0,
+        registrationNumber: event.registrationNumber,
+        vehicleType: event.vehicleType,
+        owner: owner,
+      ),
+    );
+    result.when(
+      success: (_) => add(VehicleListUpdate()),
+      failure: (error) => emit(VehicleListFailure(message: error)),
+    );
+  }
+
   Future<void> _onUpdate(
     VehicleListUpdate event,
     Emitter<VehicleListState> emit,
   ) async {
     await loadOwnedVehicles(emit);
+  }
+
+  Future<void> _onDelete(
+    VehicleListDeleteItem event,
+    Emitter<VehicleListState> emit,
+  ) async {
+    emit(VehicleListLoading());
+
+    final result = await _remoteVehicleRepository.delete(event.id);
+    result.when(
+      success: (_) => add(VehicleListUpdate()),
+      failure: (error) => emit(VehicleListFailure(message: error)),
+    );
   }
 
   Future<void> loadOwnedVehicles(
@@ -48,7 +95,6 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
     emit(VehicleListLoading());
 
     final user = (appUserCubit.state as AppUserSignedIn).user;
-
     final ownerResult =
         await _remotePersonRepository.findPersonByName(user.displayName!);
     final owner = ownerResult.when(
@@ -61,73 +107,11 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
     }
 
     final result = await _remoteVehicleRepository.findVehiclesByOwner(owner);
-
     result.when(
       success: (List<Vehicle> vehicles) => emit(
         VehicleListLoaded(vehicles: vehicles),
       ),
       failure: (error) => emit(VehicleListFailure(message: error)),
     );
-  }
-
-  Future<Result<void, String>> addVehicle({
-    required String registrationNumber,
-    required VehicleType vehicleType,
-  }) async {
-    final user = (appUserCubit.state as AppUserSignedIn).user;
-    final ownerResult =
-        await _remotePersonRepository.findPersonByName(user.displayName!);
-    final owner = ownerResult.when(
-      success: (person) => person,
-      failure: (error) => null,
-    );
-    if (owner == null) {
-      return Result.failure(error: "Owner not found");
-    }
-
-    final result = await _remoteVehicleRepository.create(
-      Vehicle(
-        id: 0,
-        registrationNumber: registrationNumber,
-        vehicleType: vehicleType,
-        owner: owner,
-      ),
-    );
-    return result.when(
-      success: (_) {
-        add(VehicleListUpdate());
-        return Result.success(value: null);
-      },
-      failure: (error) => Result.failure(error: error),
-    );
-  }
-
-  Future<Result<void, String>> deleteVehicle({
-    required int vehicleId,
-  }) async {
-    final result = await RemoteVehicleRepository.instance.delete(vehicleId);
-    return result.when(
-      success: (_) {
-        add(VehicleListUpdate());
-        return Result.success(value: null);
-      },
-      failure: (error) => Result.failure(error: error),
-    );
-  }
-
-  Future<Result<List<Vehicle>, String>> getVehiclesForOwner() async {
-    final user = (appUserCubit.state as AppUserSignedIn).user;
-    final ownerResult =
-        await _remotePersonRepository.findPersonByName(user.displayName!);
-    final owner = ownerResult.when(
-      success: (person) => person,
-      failure: (error) => null,
-    );
-    if (owner == null) {
-      return Result.failure(error: "Owner not found");
-    }
-
-    final result = await _remoteVehicleRepository.findVehiclesByOwner(owner);
-    return result;
   }
 }

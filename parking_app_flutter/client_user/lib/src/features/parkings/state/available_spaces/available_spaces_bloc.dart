@@ -16,23 +16,46 @@ class AvailableSpacesBloc
     required RemoteParkingSpaceRepository remoteParkingSpaceRepository,
   })  : _remoteParkingRepository = remoteParkingRepository,
         _remoteParkingSpaceRepository = remoteParkingSpaceRepository,
-        super(AllParkingInitial()) {
-    on<AllParkingLoad>(_onLoad);
-    on<AllParkingUpdate>(_onUpdate);
+        super(AvailableSpacesInitial()) {
+    on<AvailableSpacesLoad>(_onLoad);
+    on<AvailableSpacesStartParking>(_onStartParking);
+    on<AvailableSpacesUpdate>(_onUpdate);
   }
 
   final RemoteParkingRepository _remoteParkingRepository;
   final RemoteParkingSpaceRepository _remoteParkingSpaceRepository;
 
   Future<void> _onLoad(
-    AllParkingLoad event,
+    AvailableSpacesLoad event,
     Emitter<AvailableSpacesState> emit,
   ) async {
     await loadAllParkings(emit);
   }
 
+  Future<void> _onStartParking(
+    AvailableSpacesStartParking event,
+    Emitter<AvailableSpacesState> emit,
+  ) async {
+    emit(AvailableSpacesLoading());
+
+    final result = await _remoteParkingRepository.create(
+      Parking(
+        id: 0,
+        vehicle: event.vehicle,
+        parkingSpace: event.space,
+        startTime: DateTime.now(),
+        endTime: null,
+      ),
+    );
+
+    result.when(
+      success: (_) => add(AvailableSpacesUpdate()),
+      failure: (error) => emit(AvailableSpacesFailure(message: error)),
+    );
+  }
+
   Future<void> _onUpdate(
-    AllParkingUpdate event,
+    AvailableSpacesUpdate event,
     Emitter<AvailableSpacesState> emit,
   ) async {
     await loadAllParkings(emit);
@@ -41,38 +64,15 @@ class AvailableSpacesBloc
   Future<void> loadAllParkings(
     Emitter<AvailableSpacesState> emit,
   ) async {
-    emit(AllParkingLoading());
+    emit(AvailableSpacesLoading());
 
     try {
       List<ParkingSpace> availableSpaces =
           await _remoteParkingSpaceRepository.findAvailableSpaces();
 
-      emit(AllParkingLoaded(spaces: availableSpaces));
+      emit(AvailableSpacesLoaded(spaces: availableSpaces));
     } catch (_) {
-      emit(AllParkingFailure(message: "Unexpected error"));
+      emit(AvailableSpacesFailure(message: "Unexpected error"));
     }
-  }
-
-  Future<Result<void, String>> startParking({
-    required ParkingSpace space,
-    required Vehicle vehicle,
-  }) async {
-    final result = await _remoteParkingRepository.create(
-      Parking(
-        id: 0,
-        vehicle: vehicle,
-        parkingSpace: space,
-        startTime: DateTime.now(),
-        endTime: null,
-      ),
-    );
-
-    return result.when(
-      success: (_) {
-        add(AllParkingUpdate());
-        return Result.success(value: null);
-      },
-      failure: (error) => Result.failure(error: error),
-    );
   }
 }

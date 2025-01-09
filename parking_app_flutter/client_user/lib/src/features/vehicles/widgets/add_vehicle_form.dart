@@ -40,61 +40,70 @@ class _AddVehicleFormState extends State<AddVehicleForm>
       return;
     }
 
-    final result = await context.read<VehicleListBloc>().addVehicle(
-          registrationNumber: _registrationNumberController.text,
-          vehicleType: _vehicleType,
+    context.read<VehicleListBloc>().add(
+          VehicleListAddItem(
+            registrationNumber: _registrationNumberController.text,
+            vehicleType: _vehicleType,
+          ),
         );
-
-    result.when(
-      success: (_) {
-        Navigator.of(context).pop();
-        SnackBarService.showSuccess(context, "Vehicle Added");
-      },
-      failure: (error) => SnackBarService.showError(
-        context,
-        "Error: $error",
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          CustomTextFormField(
-            onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
-            controller: _registrationNumberController,
-            validator: validateRegistrationNumber,
-            labelText: "Registration number",
-            textInputAction: TextInputAction.next,
-          ),
-          const SizedBox(height: 20),
-          SegmentedButton<VehicleType>(
-            onSelectionChanged: (Set<VehicleType> newSelection) {
-              setState(() => _vehicleType = newSelection.first);
-            },
-            selected: <VehicleType>{_vehicleType},
-            segments: const <ButtonSegment<VehicleType>>[
-              ButtonSegment<VehicleType>(
-                value: VehicleType.car,
-                label: Text("Car"),
-                icon: Icon(Icons.directions_car_rounded),
-              ),
-              ButtonSegment<VehicleType>(
-                value: VehicleType.motorcycle,
-                label: Text("Motorcycle"),
-                icon: Icon(Icons.motorcycle_rounded),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          CustomFilledButton(
-            onPressed: _onFormSubmitted,
-            text: "Add",
-          ),
-        ],
+    return BlocListener<VehicleListBloc, VehicleListState>(
+      listener: (context, state) {
+        if (state is VehicleListFailure) {
+          SnackBarService.showError(context, state.message);
+        } else if (state is! VehicleListLoading) {
+          Navigator.of(context).pop();
+          SnackBarService.showSuccess(context, "Vehicle Added");
+        }
+      },
+      child: BlocBuilder<VehicleListBloc, VehicleListState>(
+        builder: (context, state) {
+          if (state is VehicleListLoading) {
+            return const CenteredProgressIndicator();
+          }
+
+          return Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                CustomTextFormField(
+                  onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+                  controller: _registrationNumberController,
+                  validator: validateRegistrationNumber,
+                  labelText: "Registration number",
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 20),
+                SegmentedButton<VehicleType>(
+                  onSelectionChanged: (Set<VehicleType> newSelection) {
+                    setState(() => _vehicleType = newSelection.first);
+                  },
+                  selected: <VehicleType>{_vehicleType},
+                  segments: const <ButtonSegment<VehicleType>>[
+                    ButtonSegment<VehicleType>(
+                      value: VehicleType.car,
+                      label: Text("Car"),
+                      icon: Icon(Icons.directions_car_rounded),
+                    ),
+                    ButtonSegment<VehicleType>(
+                      value: VehicleType.motorcycle,
+                      label: Text("Motorcycle"),
+                      icon: Icon(Icons.motorcycle_rounded),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                CustomFilledButton(
+                  onPressed: _onFormSubmitted,
+                  text: "Add",
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

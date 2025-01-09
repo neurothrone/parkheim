@@ -4,18 +4,18 @@ sealed class AvailableSpacesState extends Equatable {
   const AvailableSpacesState();
 }
 
-class AllParkingInitial extends AvailableSpacesState {
+class AvailableSpacesInitial extends AvailableSpacesState {
   @override
   List<Object?> get props => [];
 }
 
-class AllParkingLoading extends AvailableSpacesState {
+class AvailableSpacesLoading extends AvailableSpacesState {
   @override
   List<Object?> get props => [];
 }
 
-class AllParkingLoaded extends AvailableSpacesState {
-  const AllParkingLoaded({
+class AvailableSpacesLoaded extends AvailableSpacesState {
+  const AvailableSpacesLoaded({
     required this.spaces,
   });
 
@@ -25,8 +25,8 @@ class AllParkingLoaded extends AvailableSpacesState {
   List<Object?> get props => [spaces];
 }
 
-class AllParkingFailure extends AvailableSpacesState {
-  const AllParkingFailure({
+class AvailableSpacesFailure extends AvailableSpacesState {
+  const AvailableSpacesFailure({
     required this.message,
   });
 

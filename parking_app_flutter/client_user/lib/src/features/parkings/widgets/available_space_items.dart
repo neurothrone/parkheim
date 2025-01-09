@@ -18,16 +18,16 @@ class _AvailableSpaceItemsState extends State<AvailableSpaceItems> {
   @override
   void initState() {
     super.initState();
-    context.read<AvailableSpacesBloc>().add(AllParkingLoad());
+    context.read<AvailableSpacesBloc>().add(AvailableSpacesLoad());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AvailableSpacesBloc, AvailableSpacesState>(
       builder: (context, state) {
-        if (state is AllParkingLoading) {
+        if (state is AvailableSpacesLoading) {
           return CenteredProgressIndicator();
-        } else if (state is AllParkingLoaded) {
+        } else if (state is AvailableSpacesLoaded) {
           final spaces = state.spaces;
           if (spaces.isEmpty) {
             return Center(
@@ -43,7 +43,7 @@ class _AvailableSpaceItemsState extends State<AvailableSpaceItems> {
             },
             separatorBuilder: (context, index) => const Divider(height: 0),
           );
-        } else if (state is AllParkingFailure) {
+        } else if (state is AvailableSpacesFailure) {
           return Center(child: Text("Error: ${state.message}"));
         }
 

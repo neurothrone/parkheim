@@ -43,11 +43,11 @@ void main() {
           remoteParkingRepository: remoteParkingRepository,
           remoteParkingSpaceRepository: remoteParkingSpaceRepository,
         ),
-        seed: () => AllParkingInitial(),
-        act: (bloc) => bloc.add(AllParkingLoad()),
+        seed: () => AvailableSpacesInitial(),
+        act: (bloc) => bloc.add(AvailableSpacesLoad()),
         expect: () => [
-          AllParkingLoading(),
-          AllParkingFailure(message: "Unexpected error"),
+          AvailableSpacesLoading(),
+          AvailableSpacesFailure(message: "Unexpected error"),
         ],
         verify: (_) {
           verify(() => remoteParkingSpaceRepository.findAvailableSpaces())
@@ -65,11 +65,11 @@ void main() {
           remoteParkingRepository: remoteParkingRepository,
           remoteParkingSpaceRepository: remoteParkingSpaceRepository,
         ),
-        seed: () => AllParkingInitial(),
-        act: (bloc) => bloc.add(AllParkingLoad()),
+        seed: () => AvailableSpacesInitial(),
+        act: (bloc) => bloc.add(AvailableSpacesLoad()),
         expect: () => [
-          AllParkingLoading(),
-          AllParkingLoaded(spaces: []),
+          AvailableSpacesLoading(),
+          AvailableSpacesLoaded(spaces: []),
         ],
         verify: (_) {
           verify(() => remoteParkingSpaceRepository.findAvailableSpaces())
@@ -87,11 +87,11 @@ void main() {
           remoteParkingRepository: remoteParkingRepository,
           remoteParkingSpaceRepository: remoteParkingSpaceRepository,
         ),
-        seed: () => AllParkingInitial(),
-        act: (bloc) => bloc.add(AllParkingLoad()),
+        seed: () => AvailableSpacesInitial(),
+        act: (bloc) => bloc.add(AvailableSpacesLoad()),
         expect: () => [
-          AllParkingLoading(),
-          AllParkingLoaded(spaces: [parkingSpace]),
+          AvailableSpacesLoading(),
+          AvailableSpacesLoaded(spaces: [parkingSpace]),
         ],
         verify: (_) {
           verify(() => remoteParkingSpaceRepository.findAvailableSpaces())

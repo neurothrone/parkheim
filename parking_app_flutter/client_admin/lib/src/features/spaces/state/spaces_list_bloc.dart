@@ -50,6 +50,7 @@ class SpacesListBloc extends Bloc<SpacesListEvent, SpacesListState> {
     Emitter<SpacesListState> emit,
   ) async {
     emit(SpacesListLoading());
+
     final result = await _remoteParkingSpaceRepository.create(event.space);
     result.when(
       success: (_) => add(SpacesListUpdate()),

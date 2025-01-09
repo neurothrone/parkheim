@@ -6,4 +6,20 @@ sealed class VehicleListEvent {
 
 final class VehicleListLoad extends VehicleListEvent {}
 
+final class VehicleListAddItem extends VehicleListEvent {
+  const VehicleListAddItem({
+    required this.registrationNumber,
+    required this.vehicleType,
+  });
+
+  final String registrationNumber;
+  final VehicleType vehicleType;
+}
+
+final class VehicleListDeleteItem extends VehicleListEvent {
+  const VehicleListDeleteItem({required this.id});
+
+  final int id;
+}
+
 final class VehicleListUpdate extends VehicleListEvent {}
