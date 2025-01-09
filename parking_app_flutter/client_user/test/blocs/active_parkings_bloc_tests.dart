@@ -105,7 +105,7 @@ void main() {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));
           when(() => remoteParkingRepository.findActiveParkingsForOwner(any()))
-              .thenAnswer((_) async =>  Result.success(value: []));
+              .thenAnswer((_) async => Result.success(value: []));
         },
         build: () => ActiveParkingsBloc(
           appUserCubit: appUserCubit,
@@ -129,37 +129,38 @@ void main() {
       );
 
       blocTest<ActiveParkingsBloc, ActiveParkingsState>(
-        "emits [ActiveParkingLoading, ActiveParkingLoaded] after starting a parking",
+        "emits [ActiveParkingLoading, ActiveParkingLoaded] after ending a parking",
         setUp: () {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));
-          when(() => remoteParkingRepository.findActiveParkingsForOwner(any()))
-              .thenAnswer(
+          when(() => remoteParkingRepository.endParking(any())).thenAnswer(
             (_) async => Result.success(
-              value: [
-                ...parkings,
-                newParking,
-              ],
+              value: newParking.copyWith(
+                endTime: DateTime.now(),
+              ),
             ),
           );
+          when(() => remoteParkingRepository.findActiveParkingsForOwner(any()))
+              .thenAnswer((_) async => Result.success(value: []));
         },
         build: () => ActiveParkingsBloc(
           appUserCubit: appUserCubit,
           remotePersonRepository: remotePersonRepository,
           remoteParkingRepository: remoteParkingRepository,
         ),
-        seed: () => ActiveParkingsInitial(),
-        act: (bloc) => bloc.add(ActiveParkingLoad()),
+        seed: () => ActiveParkingsLoaded(
+          parkings: [newParking],
+        ),
+        act: (bloc) => bloc.add(ActiveParkingEnd(parking: newParking)),
         expect: () => [
           ActiveParkingsLoading(),
-          ActiveParkingsLoaded(parkings: [
-            ...parkings,
-            newParking,
-          ]),
+          ActiveParkingsLoaded(parkings: []),
         ],
         verify: (_) {
           verify(() =>
                   remotePersonRepository.findPersonByName(user.displayName!))
+              .called(1);
+          verify(() => remoteParkingRepository.endParking(newParking))
               .called(1);
           verify(() =>
                   remoteParkingRepository.findActiveParkingsForOwner(owner))
