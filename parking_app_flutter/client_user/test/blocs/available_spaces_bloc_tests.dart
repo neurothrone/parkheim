@@ -34,29 +34,7 @@ void main() {
 
     group("Available Spaces Bloc tests", () {
       blocTest<AvailableSpacesBloc, AvailableSpacesState>(
-        "load available parking spaces initially empty success test",
-        setUp: () {
-          when(() => remoteParkingSpaceRepository.findAvailableSpaces())
-              .thenAnswer((_) async => []);
-        },
-        build: () => AvailableSpacesBloc(
-          remoteParkingRepository: remoteParkingRepository,
-          remoteParkingSpaceRepository: remoteParkingSpaceRepository,
-        ),
-        seed: () => AllParkingInitial(),
-        act: (bloc) => bloc.add(AllParkingLoad()),
-        expect: () => [
-          AllParkingLoading(),
-          AllParkingLoaded(spaces: []),
-        ],
-        verify: (_) {
-          verify(() => remoteParkingSpaceRepository.findAvailableSpaces())
-              .called(1);
-        },
-      );
-
-      blocTest<AvailableSpacesBloc, AvailableSpacesState>(
-        "load available parking spaces initially empty failure test",
+        "emits [AllParkingLoading, AllParkingFailure] when initially empty failure",
         setUp: () {
           when(() => remoteParkingSpaceRepository.findAvailableSpaces())
               .thenThrow(Exception("Unexpected error"));
@@ -78,7 +56,29 @@ void main() {
       );
 
       blocTest<AvailableSpacesBloc, AvailableSpacesState>(
-        "load available parking spaces test",
+        "emits [AllParkingLoading, AllParkingLoaded] when initially empty success",
+        setUp: () {
+          when(() => remoteParkingSpaceRepository.findAvailableSpaces())
+              .thenAnswer((_) async => []);
+        },
+        build: () => AvailableSpacesBloc(
+          remoteParkingRepository: remoteParkingRepository,
+          remoteParkingSpaceRepository: remoteParkingSpaceRepository,
+        ),
+        seed: () => AllParkingInitial(),
+        act: (bloc) => bloc.add(AllParkingLoad()),
+        expect: () => [
+          AllParkingLoading(),
+          AllParkingLoaded(spaces: []),
+        ],
+        verify: (_) {
+          verify(() => remoteParkingSpaceRepository.findAvailableSpaces())
+              .called(1);
+        },
+      );
+
+      blocTest<AvailableSpacesBloc, AvailableSpacesState>(
+        "emits [AllParkingLoading, AllParkingLoaded] when spaces are available",
         setUp: () {
           when(() => remoteParkingSpaceRepository.findAvailableSpaces())
               .thenAnswer((_) async => [parkingSpace]);

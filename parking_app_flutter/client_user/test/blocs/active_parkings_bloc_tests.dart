@@ -72,7 +72,35 @@ void main() {
 
     group("Active Parkings tests", () {
       blocTest<ActiveParkingsBloc, ActiveParkingsState>(
-        "load active parkings initially no parkings success test",
+        "emits [ActiveParkingLoading, ActiveParkingFailure] when initially failure",
+        setUp: () {
+          when(() => remotePersonRepository.findPersonByName(any())).thenAnswer(
+                  (_) async => Result.failure(error: "Owner not found"));
+          when(() => remoteParkingRepository.findActiveParkingsForOwner(any()))
+              .thenAnswer((_) async => []);
+        },
+        build: () => ActiveParkingsBloc(
+          appUserCubit: appUserCubit,
+          remotePersonRepository: remotePersonRepository,
+          remoteParkingRepository: remoteParkingRepository,
+        ),
+        seed: () => ActiveParkingInitial(),
+        act: (bloc) => bloc.add(ActiveParkingLoad()),
+        expect: () => [
+          ActiveParkingLoading(),
+          ActiveParkingFailure(message: "Owner not found"),
+        ],
+        verify: (_) {
+          verify(() =>
+              remotePersonRepository.findPersonByName(user.displayName!))
+              .called(1);
+          verifyNever(
+                  () => remoteParkingRepository.findActiveParkingsForOwner(owner));
+        },
+      );
+
+      blocTest<ActiveParkingsBloc, ActiveParkingsState>(
+        "emits [ActiveParkingLoading, ActiveParkingLoaded] when initially no parkings",
         setUp: () {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));
@@ -101,35 +129,7 @@ void main() {
       );
 
       blocTest<ActiveParkingsBloc, ActiveParkingsState>(
-        "load active parkings initially failure test",
-        setUp: () {
-          when(() => remotePersonRepository.findPersonByName(any())).thenAnswer(
-              (_) async => Result.failure(error: "Owner not found"));
-          when(() => remoteParkingRepository.findActiveParkingsForOwner(any()))
-              .thenAnswer((_) async => []);
-        },
-        build: () => ActiveParkingsBloc(
-          appUserCubit: appUserCubit,
-          remotePersonRepository: remotePersonRepository,
-          remoteParkingRepository: remoteParkingRepository,
-        ),
-        seed: () => ActiveParkingInitial(),
-        act: (bloc) => bloc.add(ActiveParkingLoad()),
-        expect: () => [
-          ActiveParkingLoading(),
-          ActiveParkingFailure(message: "Owner not found"),
-        ],
-        verify: (_) {
-          verify(() =>
-                  remotePersonRepository.findPersonByName(user.displayName!))
-              .called(1);
-          verifyNever(
-              () => remoteParkingRepository.findActiveParkingsForOwner(owner));
-        },
-      );
-
-      blocTest<ActiveParkingsBloc, ActiveParkingsState>(
-        "load active parkings after starting a parking test",
+        "emits [ActiveParkingLoading, ActiveParkingLoaded] after starting a parking",
         setUp: () {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));

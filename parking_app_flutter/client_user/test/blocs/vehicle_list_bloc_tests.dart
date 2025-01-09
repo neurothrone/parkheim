@@ -59,7 +59,35 @@ void main() {
 
     group("Vehicle List tests", () {
       blocTest<VehicleListBloc, VehicleListState>(
-        "list owned vehicles success test",
+        "emits [VehicleListLoading, VehicleListFailure] when listing owned vehicles fails",
+        setUp: () {
+          when(() => remotePersonRepository.findPersonByName(any()))
+              .thenAnswer((_) async => Result.success(value: owner));
+          when(() => remoteVehicleRepository.findVehiclesByOwner(any()))
+              .thenAnswer((_) async => Result.failure(error: "Error"));
+        },
+        build: () => VehicleListBloc(
+          appUserCubit: appUserCubit,
+          remotePersonRepository: remotePersonRepository,
+          remoteVehicleRepository: remoteVehicleRepository,
+        ),
+        seed: () => VehicleListInitial(),
+        act: (bloc) => bloc.add(VehicleListLoad()),
+        expect: () => [
+          VehicleListLoading(),
+          VehicleListFailure(message: "Error"),
+        ],
+        verify: (_) {
+          verify(() =>
+                  remotePersonRepository.findPersonByName(user.displayName!))
+              .called(1);
+          verify(() => remoteVehicleRepository.findVehiclesByOwner(owner))
+              .called(1);
+        },
+      );
+
+      blocTest<VehicleListBloc, VehicleListState>(
+        "emits [VehicleListLoading, VehicleListLoaded] when listing owned vehicles succeeds",
         setUp: () {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));
@@ -87,35 +115,7 @@ void main() {
       );
 
       blocTest<VehicleListBloc, VehicleListState>(
-        "list owned vehicles failure test",
-        setUp: () {
-          when(() => remotePersonRepository.findPersonByName(any()))
-              .thenAnswer((_) async => Result.success(value: owner));
-          when(() => remoteVehicleRepository.findVehiclesByOwner(any()))
-              .thenAnswer((_) async => Result.failure(error: "Error"));
-        },
-        build: () => VehicleListBloc(
-          appUserCubit: appUserCubit,
-          remotePersonRepository: remotePersonRepository,
-          remoteVehicleRepository: remoteVehicleRepository,
-        ),
-        seed: () => VehicleListInitial(),
-        act: (bloc) => bloc.add(VehicleListLoad()),
-        expect: () => [
-          VehicleListLoading(),
-          VehicleListFailure(message: "Error"),
-        ],
-        verify: (_) {
-          verify(() =>
-              remotePersonRepository.findPersonByName(user.displayName!))
-              .called(1);
-          verify(() => remoteVehicleRepository.findVehiclesByOwner(owner))
-              .called(1);
-        },
-      );
-
-      blocTest<VehicleListBloc, VehicleListState>(
-        "list owned vehicles after add vehicle test",
+        "emits [VehicleListLoading, VehicleListLoaded] when listing owned vehicles after adding a vehicle",
         setUp: () {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));
