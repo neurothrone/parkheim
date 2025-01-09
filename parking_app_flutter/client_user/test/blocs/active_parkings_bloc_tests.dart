@@ -75,9 +75,9 @@ void main() {
         "emits [ActiveParkingLoading, ActiveParkingFailure] when initially failure",
         setUp: () {
           when(() => remotePersonRepository.findPersonByName(any())).thenAnswer(
-                  (_) async => Result.failure(error: "Owner not found"));
+              (_) async => Result.failure(error: "Owner not found"));
           when(() => remoteParkingRepository.findActiveParkingsForOwner(any()))
-              .thenAnswer((_) async => []);
+              .thenAnswer((_) async => Result.success(value: []));
         },
         build: () => ActiveParkingsBloc(
           appUserCubit: appUserCubit,
@@ -92,10 +92,10 @@ void main() {
         ],
         verify: (_) {
           verify(() =>
-              remotePersonRepository.findPersonByName(user.displayName!))
+                  remotePersonRepository.findPersonByName(user.displayName!))
               .called(1);
           verifyNever(
-                  () => remoteParkingRepository.findActiveParkingsForOwner(owner));
+              () => remoteParkingRepository.findActiveParkingsForOwner(owner));
         },
       );
 
@@ -105,7 +105,7 @@ void main() {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));
           when(() => remoteParkingRepository.findActiveParkingsForOwner(any()))
-              .thenAnswer((_) async => []);
+              .thenAnswer((_) async =>  Result.success(value: []));
         },
         build: () => ActiveParkingsBloc(
           appUserCubit: appUserCubit,
@@ -134,10 +134,14 @@ void main() {
           when(() => remotePersonRepository.findPersonByName(any()))
               .thenAnswer((_) async => Result.success(value: owner));
           when(() => remoteParkingRepository.findActiveParkingsForOwner(any()))
-              .thenAnswer((_) async => [
-                    ...parkings,
-                    newParking,
-                  ]);
+              .thenAnswer(
+            (_) async => Result.success(
+              value: [
+                ...parkings,
+                newParking,
+              ],
+            ),
+          );
         },
         build: () => ActiveParkingsBloc(
           appUserCubit: appUserCubit,
