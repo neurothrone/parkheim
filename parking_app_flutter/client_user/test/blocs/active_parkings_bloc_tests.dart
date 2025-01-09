@@ -84,11 +84,11 @@ void main() {
           remotePersonRepository: remotePersonRepository,
           remoteParkingRepository: remoteParkingRepository,
         ),
-        seed: () => ActiveParkingInitial(),
+        seed: () => ActiveParkingsInitial(),
         act: (bloc) => bloc.add(ActiveParkingLoad()),
         expect: () => [
-          ActiveParkingLoading(),
-          ActiveParkingFailure(message: "Owner not found"),
+          ActiveParkingsLoading(),
+          ActiveParkingsFailure(message: "Owner not found"),
         ],
         verify: (_) {
           verify(() =>
@@ -112,11 +112,11 @@ void main() {
           remotePersonRepository: remotePersonRepository,
           remoteParkingRepository: remoteParkingRepository,
         ),
-        seed: () => ActiveParkingInitial(),
+        seed: () => ActiveParkingsInitial(),
         act: (bloc) => bloc.add(ActiveParkingLoad()),
         expect: () => [
-          ActiveParkingLoading(),
-          ActiveParkingLoaded(parkings: []),
+          ActiveParkingsLoading(),
+          ActiveParkingsLoaded(parkings: []),
         ],
         verify: (_) {
           verify(() =>
@@ -144,11 +144,11 @@ void main() {
           remotePersonRepository: remotePersonRepository,
           remoteParkingRepository: remoteParkingRepository,
         ),
-        seed: () => ActiveParkingInitial(),
+        seed: () => ActiveParkingsInitial(),
         act: (bloc) => bloc.add(ActiveParkingLoad()),
         expect: () => [
-          ActiveParkingLoading(),
-          ActiveParkingLoaded(parkings: [
+          ActiveParkingsLoading(),
+          ActiveParkingsLoaded(parkings: [
             ...parkings,
             newParking,
           ]),

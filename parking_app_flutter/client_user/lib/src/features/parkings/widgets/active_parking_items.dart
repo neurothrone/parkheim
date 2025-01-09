@@ -25,9 +25,9 @@ class _ActiveParkingItemsState extends State<ActiveParkingItems> {
   Widget build(BuildContext context) {
     return BlocBuilder<ActiveParkingsBloc, ActiveParkingsState>(
       builder: (context, state) {
-        if (state is ActiveParkingLoading) {
+        if (state is ActiveParkingsLoading) {
           return CenteredProgressIndicator();
-        } else if (state is ActiveParkingLoaded) {
+        } else if (state is ActiveParkingsLoaded) {
           final parkings = state.parkings;
           if (parkings.isEmpty) {
             return Center(
@@ -43,7 +43,7 @@ class _ActiveParkingItemsState extends State<ActiveParkingItems> {
             },
             separatorBuilder: (context, index) => const Divider(height: 0),
           );
-        } else if (state is ActiveParkingFailure) {
+        } else if (state is ActiveParkingsFailure) {
           return Center(child: Text("Error: ${state.message}"));
         }
 

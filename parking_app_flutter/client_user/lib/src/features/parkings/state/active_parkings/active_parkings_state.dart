@@ -4,18 +4,18 @@ sealed class ActiveParkingsState extends Equatable {
   const ActiveParkingsState();
 }
 
-class ActiveParkingInitial extends ActiveParkingsState {
+class ActiveParkingsInitial extends ActiveParkingsState {
   @override
   List<Object?> get props => [];
 }
 
-class ActiveParkingLoading extends ActiveParkingsState {
+class ActiveParkingsLoading extends ActiveParkingsState {
   @override
   List<Object?> get props => [];
 }
 
-class ActiveParkingLoaded extends ActiveParkingsState {
-  const ActiveParkingLoaded({
+class ActiveParkingsLoaded extends ActiveParkingsState {
+  const ActiveParkingsLoaded({
     required this.parkings,
   });
 
@@ -25,8 +25,8 @@ class ActiveParkingLoaded extends ActiveParkingsState {
   List<Object?> get props => [parkings];
 }
 
-class ActiveParkingFailure extends ActiveParkingsState {
-  const ActiveParkingFailure({
+class ActiveParkingsFailure extends ActiveParkingsState {
+  const ActiveParkingsFailure({
     required this.message,
   });
 

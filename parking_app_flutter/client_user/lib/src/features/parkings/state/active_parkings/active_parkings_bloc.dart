@@ -20,8 +20,9 @@ class ActiveParkingsBloc
     required RemoteParkingRepository remoteParkingRepository,
   })  : _remotePersonRepository = remotePersonRepository,
         _remoteParkingRepository = remoteParkingRepository,
-        super(ActiveParkingInitial()) {
+        super(ActiveParkingsInitial()) {
     on<ActiveParkingLoad>(_onLoad);
+    on<ActiveParkingEnd>(_onEnd);
     on<ActiveParkingUpdate>(_onUpdate);
   }
 
@@ -36,6 +37,20 @@ class ActiveParkingsBloc
     await loadActiveParkings(emit);
   }
 
+  Future<void> _onEnd(
+    ActiveParkingEnd event,
+    Emitter<ActiveParkingsState> emit,
+  ) async {
+    emit(ActiveParkingsLoading());
+
+    final result =
+        await RemoteParkingRepository.instance.endParking(event.parking);
+    return result.when(
+      success: (_) => add(ActiveParkingUpdate()),
+      failure: (error) => emit(ActiveParkingsFailure(message: error)),
+    );
+  }
+
   Future<void> _onUpdate(
     ActiveParkingUpdate event,
     Emitter<ActiveParkingsState> emit,
@@ -46,10 +61,9 @@ class ActiveParkingsBloc
   Future<void> loadActiveParkings(
     Emitter<ActiveParkingsState> emit,
   ) async {
-    emit(ActiveParkingLoading());
+    emit(ActiveParkingsLoading());
 
     final user = (appUserCubit.state as AppUserSignedIn).user;
-
     final ownerResult =
         await _remotePersonRepository.findPersonByName(user.displayName!);
     final owner = ownerResult.when(
@@ -57,23 +71,15 @@ class ActiveParkingsBloc
       failure: (error) => null,
     );
     if (owner == null) {
-      emit(ActiveParkingFailure(message: "Owner not found"));
+      emit(ActiveParkingsFailure(message: "Owner not found"));
       return;
     }
 
-    final parkings =
+    final result =
         await _remoteParkingRepository.findActiveParkingsForOwner(owner);
-    emit(ActiveParkingLoaded(parkings: parkings));
-  }
-
-  Future<Result<void, String>> endParking(Parking parking) async {
-    final result = await RemoteParkingRepository.instance.endParking(parking);
-    return result.when(
-      success: (_) {
-        add(ActiveParkingUpdate());
-        return Result.success(value: null);
-      },
-      failure: (error) => Result.failure(error: error),
+    result.when(
+      success: (parkings) => emit(ActiveParkingsLoaded(parkings: parkings)),
+      failure: (error) => emit(ActiveParkingsFailure(message: error)),
     );
   }
 }

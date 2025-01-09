@@ -6,4 +6,10 @@ sealed class ActiveParkingsEvent {
 
 final class ActiveParkingLoad extends ActiveParkingsEvent {}
 
+final class ActiveParkingEnd extends ActiveParkingsEvent {
+  const ActiveParkingEnd({required this.parking});
+
+  final Parking parking;
+}
+
 final class ActiveParkingUpdate extends ActiveParkingsEvent {}

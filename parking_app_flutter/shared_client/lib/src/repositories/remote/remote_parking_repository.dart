@@ -134,10 +134,10 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     );
   }
 
-  Future<List<Parking>> findActiveParkingsForOwner(Person owner) async {
+  Future<Result<List<Parking>, String>> findActiveParkingsForOwner(
+      Person owner) async {
     final vehicleResults =
         await RemoteVehicleRepository.instance.findVehiclesByOwner(owner);
-
     final vehicles = vehicleResults.when(
       success: (vehicles) => vehicles,
       failure: (_) => [],
@@ -146,14 +146,17 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     final parkings = await getAll();
     return parkings.when(
       success: (parkings) {
-        return parkings
-            .where((parking) =>
-                parking.vehicle != null &&
-                vehicles.any((vehicle) => vehicle.id == parking.vehicle!.id) &&
-                parking.endTime == null)
-            .toList();
+        return Result.success(
+          value: parkings
+              .where((parking) =>
+                  parking.vehicle != null &&
+                  vehicles
+                      .any((vehicle) => vehicle.id == parking.vehicle!.id) &&
+                  parking.endTime == null)
+              .toList(),
+        );
       },
-      failure: (_) => [],
+      failure: (error) => Result.failure(error: error),
     );
   }
 

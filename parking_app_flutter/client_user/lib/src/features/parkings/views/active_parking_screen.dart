@@ -20,64 +20,69 @@ class ActiveParkingScreen extends StatelessWidget {
 
   final Parking parking;
 
-  Future<void> _endParking(BuildContext context) async {
-    final result = await context.read<ActiveParkingsBloc>().endParking(parking);
-    result.when(
-      success: (_) {
-        AppRouter.pop(context);
-        SnackBarService.showSuccess(context, "Parking ended successfully");
-      },
-      failure: (error) {
-        SnackBarService.showError(context, "Failed to end parking");
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      title: "Parking",
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Hero(
-              tag: parking.id,
-              child: CustomCircleAvatar(icon: Icons.local_parking_rounded),
-            ),
-            const SizedBox(height: 20.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Started parking:",
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                Text(
-                  parking.startTime.formatted,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
-            Divider(),
-            const SizedBox(height: 10.0),
-            if (parking.parkingSpace != null) ...[
-              ParkingSpaceDetails(space: parking.parkingSpace!),
+    return BlocListener<ActiveParkingsBloc, ActiveParkingsState>(
+      listener: (context, state) {
+        if (state is ActiveParkingsFailure) {
+          SnackBarService.showError(context, "Error: ${state.message}");
+        } else if (state is! ActiveParkingsLoading) {
+          AppRouter.pop(context);
+          SnackBarService.showSuccess(context, "Parking ended successfully");
+        }
+      },
+      child: CustomScaffold(
+        title: "Parking",
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Hero(
+                tag: parking.id,
+                child: CustomCircleAvatar(icon: Icons.local_parking_rounded),
+              ),
+              const SizedBox(height: 20.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Started parking:",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  Text(
+                    parking.startTime.formatted,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ],
+              ),
               Divider(),
               const SizedBox(height: 10.0),
+              if (parking.parkingSpace != null) ...[
+                ParkingSpaceDetails(space: parking.parkingSpace!),
+                Divider(),
+                const SizedBox(height: 10.0),
+              ],
+              if (parking.vehicle != null) ...[
+                VehicleDetails(vehicle: parking.vehicle!),
+                Divider(),
+                const SizedBox(height: 20.0),
+              ],
+              BlocBuilder<ActiveParkingsBloc, ActiveParkingsState>(
+                builder: (context, state) {
+                  return CustomFilledButton(
+                    onPressed: state is ActiveParkingsLoading
+                        ? null
+                        : () => context
+                            .read<ActiveParkingsBloc>()
+                            .add(ActiveParkingEnd(parking: parking)),
+                    text: "End Parking",
+                  );
+                },
+              ),
             ],
-            if (parking.vehicle != null) ...[
-              VehicleDetails(vehicle: parking.vehicle!),
-              Divider(),
-              const SizedBox(height: 20.0),
-            ],
-            CustomFilledButton(
-              onPressed: () async => await _endParking(context),
-              text: "End Parking",
-            ),
-          ],
+          ),
         ),
       ),
     );
