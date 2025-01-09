@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../state/spaces_list_provider.dart';
+import '../state/spaces_list_bloc.dart';
 
 class AddSpaceForm extends StatefulWidget {
   const AddSpaceForm({super.key});
@@ -23,11 +22,6 @@ class _AddSpaceFormState extends State<AddSpaceForm>
   late final TextEditingController _pricePerHourController;
 
   late final FocusNode _pricePerHourNode;
-
-  final RemoteParkingSpaceRepository _repository =
-      RemoteParkingSpaceRepository.instance;
-
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -49,43 +43,44 @@ class _AddSpaceFormState extends State<AddSpaceForm>
     super.dispose();
   }
 
-  Future<void> _onFormSubmitted() async {
+  void _onFormSubmitted() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    final result = await _repository.create(
-      ParkingSpace(
-        id: 0,
-        address: _addressController.text,
-        pricePerHour: double.tryParse(_pricePerHourController.text) ?? 0.0,
-      ),
-    );
-
-    setState(() => _isLoading = false);
-
-    result.when(
-      success: (ParkingSpace space) {
-        context.read<SpacesListProvider>().fetchAllSpaces();
-        Navigator.of(context).pop();
-        SnackBarService.showSuccess(
-          context,
-          "Parking space added successfully",
+    context.read<SpacesListBloc>().add(
+          SpacesListAddItem(
+            space: ParkingSpace(
+              id: 0,
+              address: _addressController.text,
+              pricePerHour:
+                  double.tryParse(_pricePerHourController.text) ?? 0.0,
+            ),
+          ),
         );
-      },
-      failure: (String error) => SnackBarService.showError(context, error),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: _isLoading
-          ? CenteredProgressIndicator()
-          : Column(
+    return BlocListener<SpacesListBloc, SpacesListState>(
+      listener: (context, state) {
+        if (state is SpacesListFailure) {
+          SnackBarService.showError(context, state.message);
+        } else if (state is! SpacesListLoading) {
+          Navigator.of(context).pop();
+          SnackBarService.showSuccess(
+              context, "Parking space added successfully");
+        }
+      },
+      child: BlocBuilder<SpacesListBloc, SpacesListState>(
+        builder: (context, state) {
+          if (state is SpacesListLoading) {
+            return CenteredProgressIndicator();
+          }
+
+          return Form(
+            key: _formKey,
+            child: Column(
               children: [
                 CustomTextFormField(
                   onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(
@@ -114,6 +109,9 @@ class _AddSpaceFormState extends State<AddSpaceForm>
                 ),
               ],
             ),
+          );
+        },
+      ),
     );
   }
 }

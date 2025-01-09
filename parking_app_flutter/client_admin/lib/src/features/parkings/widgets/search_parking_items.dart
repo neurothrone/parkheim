@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../state/parking_search_text_provider.dart';
+import '../state/parking_list_bloc.dart';
+import '../state/parking_search_text_cubit.dart';
 import 'parking_list.dart';
 
 class SearchParkingItems extends StatelessWidget {
@@ -41,21 +40,27 @@ class AddressSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = TextEditingController();
-    controller.text = context.watch<ParkingSearchTextProvider>().searchText;
+    controller.text = context.watch<ParkingSearchTextCubit>().state;
 
     return TextField(
       controller: controller,
       autocorrect: false,
       textCapitalization: TextCapitalization.none,
       onSubmitted: (text) {
-        context.read<ParkingSearchTextProvider>().search(text);
+        context.read<ParkingSearchTextCubit>().search(text);
+        context
+            .read<ParkingListBloc>()
+            .add(ParkingListSearchItems(searchText: text));
       },
       decoration: InputDecoration(
         hintText: "Search parkings by address",
         suffixIcon: IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
-            context.read<ParkingSearchTextProvider>().search(controller.text);
+            context.read<ParkingSearchTextCubit>().search(controller.text);
+            context
+                .read<ParkingListBloc>()
+                .add(ParkingListSearchItems(searchText: controller.text));
           },
         ),
         border: OutlineInputBorder(),
@@ -69,30 +74,27 @@ class SearchedParkingsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchText = context.watch<ParkingSearchTextProvider>().searchText;
+    final searchText = context.watch<ParkingSearchTextCubit>().state;
 
-    return FutureBuilder<List<Parking>>(
-      future: RemoteParkingRepository.instance.searchParkings(searchText),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final parkings = snapshot.data!;
-          if (parkings.isEmpty) {
+    return BlocBuilder<ParkingListBloc, ParkingListState>(
+      builder: (context, state) {
+        if (state is ParkingListLoaded) {
+          if (state.parkings.isEmpty) {
             return ListTile(
               title: Text(searchText.isEmpty
                   ? "Try entering something."
                   : "No results."),
             );
           }
-
           return ParkingList(
-            parkings: parkings,
+            parkings: state.parkings,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
           );
         }
 
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+        if (state is ParkingListFailure) {
+          return Center(child: Text("Error: ${state.message}"));
         }
 
         return CenteredProgressIndicator();

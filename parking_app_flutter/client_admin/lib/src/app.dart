@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 
 import 'core/constants/constants.dart';
 import 'core/navigation/navigation.dart';
-import 'features/auth/state/auth_provider.dart';
+import 'core/navigation/navigation_rail_cubit.dart';
+import 'features/auth/state/auth_cubit.dart';
 import 'features/auth/views/auth_screen.dart';
 import 'features/parkings/views/parkings_screen.dart';
 import 'features/spaces/views/spaces_screen.dart';
@@ -15,6 +16,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authStatus = context.watch<AuthCubit>().state;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "${AppConstants.appName} - Admin",
@@ -22,15 +25,11 @@ class MainApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Consumer(
-        builder: (context, AuthProvider provider, _) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
-            child: provider.status == AuthStatus.authenticated
-                ? MainContent()
-                : AuthScreen(),
-          );
-        },
+      home: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child: authStatus == AuthStatus.authenticated
+            ? MainContent()
+            : AuthScreen(),
       ),
     );
   }
@@ -41,7 +40,7 @@ class MainContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedTab = context.watch<NavigationRailProvider>().selectedTab;
+    final selectedTab = context.watch<NavigationRailCubit>().state;
     return switch (selectedTab) {
       NavigationRailTab.statistics => StatisticsScreen(),
       NavigationRailTab.spaces => SpacesScreen(),

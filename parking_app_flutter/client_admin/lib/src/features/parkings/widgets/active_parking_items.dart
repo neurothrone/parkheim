@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shared_widgets/shared_widgets.dart';
 
+import '../state/parking_list_bloc.dart';
 import 'parking_list.dart';
 
 class ActiveParkingItems extends StatelessWidget {
@@ -11,22 +12,19 @@ class ActiveParkingItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Parking>>(
-      future: RemoteParkingRepository.instance.findActiveParkings(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final parkings = snapshot.data!;
-          if (parkings.isEmpty) {
+    return BlocBuilder<ParkingListBloc, ParkingListState>(
+      builder: (context, state) {
+        if (state is ParkingListLoaded) {
+          if (state.parkings.isEmpty) {
             return const Center(
               child: Text("No active parkings available."),
             );
           }
-
-          return ParkingList(parkings: parkings);
+          return ParkingList(parkings: state.parkings);
         }
 
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+        if (state is ParkingListFailure) {
+          return Center(child: Text("Error: ${state.message}"));
         }
 
         return CenteredProgressIndicator();

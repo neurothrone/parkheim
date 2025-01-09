@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:shared/shared.dart';
 import 'package:shared_client/shared_client.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/widgets/widgets.dart';
-import '../state/spaces_list_provider.dart';
+import '../state/spaces_list_bloc.dart';
 import '../widgets/parking_space_list.dart';
 import 'add_space_screen.dart';
 
@@ -98,26 +98,29 @@ class _ParkingSpaceItemsState extends State<ParkingSpaceItems> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<SpacesListProvider>().fetchAllSpaces();
+      context.read<SpacesListBloc>().add(SpacesListLoad());
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<SpacesListProvider>();
+    return BlocBuilder<SpacesListBloc, SpacesListState>(
+      builder: (context, state) {
+        if (state is SpacesListLoading) {
+          return CenteredProgressIndicator();
+        } else if (state is SpacesListLoaded) {
+          if (state.spaces.isEmpty) {
+            return const Center(
+              child: Text("No parking spaces available."),
+            );
+          }
+          return ParkingSpaceList(spaces: state.spaces);
+        } else if (state is SpacesListFailure) {
+          return Center(child: Text("Error: ${state.message}"));
+        }
 
-    if (provider.error != null) {
-      return Center(child: Text("Error: ${provider.error}"));
-    } else if (provider.isLoading) {
-      return CenteredProgressIndicator();
-    }
-
-    if (provider.spaces.isEmpty) {
-      return const Center(
-        child: Text("No parking spaces available."),
-      );
-    }
-
-    return ParkingSpaceList(spaces: provider.spaces);
+        return CenteredProgressIndicator();
+      },
+    );
   }
 }

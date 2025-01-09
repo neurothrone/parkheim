@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:shared/shared.dart';
 
 import '../domain/parking_tab.dart';
-import '../state/parking_tab_provider.dart';
+import '../state/parking_list_bloc.dart';
+import '../state/parking_tab_cubit.dart';
 
 class ParkingTabBar extends StatefulWidget {
   const ParkingTabBar({super.key});
@@ -21,13 +22,13 @@ class _ParkingTabBarState extends State<ParkingTabBar>
   @override
   void initState() {
     super.initState();
-    final parkingTabProvider =
-        Provider.of<ParkingTabProvider>(context, listen: false);
+    final selectedTab = context.read<ParkingTabCubit>().state;
     _tabController = TabController(
       length: ParkingTab.values.length,
       vsync: this,
-      initialIndex: parkingTabProvider.selectedTab.index,
+      initialIndex: selectedTab.index,
     );
+    _onTabChange();
   }
 
   @override
@@ -36,14 +37,29 @@ class _ParkingTabBarState extends State<ParkingTabBar>
     super.dispose();
   }
 
+  void _onTabChange() {
+    final selectedTab = context.read<ParkingTabCubit>().state;
+    switch (selectedTab) {
+      case ParkingTab.active:
+        context.read<ParkingListBloc>().add(ParkingListLoadActiveItems());
+        break;
+      case ParkingTab.all:
+        context.read<ParkingListBloc>().add(ParkingListLoadAllItems());
+        break;
+      case ParkingTab.search:
+        context.read<ParkingListBloc>().add(ParkingListSearchInitial());
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         TabBar(
           onTap: (int index) {
-            Provider.of<ParkingTabProvider>(context, listen: false)
-                .changeTab(ParkingTab.values[index]);
+            context.read<ParkingTabCubit>().changeTab(ParkingTab.values[index]);
+            _onTabChange();
           },
           controller: _tabController,
           tabs: [

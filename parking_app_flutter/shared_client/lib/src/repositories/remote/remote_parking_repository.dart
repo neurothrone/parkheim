@@ -33,19 +33,19 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     );
   }
 
-  Future<List<Parking>> findActiveParkings() async {
+  Future<Result<List<Parking>, String>> findActiveParkings() async {
     final result = await getAll();
     return result.when(
       success: (List<Parking> parkings) {
-        return parkings
-            .where((Parking parking) =>
-                parking.endTime == null && parking.parkingSpace != null)
-            .toList()
-          ..sort((a, b) => b.startTime.compareTo(a.startTime));
+        return Result.success(
+          value: parkings
+              .where((Parking parking) =>
+                  parking.endTime == null && parking.parkingSpace != null)
+              .toList()
+            ..sort((a, b) => b.startTime.compareTo(a.startTime)),
+        );
       },
-      failure: (error) {
-        return [];
-      },
+      failure: (error) => Result.failure(error: error),
     );
   }
 
@@ -99,16 +99,17 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     );
   }
 
-  Future<List<Parking>> findAllParkingsSortedByStartTime() async {
+  Future<Result<List<Parking>, String>>
+      findAllParkingsSortedByStartTime() async {
     final result = await getAll();
     return result.when(
       success: (List<Parking> parkings) {
-        return parkings.toList()
-          ..sort((a, b) => b.startTime.compareTo(a.startTime));
+        return Result.success(
+          value: parkings.toList()
+            ..sort((a, b) => b.startTime.compareTo(a.startTime)),
+        );
       },
-      failure: (error) {
-        return [];
-      },
+      failure: (error) => Result.failure(error: error),
     );
   }
 
@@ -235,9 +236,11 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     );
   }
 
-  Future<List<Parking>> searchParkings(String searchText) async {
+  Future<Result<List<Parking>, String>> searchParkings(
+    String searchText,
+  ) async {
     if (searchText.isEmpty) {
-      return [];
+      return Result.success(value: []);
     }
 
     searchText = searchText.toLowerCase();
@@ -245,15 +248,17 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     final result = await getAll();
     return result.when(
       success: (List<Parking> parkings) {
-        return parkings
-            .where((Parking parking) =>
-                parking.parkingSpace != null &&
-                parking.parkingSpace!.address
-                    .toLowerCase()
-                    .contains(searchText))
-            .toList();
+        return Result.success(
+          value: parkings
+              .where((Parking parking) =>
+                  parking.parkingSpace != null &&
+                  parking.parkingSpace!.address
+                      .toLowerCase()
+                      .contains(searchText))
+              .toList(),
+        );
       },
-      failure: (error) => [],
+      failure: (error) => Result.failure(error: error),
     );
   }
 }

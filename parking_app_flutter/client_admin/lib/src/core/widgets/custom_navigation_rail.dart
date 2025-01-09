@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../features/auth/state/auth_provider.dart';
+import '../../features/auth/state/auth_cubit.dart';
 import '../navigation/navigation.dart';
+import '../navigation/navigation_rail_cubit.dart';
 
 class CustomNavigationRail extends StatelessWidget {
   const CustomNavigationRail({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final selection =
-        Provider.of<NavigationRailProvider>(context, listen: false).selectedTab;
+    final selection = context.read<NavigationRailCubit>().state;
 
     return NavigationRail(
       selectedIndex: selection.index,
       groupAlignment: -1.0,
       onDestinationSelected: (int index) {
-        Provider.of<NavigationRailProvider>(context, listen: false)
+        context
+            .read<NavigationRailCubit>()
             .changeTab(NavigationRailTab.fromIndex(index));
       },
       labelType: NavigationRailLabelType.all,
@@ -32,8 +33,7 @@ class CustomNavigationRail extends StatelessWidget {
         child: Align(
           alignment: Alignment.bottomCenter,
           child: IconButton(
-            onPressed:
-                Provider.of<AuthProvider>(context, listen: false).signOut,
+            onPressed: context.read<AuthCubit>().signOut,
             icon: Icon(Icons.logout_rounded),
           ),
         ),

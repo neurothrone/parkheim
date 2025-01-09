@@ -1,33 +1,32 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'src/app.dart';
-import 'src/core/navigation/navigation_rail_provider.dart';
-import 'src/features/auth/state/auth_provider.dart';
-import 'src/features/parkings/state/parking_search_text_provider.dart';
-import 'src/features/parkings/state/parking_tab_provider.dart';
-import 'src/features/spaces/state/spaces_list_provider.dart';
+import 'src/core/di/dependencies.dart';
+import 'src/core/navigation/navigation_rail_cubit.dart';
+import 'src/features/auth/state/auth_cubit.dart';
+import 'src/features/parkings/state/parking_list_bloc.dart';
+import 'src/features/parkings/state/parking_search_text_cubit.dart';
+import 'src/features/parkings/state/parking_tab_cubit.dart';
+import 'src/features/spaces/state/spaces_list_bloc.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await initDependencies();
+
   runApp(
-    MultiProvider(
+    MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => AuthProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => NavigationRailProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ParkingTabProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ParkingSearchTextProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => SpacesListProvider(),
-        ),
+        // !: Cubits
+        BlocProvider(create: (_) => serviceLocator<AuthCubit>()),
+        BlocProvider(create: (_) => serviceLocator<NavigationRailCubit>()),
+        BlocProvider(create: (_) => serviceLocator<ParkingTabCubit>()),
+        BlocProvider(create: (_) => serviceLocator<ParkingSearchTextCubit>()),
+        // !: Blocs
+        BlocProvider(create: (_) => serviceLocator<SpacesListBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ParkingListBloc>()),
       ],
       child: const MainApp(),
     ),

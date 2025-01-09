@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/widgets/widgets.dart';
 import '../domain/parking_tab.dart';
-import '../state/parking_tab_provider.dart';
+import '../state/parking_tab_cubit.dart';
 import '../widgets/parking_tab_bar.dart';
 import '../widgets/active_parking_items.dart';
 import '../widgets/all_parking_items.dart';
@@ -42,7 +42,7 @@ class ParkingTabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedTab = context.watch<ParkingTabProvider>().selectedTab;
+    final selectedTab = context.watch<ParkingTabCubit>().state;
     return switch (selectedTab) {
       ParkingTab.active => ActiveParkingItems(),
       ParkingTab.all => AllParkingItems(),
