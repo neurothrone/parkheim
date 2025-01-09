@@ -44,7 +44,7 @@ class ActiveParkingsBloc
     emit(ActiveParkingsLoading());
 
     final result =
-        await RemoteParkingRepository.instance.endParking(event.parking);
+        await _remoteParkingRepository.endParking(event.parking);
     return result.when(
       success: (_) => add(ActiveParkingUpdate()),
       failure: (error) => emit(ActiveParkingsFailure(message: error)),
