@@ -1,0 +1,33 @@
+name: shared_client_firebase
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.0.1
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  shared:
+    path: ../shared
+
+  # !: Group by functionality
+  collection: ^1.18.0
+
+  # !: Date Formatting
+  intl: ^0.20.1
+
+  # Firebase
+  firebase_core: ^3.10.0
+  cloud_firestore: ^5.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+#flutter:

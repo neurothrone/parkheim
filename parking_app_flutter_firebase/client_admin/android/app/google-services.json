@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "761319125381",
+    "project_id": "parking-app-1ed54",
+    "storage_bucket": "parking-app-1ed54.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761319125381:android:1d35d0fff4eae2493394ec",
+        "android_client_info": {
+          "package_name": "tech.neurothrone.client_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_OFTYgU2eZJ_38MjrGdOOMMd6lzuUGn8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761319125381:android:38ab32adf9e4c4483394ec",
+        "android_client_info": {
+          "package_name": "tech.neurothrone.client_user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_OFTYgU2eZJ_38MjrGdOOMMd6lzuUGn8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

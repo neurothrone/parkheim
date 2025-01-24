@@ -1,0 +1,46 @@
+name: client_user
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  shared:
+    path: ../shared
+
+  shared_client_firebase:
+    path: ../shared_client_firebase
+
+  shared_widgets:
+    path: ../shared_widgets
+
+  # Navigation
+  go_router: ^14.6.1
+
+  # Firebase
+  firebase_core: ^3.10.0
+  firebase_auth: ^5.3.3
+
+  # Dependency injection
+  get_it: ^8.0.2
+
+  # State management
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
