@@ -40,15 +40,6 @@ void main() {
       address: "123 Main St",
       pricePerHour: 10.0,
     );
-    final List<Parking> parkings = [
-      Parking(
-        id: "VFa5T4QYQnqayx6ob1E5",
-        vehicle: vehicle,
-        parkingSpace: parkingSpace,
-        startTime: DateTime.now().add(const Duration(hours: -8)),
-        endTime: DateTime.now().add(const Duration(hours: -4)),
-      ),
-    ];
     final Parking newParking = Parking(
       id: "VFa5T4QYQnqayx6ob1E6",
       vehicle: vehicle,
