@@ -105,38 +105,5 @@ class _CreateProfileFormState extends State<CreateProfileForm>
         ),
       ),
     );
-
-    // return Form(
-    //   key: _formKey,
-    //   child: _isLoading
-    //       ? CenteredProgressIndicator()
-    //       : Column(
-    //           children: [
-    //             CustomTextFormField(
-    //               onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(
-    //                 _socialSecurityNumberNode,
-    //               ),
-    //               controller: _nameController,
-    //               validator: (String? value) => validateString(value, "Name"),
-    //               labelText: "Name",
-    //               textInputAction: TextInputAction.next,
-    //             ),
-    //             const SizedBox(height: 20),
-    //             CustomTextFormField(
-    //               onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
-    //               controller: _socialSecurityNumberController,
-    //               validator: validateSocialSecurityNumber,
-    //               labelText: "Social Security Number",
-    //               focusNode: _socialSecurityNumberNode,
-    //               textInputAction: TextInputAction.done,
-    //             ),
-    //             const SizedBox(height: 20),
-    //             CustomFilledButton(
-    //               onPressed: _onFormSubmitted,
-    //               text: "Add",
-    //             ),
-    //           ],
-    //         ),
-    // );
   }
 }

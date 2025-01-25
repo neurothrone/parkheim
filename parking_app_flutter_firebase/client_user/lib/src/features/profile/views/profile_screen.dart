@@ -34,21 +34,6 @@ class ProfileDetails extends StatelessWidget {
         if (state is ProfileLoaded) {
           return Column(
             children: [
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Text(
-              //       "Email:",
-              //       style: Theme.of(context).textTheme.bodyLarge,
-              //     ),
-              //     Text(
-              //        user.email!,
-              //       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              //         fontWeight: FontWeight.bold,
-              //       ),
-              //     ),
-              //   ],
-              // ),
               PersonDetails(person: state.person),
             ],
           );
