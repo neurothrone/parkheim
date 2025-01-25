@@ -4,7 +4,7 @@ import 'package:shared/shared.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/widgets/widgets.dart';
-import '../widgets/add_parking_form.dart';
+import '../widgets/start_parking_form.dart';
 import '../widgets/parking_space_details.dart';
 
 class ParkingDetailsScreen extends StatelessWidget {
@@ -29,7 +29,7 @@ class ParkingDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             ParkingSpaceDetails(space: space),
-            AddParkingForm(space: space),
+            StartParkingForm(space: space),
           ],
         ),
       ),

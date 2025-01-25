@@ -7,9 +7,10 @@ import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../vehicles/state/vehicle_list_bloc.dart';
 import '../state/available_spaces/available_spaces_bloc.dart';
+import 'vehicle_drop_down_field.dart';
 
-class AddParkingForm extends StatefulWidget {
-  const AddParkingForm({
+class StartParkingForm extends StatefulWidget {
+  const StartParkingForm({
     super.key,
     required this.space,
   });
@@ -17,10 +18,10 @@ class AddParkingForm extends StatefulWidget {
   final ParkingSpace space;
 
   @override
-  State<AddParkingForm> createState() => _AddParkingFormState();
+  State<StartParkingForm> createState() => _StartParkingFormState();
 }
 
-class _AddParkingFormState extends State<AddParkingForm> {
+class _StartParkingFormState extends State<StartParkingForm> {
   final _formKey = GlobalKey<FormState>();
 
   Vehicle? _vehicle;
@@ -83,7 +84,7 @@ class _AddParkingFormState extends State<AddParkingForm> {
 
               return Column(
                 children: [
-                  VehicleDropDownForm(
+                  VehicleDropDownField(
                     vehicles: state.vehicles,
                     initialSelection: _vehicle!,
                     onVehicleSelected: (Vehicle vehicle) {
@@ -120,67 +121,6 @@ class _AddParkingFormState extends State<AddParkingForm> {
           },
         ),
       ),
-    );
-  }
-}
-
-class VehicleDropDownForm extends StatefulWidget {
-  const VehicleDropDownForm({
-    super.key,
-    required this.vehicles,
-    required this.initialSelection,
-    required this.onVehicleSelected,
-  });
-
-  final List<Vehicle> vehicles;
-  final Vehicle initialSelection;
-  final Function(Vehicle vehicle) onVehicleSelected;
-
-  @override
-  State<VehicleDropDownForm> createState() => _VehicleDropDownFormState();
-}
-
-class _VehicleDropDownFormState extends State<VehicleDropDownForm> {
-  String _registrationNumber = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _registrationNumber = widget.initialSelection.registrationNumber;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      onChanged: (String? newValue) {
-        setState(() => _registrationNumber = newValue!);
-        widget.onVehicleSelected(
-          widget.vehicles.firstWhere(
-            (vehicle) => vehicle.registrationNumber == _registrationNumber,
-          ),
-        );
-      },
-      validator: (String? value) {
-        if (value == null || value == "") {
-          return "Vehicle is required";
-        }
-        return null;
-      },
-      value: _registrationNumber,
-      decoration: InputDecoration(labelText: "Vehicle"),
-      items: widget.vehicles.map<DropdownMenuItem<String>>((Vehicle vehicle) {
-        return DropdownMenuItem<String>(
-          value: vehicle.registrationNumber,
-          child: Text(
-            vehicle.registrationNumber,
-            style: TextStyle(
-              fontWeight: _registrationNumber == vehicle.registrationNumber
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }
