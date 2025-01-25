@@ -5,34 +5,34 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:client_user/src/features/parkings/state/available_spaces/available_spaces_bloc.dart';
 import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
+import 'package:shared_client_firebase/shared_client_firebase.dart';
 
 import '../shared/fakes.dart';
 import '../shared/mocks.dart';
 
 void main() {
   group("AvailableSpacesBloc", () {
-    late RemoteParkingRepository remoteParkingRepository;
-    late RemoteParkingSpaceRepository remoteParkingSpaceRepository;
+    late FirebaseParkingRepository remoteParkingRepository;
+    late FirebaseParkingSpaceRepository remoteParkingSpaceRepository;
 
     final Person owner = Person(
-      id: 1,
+      id: "VFa5T4QYQnqayx6ob1E1",
       name: "Zane Doe",
       socialSecurityNumber: "199001011239",
     );
     final Vehicle vehicle = Vehicle(
-      id: 1,
+      id: "VFa5T4QYQnqayx6ob1E2",
       registrationNumber: "ABC123",
       vehicleType: VehicleType.car,
       owner: owner,
     );
     final ParkingSpace parkingSpace = ParkingSpace(
-      id: 1,
+      id: "VFa5T4QYQnqayx6ob1E3",
       address: "123 Main St",
       pricePerHour: 10.0,
     );
     final Parking newParking = Parking(
-      id: 1,
+      id: "VFa5T4QYQnqayx6ob1E4",
       vehicle: vehicle,
       parkingSpace: parkingSpace,
       startTime: DateTime.now(),

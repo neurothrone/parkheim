@@ -8,15 +8,15 @@ import 'package:client_user/src/core/cubits/app_user/app_user_state.dart';
 import 'package:client_user/src/core/entities/user_entity.dart';
 import 'package:client_user/src/features/vehicles/state/vehicle_list_bloc.dart';
 import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
+import 'package:shared_client_firebase/shared_client_firebase.dart';
 
 import '../shared/fakes.dart';
 import '../shared/mocks.dart';
 
 void main() {
   group("VehicleListBloc", () {
-    late RemotePersonRepository remotePersonRepository;
-    late RemoteVehicleRepository remoteVehicleRepository;
+    late FirebasePersonRepository remotePersonRepository;
+    late FirebaseVehicleRepository remoteVehicleRepository;
 
     late AppUserCubit appUserCubit;
     final UserEntity user = UserEntity(
@@ -25,20 +25,20 @@ void main() {
       displayName: "Zane Doe",
     );
     final Person owner = Person(
-      id: 1,
+      id: "VFa5T4QYQnqayx6ob1E1",
       name: "Zane Doe",
       socialSecurityNumber: "199001011239",
     );
     final List<Vehicle> vehicles = [
       Vehicle(
-        id: 1,
+        id: "VFa5T4QYQnqayx6ob1E2",
         registrationNumber: "ABC123",
         vehicleType: VehicleType.car,
         owner: owner,
       ),
     ];
     final Vehicle newVehicle = Vehicle(
-      id: 2,
+      id: "VFa5T4QYQnqayx6ob1E3",
       registrationNumber: "XDF442",
       vehicleType: VehicleType.motorcycle,
       owner: owner,

@@ -8,41 +8,41 @@ import 'package:client_user/src/core/cubits/app_user/app_user_state.dart';
 import 'package:client_user/src/core/entities/user_entity.dart';
 import 'package:client_user/src/features/parkings/state/active_parkings/active_parkings_bloc.dart';
 import 'package:shared/shared.dart';
-import 'package:shared_client/shared_client.dart';
+import 'package:shared_client_firebase/shared_client_firebase.dart';
 
 import '../shared/fakes.dart';
 import '../shared/mocks.dart';
 
 void main() {
   group("ActiveParkingsBloc", () {
-    late RemotePersonRepository remotePersonRepository;
-    late RemoteParkingRepository remoteParkingRepository;
+    late FirebasePersonRepository remotePersonRepository;
+    late FirebaseParkingRepository remoteParkingRepository;
 
     late AppUserCubit appUserCubit;
     final UserEntity user = UserEntity(
-      id: "199001011239",
+      id: "VFa5T4QYQnqayx6ob1E1",
       email: "zane@example.com",
       displayName: "Zane Doe",
     );
     final Person owner = Person(
-      id: 1,
+      id: "VFa5T4QYQnqayx6ob1E2",
       name: "Zane Doe",
       socialSecurityNumber: "199001011239",
     );
     final Vehicle vehicle = Vehicle(
-      id: 1,
+      id: "VFa5T4QYQnqayx6ob1E3",
       registrationNumber: "ABC123",
       vehicleType: VehicleType.car,
       owner: owner,
     );
     final ParkingSpace parkingSpace = ParkingSpace(
-      id: 1,
+      id: "VFa5T4QYQnqayx6ob1E4",
       address: "123 Main St",
       pricePerHour: 10.0,
     );
     final List<Parking> parkings = [
       Parking(
-        id: 1,
+        id: "VFa5T4QYQnqayx6ob1E5",
         vehicle: vehicle,
         parkingSpace: parkingSpace,
         startTime: DateTime.now().add(const Duration(hours: -8)),
@@ -50,7 +50,7 @@ void main() {
       ),
     ];
     final Parking newParking = Parking(
-      id: 2,
+      id: "VFa5T4QYQnqayx6ob1E6",
       vehicle: vehicle,
       parkingSpace: parkingSpace,
       startTime: DateTime.now().add(const Duration(hours: -2)),
