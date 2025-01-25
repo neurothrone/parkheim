@@ -28,11 +28,9 @@ Future<void> main() async {
         BlocProvider(create: (_) => serviceLocator<BottomNavigationCubit>()),
         BlocProvider(create: (_) => serviceLocator<DarkModeCubit>()),
         // !: Blocs
-        BlocProvider(create: (_) {
-          final authBloc = serviceLocator<AuthBloc>();
-          authBloc.add(AuthIsUserSignedIn());
-          return authBloc;
-        }),
+        BlocProvider(
+          create: (_) => serviceLocator<AuthBloc>()..add(AuthIsUserSignedIn()),
+        ),
         BlocProvider(create: (_) => serviceLocator<CreateProfileBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProfileBloc>()),
         BlocProvider(create: (_) => serviceLocator<ActiveParkingsBloc>()),
