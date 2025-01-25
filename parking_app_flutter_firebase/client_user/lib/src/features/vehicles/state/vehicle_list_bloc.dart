@@ -43,30 +43,37 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
   ) async {
     emit(VehicleListLoading());
 
-    final user = (appUserCubit.state as AppUserSignedIn).user;
-    final ownerResult =
-        await _personRepository.findPersonByName(user.displayName!);
-    final owner = ownerResult.when(
-      success: (person) => person,
-      failure: (error) => null,
-    );
-    if (owner == null) {
-      emit(VehicleListFailure(message: "Owner not found"));
-      return;
-    }
+    try {
+      final user = (appUserCubit.state as AppUserSignedIn).user;
+      final ownerResult =
+          await _personRepository.findPersonByName(user.displayName!);
+      final owner = ownerResult.when(
+        success: (person) => person,
+        failure: (error) => null,
+      );
+      if (owner == null) {
+        emit(VehicleListFailure(message: "Owner not found"));
+        return;
+      }
 
-    final result = await _vehicleRepository.create(
-      Vehicle(
-        id: null,
-        registrationNumber: event.registrationNumber,
-        vehicleType: event.vehicleType,
-        owner: owner,
-      ),
-    );
-    result.when(
-      success: (_) => add(VehicleListUpdate()),
-      failure: (error) => emit(VehicleListFailure(message: error)),
-    );
+      final result = await _vehicleRepository.create(
+        Vehicle(
+          id: null,
+          registrationNumber: event.registrationNumber,
+          vehicleType: event.vehicleType,
+          owner: owner,
+        ),
+      );
+      result.when(
+        success: (_) {
+          emit(VehicleListAdded());
+          add(VehicleListUpdate());
+        },
+        failure: (error) => emit(VehicleListFailure(message: error)),
+      );
+    } catch (error) {
+      emit(VehicleListFailure(message: "Unexpected error: $error"));
+    }
   }
 
   Future<void> _onUpdate(
@@ -84,7 +91,10 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
 
     final result = await _vehicleRepository.delete(event.id);
     result.when(
-      success: (_) => add(VehicleListUpdate()),
+      success: (_) {
+        emit(VehicleListDeleted());
+        add(VehicleListUpdate());
+      },
       failure: (error) => emit(VehicleListFailure(message: error)),
     );
   }
@@ -108,9 +118,14 @@ class VehicleListBloc extends Bloc<VehicleListEvent, VehicleListState> {
 
     final result = await _vehicleRepository.findVehiclesByOwner(owner);
     result.when(
-      success: (List<Vehicle> vehicles) => emit(
-        VehicleListLoaded(vehicles: vehicles),
-      ),
+      success: (List<Vehicle> vehicles) {
+        if (vehicles.isEmpty) {
+          emit(VehicleListEmpty());
+          return;
+        }
+
+        emit(VehicleListLoaded(vehicles: vehicles));
+      },
       failure: (error) => emit(VehicleListFailure(message: error)),
     );
   }

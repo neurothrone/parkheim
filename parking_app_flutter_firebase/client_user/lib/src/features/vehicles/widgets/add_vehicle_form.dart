@@ -54,7 +54,7 @@ class _AddVehicleFormState extends State<AddVehicleForm>
       listener: (context, state) {
         if (state is VehicleListFailure) {
           SnackBarService.showError(context, state.message);
-        } else if (state is! VehicleListLoading) {
+        } else if (state is VehicleListAdded) {
           Navigator.of(context).pop();
           SnackBarService.showSuccess(context, "Vehicle Added");
         }

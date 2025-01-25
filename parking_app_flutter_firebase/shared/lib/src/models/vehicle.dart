@@ -68,7 +68,7 @@ class Vehicle extends BaseModel {
       "id": id,
       "registrationNumber": registrationNumber,
       "vehicleTypeIndex": vehicleType.index,
-      "owner": owner,
+      "owner": owner?.toJson(),
     };
   }
 }

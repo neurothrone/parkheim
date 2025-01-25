@@ -29,36 +29,21 @@ class VehiclesScreen extends StatelessWidget {
   }
 }
 
-class OwnedVehiclesList extends StatefulWidget {
+class OwnedVehiclesList extends StatelessWidget {
   const OwnedVehiclesList({
     super.key,
   });
 
   @override
-  State<OwnedVehiclesList> createState() => _OwnedVehiclesListState();
-}
-
-class _OwnedVehiclesListState extends State<OwnedVehiclesList> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<VehicleListBloc>().add(VehicleListLoad());
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<VehicleListBloc, VehicleListState>(
       builder: (context, state) {
-        if (state is VehicleListLoading) {
-          return CenteredProgressIndicator();
+        if (state is VehicleListEmpty) {
+          return Center(
+            child: Text("No vehicles available."),
+          );
         } else if (state is VehicleListLoaded) {
           final vehicles = state.vehicles;
-          if (vehicles.isEmpty) {
-            return Center(
-              child: Text("No vehicles available."),
-            );
-          }
-
           return VehicleList(vehicles: vehicles);
         } else if (state is VehicleListFailure) {
           return Center(child: Text("Error: ${state.message}"));

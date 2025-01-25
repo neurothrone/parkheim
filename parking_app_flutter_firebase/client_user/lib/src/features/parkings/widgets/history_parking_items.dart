@@ -2,63 +2,46 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:shared/shared.dart';
-import 'package:shared_client_firebase/shared_client_firebase.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../../../core/cubits/app_user/app_user_cubit.dart';
-import '../../../core/cubits/app_user/app_user_state.dart';
+import '../state/parking_history/parking_history_bloc.dart';
 import 'history_parking_list_tile.dart';
 
-class HistoryParkingItems extends StatelessWidget {
+class HistoryParkingItems extends StatefulWidget {
   const HistoryParkingItems({super.key});
 
-  Future<List<Parking>> _findFinishedParkings(BuildContext context) async {
-    final appUserCubit = context.read<AppUserCubit>();
-    final user = (appUserCubit.state as AppUserSignedIn).user;
+  @override
+  State<HistoryParkingItems> createState() => _HistoryParkingItemsState();
+}
 
-    final ownerResult = await RemotePersonRepository.instance
-        .findPersonByName(user.displayName!);
-    final owner = ownerResult.when(
-      success: (person) => person,
-      failure: (error) {
-        SnackBarService.showError(context, "Error: Owner not found");
-        return null;
-      },
-    );
-    if (owner == null) {
-      return [];
-    }
-
-    return await RemoteParkingRepository.instance
-        .findFinishedParkingsForOwner(owner);
+class _HistoryParkingItemsState extends State<HistoryParkingItems> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ParkingHistoryBloc>().add(ParkingHistoryLoad());
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Parking>>(
-      future: _findFinishedParkings(context),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final parkings = snapshot.data!;
-          if (parkings.isEmpty) {
+    return BlocBuilder<ParkingHistoryBloc, ParkingHistoryState>(
+      builder: (context, state) {
+        if (state is ParkingHistoryLoaded) {
+          if (state.parkings.isEmpty) {
             return Center(
               child: Text("No parking spaces available."),
             );
           }
 
           return ListView.separated(
-            itemCount: parkings.length,
+            itemCount: state.parkings.length,
             itemBuilder: (context, index) {
-              final parking = parkings[index];
+              final parking = state.parkings[index];
               return HistoryParkingListTile(parking: parking);
             },
             separatorBuilder: (context, index) => const Divider(height: 0),
           );
-        }
-
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (state is ParkingHistoryFailure) {
+          return Center(child: Text("Error: ${state.message}"));
         }
 
         return CenteredProgressIndicator();

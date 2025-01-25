@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:shared/shared.dart';
-import 'package:shared_client_firebase/shared_client_firebase.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../../../core/cubits/app_user/app_user_cubit.dart';
-import '../../../core/cubits/app_user/app_user_state.dart';
 import '../../../core/widgets/widgets.dart';
-import '../../people/widgets/person_details.dart';
+import '../../vehicles/widgets/person_details.dart';
+import '../state/profile_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -32,42 +29,31 @@ class ProfileDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appUserCubit = context.read<AppUserCubit>();
-    final user = (appUserCubit.state as AppUserSignedIn).user;
-
-    return FutureBuilder<Result<Person, String>>(
-      future:
-          RemotePersonRepository.instance.findPersonByName(user.displayName!),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final result = snapshot.data!;
-          return result.when(
-            success: (Person person) => Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Email:",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    Text(
-                      user.email!,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ],
-                ),
-                PersonDetails(person: person),
-              ],
-            ),
-            failure: (error) => Center(child: Text("Error: $error")),
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileLoaded) {
+          return Column(
+            children: [
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       "Email:",
+              //       style: Theme.of(context).textTheme.bodyLarge,
+              //     ),
+              //     Text(
+              //        user.email!,
+              //       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              PersonDetails(person: state.person),
+            ],
           );
-        }
-
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (state is ProfileFailure) {
+          return Center(child: Text("Error: ${state.message}"));
         }
 
         return CenteredProgressIndicator();

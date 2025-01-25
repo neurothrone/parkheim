@@ -9,12 +9,12 @@ import '../../features/auth/auth.dart';
 import '../../features/parkings/views/active_parking_screen.dart';
 import '../../features/parkings/views/finished_parking_screen.dart';
 import '../../features/parkings/views/parking_details_screen.dart';
-import '../../features/people/views/add_person_screen.dart';
-import '../../features/people/views/person_details_screen.dart';
 import '../../features/parkings/views/parkings_screen.dart';
+import '../../features/profile/state/profile_bloc.dart';
 import '../../features/profile/views/create_profile_screen.dart';
 import '../../features/profile/views/profile_screen.dart';
 import '../../features/settings/views/settings_screen.dart';
+import '../../features/vehicles/state/vehicle_list_bloc.dart';
 import '../../features/vehicles/views/add_vehicle_screen.dart';
 import '../../features/vehicles/views/vehicle_details_screen.dart';
 import '../../features/vehicles/views/vehicles_screen.dart';
@@ -87,6 +87,15 @@ class AppRouter {
           name: AppRoute.home.name,
           builder: (context, state) {
             final currentTab = context.watch<BottomNavigationCubit>();
+
+            if (currentTab.state == BottomTab.vehicles) {
+              // Load owned vehicles when switching to vehicles tab
+              context.read<VehicleListBloc>().add(VehicleListLoad());
+            } else if (currentTab.state == BottomTab.profile) {
+              // Load profile when switching to profile tab
+              context.read<ProfileBloc>().add(ProfileLoad());
+            }
+
             return switch (currentTab.state) {
               BottomTab.parkings => const ParkingsScreen(),
               BottomTab.vehicles => const VehiclesScreen(),
@@ -126,18 +135,6 @@ class AppRouter {
               name: AppRoute.vehicleDetails.name,
               builder: (context, state) => VehicleDetailsScreen(
                 vehicle: state.extra as Vehicle,
-              ),
-            ),
-            GoRoute(
-              path: "add-person",
-              name: AppRoute.addPerson.name,
-              builder: (context, state) => const AddPersonScreen(),
-            ),
-            GoRoute(
-              path: "person-details",
-              name: AppRoute.personDetails.name,
-              builder: (context, state) => PersonDetailsScreen(
-                person: state.extra as Person,
               ),
             ),
           ],

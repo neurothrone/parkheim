@@ -25,6 +25,21 @@ class VehicleListLoaded extends VehicleListState {
   List<Object?> get props => [vehicles];
 }
 
+class VehicleListEmpty extends VehicleListState {
+  @override
+  List<Object?> get props => [];
+}
+
+class VehicleListAdded extends VehicleListState {
+  @override
+  List<Object?> get props => [];
+}
+
+class VehicleListDeleted extends VehicleListState {
+  @override
+  List<Object?> get props => [];
+}
+
 class VehicleListFailure extends VehicleListState {
   const VehicleListFailure({
     required this.message,

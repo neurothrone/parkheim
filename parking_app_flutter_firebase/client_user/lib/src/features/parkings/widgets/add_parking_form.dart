@@ -23,7 +23,6 @@ class AddParkingForm extends StatefulWidget {
 class _AddParkingFormState extends State<AddParkingForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String _vehicleId = "";
   Vehicle? _vehicle;
 
   @override
@@ -34,6 +33,10 @@ class _AddParkingFormState extends State<AddParkingForm> {
 
   Future<void> _onFormSubmitted() async {
     if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    if (_vehicle == null) {
       return;
     }
 
@@ -51,61 +54,133 @@ class _AddParkingFormState extends State<AddParkingForm> {
       listener: (context, state) {
         if (state is AvailableSpacesFailure) {
           SnackBarService.showError(context, "Error: ${state.message}");
-        } else if (state is !AvailableSpacesLoading) {
+        } else if (state is! AvailableSpacesLoading) {
           Navigator.of(context).pop();
           SnackBarService.showSuccess(context, "Parking started");
         }
       },
       child: Form(
         key: _formKey,
-        child: Column(
-          children: [
-            BlocBuilder<VehicleListBloc, VehicleListState>(
-              builder: (context, state) {
-                if (state is VehicleListLoaded) {
-                  _vehicleId = state.vehicles.first.id;
-                  _vehicle = state.vehicles.first;
+        child: BlocBuilder<VehicleListBloc, VehicleListState>(
+          builder: (context, state) {
+            if (state is VehicleListEmpty) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Center(
+                  child: Text(
+                    "No vehicles available. Please add a vehicle first.",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            } else if (state is VehicleListLoaded) {
+              _vehicle ??= state.vehicles.first;
 
-                  return DropdownButtonFormField<String>(
-                    onChanged: (String? newValue) {
-                      setState(() => _vehicleId = newValue!);
+              return Column(
+                children: [
+                  VehicleDropDownForm(
+                    vehicles: state.vehicles,
+                    initialSelection: _vehicle!,
+                    onVehicleSelected: (Vehicle vehicle) {
+                      setState(() => _vehicle = vehicle);
                     },
-                    validator: (String? value) {
-                      if (value == null || value == "") {
-                        return "Vehicle is required";
-                      }
-                      return null;
-                    },
-                    value: _vehicleId,
-                    decoration: InputDecoration(labelText: "Vehicle"),
-                    items: state.vehicles
-                        .map<DropdownMenuItem<String>>((Vehicle vehicle) {
-                      return DropdownMenuItem<String>(
-                        onTap: () => _vehicle = vehicle,
-                        value: vehicle.id,
-                        child: Text(vehicle.registrationNumber),
-                      );
-                    }).toList(),
-                  );
-                }
+                  ),
+                  const SizedBox(height: 20),
+                  CustomFilledButton(
+                    onPressed: _vehicle != null ? _onFormSubmitted : null,
+                    text: "Start Parking",
+                  ),
+                ],
+              );
+            }
 
-                if (state is VehicleListFailure) {
-                  return Center(
-                    child: Text("Error: ${state.message}"),
-                  );
-                }
+            if (state is VehicleListFailure) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Center(
+                  child: Text(
+                    state.message,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
 
-                return const CenteredProgressIndicator();
-              },
-            ),
-            const SizedBox(height: 20),
-            CustomFilledButton(
-              onPressed: _onFormSubmitted,
-              text: "Start Parking",
-            ),
-          ],
+            return const CenteredProgressIndicator();
+          },
         ),
       ),
+    );
+  }
+}
+
+class VehicleDropDownForm extends StatefulWidget {
+  const VehicleDropDownForm({
+    super.key,
+    required this.vehicles,
+    required this.initialSelection,
+    required this.onVehicleSelected,
+  });
+
+  final List<Vehicle> vehicles;
+  final Vehicle initialSelection;
+  final Function(Vehicle vehicle) onVehicleSelected;
+
+  @override
+  State<VehicleDropDownForm> createState() => _VehicleDropDownFormState();
+}
+
+class _VehicleDropDownFormState extends State<VehicleDropDownForm> {
+  String _registrationNumber = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _registrationNumber = widget.initialSelection.registrationNumber;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      onChanged: (String? newValue) {
+        setState(() => _registrationNumber = newValue!);
+        widget.onVehicleSelected(
+          widget.vehicles.firstWhere(
+            (vehicle) => vehicle.registrationNumber == _registrationNumber,
+          ),
+        );
+      },
+      validator: (String? value) {
+        if (value == null || value == "") {
+          return "Vehicle is required";
+        }
+        return null;
+      },
+      value: _registrationNumber,
+      decoration: InputDecoration(labelText: "Vehicle"),
+      items: widget.vehicles.map<DropdownMenuItem<String>>((Vehicle vehicle) {
+        return DropdownMenuItem<String>(
+          value: vehicle.registrationNumber,
+          child: Text(
+            vehicle.registrationNumber,
+            style: TextStyle(
+              fontWeight: _registrationNumber == vehicle.registrationNumber
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

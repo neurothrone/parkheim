@@ -103,8 +103,8 @@ class Parking extends BaseModel {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "vehicle": vehicle,
-      "parkingSpace": parkingSpace,
+      "vehicle": vehicle?.toJson(),
+      "parkingSpace": parkingSpace?.toJson(),
       "startTime": startTime.toIso8601String(),
       "endTime": endTime?.toIso8601String(),
     };

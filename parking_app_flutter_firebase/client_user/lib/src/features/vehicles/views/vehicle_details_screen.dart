@@ -6,7 +6,7 @@ import 'package:shared/shared.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
 import '../../../core/widgets/widgets.dart';
-import '../../people/widgets/person_details.dart';
+import '../widgets/person_details.dart';
 import '../state/vehicle_list_bloc.dart';
 import '../widgets/vehicle_details.dart';
 
@@ -37,7 +37,7 @@ class VehicleDetailsScreen extends StatelessWidget {
       listener: (context, state) {
         if (state is VehicleListFailure) {
           SnackBarService.showError(context, "Error: ${state.message}");
-        } else if (state is! VehicleListLoading) {
+        } else if (state is VehicleListDeleted) {
           Navigator.of(context).pop();
           SnackBarService.showSuccess(context, "Vehicle deleted");
         }

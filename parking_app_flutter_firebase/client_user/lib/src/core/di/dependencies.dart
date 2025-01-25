@@ -11,6 +11,9 @@ import '../../domain/use_cases/auth.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/parkings/state/active_parkings/active_parkings_bloc.dart';
 import '../../features/parkings/state/available_spaces/available_spaces_bloc.dart';
+import '../../features/parkings/state/parking_history/parking_history_bloc.dart';
+import '../../features/profile/state/create_profile_bloc.dart';
+import '../../features/profile/state/profile_bloc.dart';
 import '../../features/settings/state/dark_mode_cubit.dart';
 import '../../features/vehicles/state/vehicle_list_bloc.dart';
 import '../cubits/app_user/app_user_cubit.dart';
@@ -80,6 +83,21 @@ Future<void> initDependencies() async {
     ..registerLazySingleton(() =>
         FirebaseParkingSpaceRepository(parkingRepository: serviceLocator()));
 
+  // !: Profile
+  serviceLocator
+    ..registerLazySingleton(
+      () => CreateProfileBloc(
+        appUserCubit: serviceLocator(),
+        personRepository: serviceLocator(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => ProfileBloc(
+        appUserCubit: serviceLocator(),
+        personRepository: serviceLocator(),
+      ),
+    );
+
   // !: Parking
   serviceLocator
     ..registerLazySingleton(
@@ -93,6 +111,13 @@ Future<void> initDependencies() async {
       () => AvailableSpacesBloc(
         parkingSpaceRepository: serviceLocator(),
         parkingRepository: serviceLocator(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => ParkingHistoryBloc(
+        appUserCubit: serviceLocator(),
+        parkingRepository: serviceLocator(),
+        personRepository: serviceLocator(),
       ),
     );
 

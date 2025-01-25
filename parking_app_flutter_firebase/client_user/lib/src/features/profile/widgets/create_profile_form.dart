@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:shared/shared.dart';
-import 'package:shared_client_firebase/shared_client_firebase.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 
-import '../../../core/cubits/app_user/app_user_cubit.dart';
-import '../../../core/cubits/app_user/app_user_state.dart';
+import '../state/create_profile_bloc.dart';
 
 class CreateProfileForm extends StatefulWidget {
   const CreateProfileForm({super.key});
@@ -25,11 +21,6 @@ class _CreateProfileFormState extends State<CreateProfileForm>
   late final TextEditingController _socialSecurityNumberController;
 
   late final FocusNode _socialSecurityNumberNode;
-
-  final RemotePersonRepository _personRepository =
-      RemotePersonRepository.instance;
-
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -56,55 +47,34 @@ class _CreateProfileFormState extends State<CreateProfileForm>
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    final name = _nameController.text;
-    final isAvailable = await _personRepository.isNameAvailable(name);
-    if (!isAvailable) {
-      setState(() => _isLoading = false);
-      SnackBarService.showError(context, "Name is already taken");
-      return;
-    }
-
-    try {
-      await FirebaseAuth.instance.currentUser!.updateDisplayName(
-        _nameController.text,
-      );
-    } catch (e) {
-      setState(() => _isLoading = false);
-      SnackBarService.showError(context, e.toString());
-      return;
-    }
-
-    final result = await _personRepository.create(
-      Person(
-        id: null,
-        name: name,
-        socialSecurityNumber: _socialSecurityNumberController.text,
-      ),
-    );
-
-    setState(() => _isLoading = false);
-
-    result.when(
-      success: (Person person) async {
-        final appUserCubit = context.read<AppUserCubit>();
-        final user = (appUserCubit.state as AppUserSignedIn).user;
-        final updatedUser = user.copyWith(displayName: person.name);
-        appUserCubit.updateUser(updatedUser);
-        SnackBarService.showSuccess(context, "Profile created successfully");
-      },
-      failure: (String error) => SnackBarService.showError(context, error),
-    );
+    context.read<CreateProfileBloc>().add(
+          CreateProfileSubmit(
+            name: _nameController.text,
+            socialSecurityNumber: _socialSecurityNumberController.text,
+          ),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: _isLoading
-          ? CenteredProgressIndicator()
-          : Column(
+    // TODO: wrap with bloc listener
+    return BlocListener<CreateProfileBloc, CreateProfileState>(
+      listener: (context, state) {
+        if (state is CreateProfileSuccess) {
+          SnackBarService.showSuccess(context, "Profile created successfully");
+        } else if (state is CreateProfileFailure) {
+          SnackBarService.showError(context, state.message);
+        }
+      },
+      child: Form(
+        key: _formKey,
+        child: BlocBuilder<CreateProfileBloc, CreateProfileState>(
+          builder: (context, state) {
+            if (state is CreateProfileLoading) {
+              return CenteredProgressIndicator();
+            }
+
+            return Column(
               children: [
                 CustomTextFormField(
                   onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(
@@ -130,7 +100,43 @@ class _CreateProfileFormState extends State<CreateProfileForm>
                   text: "Add",
                 ),
               ],
-            ),
+            );
+          },
+        ),
+      ),
     );
+
+    // return Form(
+    //   key: _formKey,
+    //   child: _isLoading
+    //       ? CenteredProgressIndicator()
+    //       : Column(
+    //           children: [
+    //             CustomTextFormField(
+    //               onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(
+    //                 _socialSecurityNumberNode,
+    //               ),
+    //               controller: _nameController,
+    //               validator: (String? value) => validateString(value, "Name"),
+    //               labelText: "Name",
+    //               textInputAction: TextInputAction.next,
+    //             ),
+    //             const SizedBox(height: 20),
+    //             CustomTextFormField(
+    //               onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+    //               controller: _socialSecurityNumberController,
+    //               validator: validateSocialSecurityNumber,
+    //               labelText: "Social Security Number",
+    //               focusNode: _socialSecurityNumberNode,
+    //               textInputAction: TextInputAction.done,
+    //             ),
+    //             const SizedBox(height: 20),
+    //             CustomFilledButton(
+    //               onPressed: _onFormSubmitted,
+    //               text: "Add",
+    //             ),
+    //           ],
+    //         ),
+    // );
   }
 }

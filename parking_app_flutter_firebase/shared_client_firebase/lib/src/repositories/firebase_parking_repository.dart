@@ -131,8 +131,7 @@ class FirebaseParkingRepository
 
   Future<Result<List<Parking>, String>> findActiveParkingsForOwner(
       Person owner) async {
-    final vehicleResults =
-        await _vehicleRepository.findVehiclesByOwner(owner);
+    final vehicleResults = await _vehicleRepository.findVehiclesByOwner(owner);
     final vehicles = vehicleResults.when(
       success: (vehicles) => vehicles,
       failure: (_) => [],
@@ -196,8 +195,7 @@ class FirebaseParkingRepository
   Future<List<Parking>> findFinishedParkingsForOwner(
     Person owner,
   ) async {
-    final vehicleResults =
-        await _vehicleRepository.findVehiclesByOwner(owner);
+    final vehicleResults = await _vehicleRepository.findVehiclesByOwner(owner);
 
     final vehicles = vehicleResults.when(
       success: (vehicles) => vehicles,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shared/shared.dart';
 
-import '../../people/widgets/owned_vehicle_list_tile.dart';
+import 'owned_vehicle_list_tile.dart';
 import 'vehicle_list_tile.dart';
 
 enum VehicleListType {

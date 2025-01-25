@@ -28,3 +28,4 @@ Some generated Swedish social security numbers for testing:
 
 ### User client
 
+- Removed redundant people feature directory. Move used widgets to vehicles feature.
