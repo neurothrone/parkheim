@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/constants/constants.dart';
 import 'core/navigation/navigation.dart';

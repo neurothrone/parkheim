@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/widgets/widgets.dart';
 import '../domain/parking_tab.dart';

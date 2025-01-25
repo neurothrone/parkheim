@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/state/auth_cubit.dart';
 import '../navigation/navigation.dart';
-import '../navigation/navigation_rail_cubit.dart';
 
 class CustomNavigationRail extends StatelessWidget {
   const CustomNavigationRail({super.key});
