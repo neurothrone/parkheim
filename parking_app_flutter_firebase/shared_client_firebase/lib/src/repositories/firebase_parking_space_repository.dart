@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared/shared.dart';
 
 import '../../shared_client_firebase.dart';
@@ -36,5 +37,14 @@ class FirebaseParkingSpaceRepository
     return spaces
         .where((ParkingSpace space) => !unavailableSpaces.contains(space))
         .toList();
+  }
+
+  Stream<List<ParkingSpace>> getAllSpacesStream() {
+    return FirebaseFirestore.instance
+        .collection(collection)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => ParkingSpace.fromJson(doc.data()))
+            .toList());
   }
 }

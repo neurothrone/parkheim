@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +16,7 @@ class SpacesListBloc extends Bloc<SpacesListEvent, SpacesListState> {
     required FirebaseParkingSpaceRepository parkingSpaceRepository,
   })  : _parkingSpaceRepository = parkingSpaceRepository,
         super(SpacesListInitial()) {
+    on<SubscribeToSpaces>(_onChange);
     on<SpacesListLoad>(_onLoad);
     on<SpacesListAddItem>(_onAdd);
     on<SpacesListUpdate>(_onUpdate);
@@ -22,20 +25,19 @@ class SpacesListBloc extends Bloc<SpacesListEvent, SpacesListState> {
 
   final FirebaseParkingSpaceRepository _parkingSpaceRepository;
 
-  Future<void> loadAllSpaces(
+  Future<void> _onChange(
+    SubscribeToSpaces event,
     Emitter<SpacesListState> emit,
   ) async {
     emit(SpacesListLoading());
 
-    try {
-      final result = await _parkingSpaceRepository.getAll();
-      result.when(
-        success: (spaces) => emit(SpacesListLoaded(spaces: spaces)),
-        failure: (error) => emit(SpacesListFailure(message: error)),
-      );
-    } catch (_) {
-      emit(SpacesListFailure(message: "Unexpected error"));
-    }
+    await emit.onEach<List<ParkingSpace>>(
+      _parkingSpaceRepository.getAllSpacesStream(),
+      onData: (spaces) => emit(SpacesListLoaded(spaces: spaces)),
+      onError: (error, stackTrace) => emit(
+        SpacesListFailure(message: error.toString()),
+      ),
+    );
   }
 
   Future<void> _onLoad(
@@ -76,5 +78,21 @@ class SpacesListBloc extends Bloc<SpacesListEvent, SpacesListState> {
       success: (_) => add(SpacesListUpdate()),
       failure: (error) => emit(SpacesListFailure(message: error)),
     );
+  }
+
+  Future<void> loadAllSpaces(
+    Emitter<SpacesListState> emit,
+  ) async {
+    emit(SpacesListLoading());
+
+    try {
+      final result = await _parkingSpaceRepository.getAll();
+      result.when(
+        success: (spaces) => emit(SpacesListLoaded(spaces: spaces)),
+        failure: (error) => emit(SpacesListFailure(message: error)),
+      );
+    } catch (_) {
+      emit(SpacesListFailure(message: "Unexpected error"));
+    }
   }
 }

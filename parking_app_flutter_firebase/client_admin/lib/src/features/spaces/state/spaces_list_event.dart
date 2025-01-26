@@ -4,6 +4,8 @@ sealed class SpacesListEvent {
   const SpacesListEvent();
 }
 
+final class SubscribeToSpaces extends SpacesListEvent {}
+
 final class SpacesListLoad extends SpacesListEvent {}
 
 final class SpacesListAddItem extends SpacesListEvent {
