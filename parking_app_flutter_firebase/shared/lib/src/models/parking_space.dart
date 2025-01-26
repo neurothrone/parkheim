@@ -12,13 +12,25 @@ class ParkingSpace extends BaseModel {
       id: map.containsKey("id") ? map["id"] as String : null,
       address: map.containsKey("address") ? map["address"] as String : "",
       pricePerHour: map.containsKey("pricePerHour")
-          ? map["pricePerHour"] as double
+          ? _parseToDouble(map["pricePerHour"])
           : 0.0,
     );
   }
 
   final String address;
   final double pricePerHour;
+
+  static double _parseToDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value) ?? 0.0;
+    }
+    return 0.0;
+  }
+
+  @override
+  List<Object?> get props => [id, address, pricePerHour];
 
   ParkingSpace copyWith({
     String? id,

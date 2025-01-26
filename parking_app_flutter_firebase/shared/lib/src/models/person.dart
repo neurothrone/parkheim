@@ -34,6 +34,9 @@ class Person extends BaseModel {
   }
 
   @override
+  List<Object?> get props => [id, name, socialSecurityNumber];
+
+  @override
   String toString() {
     return "Person(name: $name, socialSecurityNumber: $socialSecurityNumber)";
   }

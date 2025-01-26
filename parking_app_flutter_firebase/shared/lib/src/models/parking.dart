@@ -62,6 +62,9 @@ class Parking extends BaseModel {
   }
 
   @override
+  List<Object?> get props => [id, vehicle, parkingSpace, startTime, endTime];
+
+  @override
   String toString() {
     return """Parking(
       vehicle: $vehicle,
@@ -79,8 +82,18 @@ class Parking extends BaseModel {
     return true;
   }
 
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "vehicle": vehicle?.toJson(),
+      "parkingSpace": parkingSpace?.toJson(),
+      "startTime": startTime.toIso8601String(),
+      "endTime": endTime?.toIso8601String(),
+    };
+  }
+
   double parkingCosts() {
-    // TODO: modify price based on time of day?
     if (parkingSpace == null) {
       return 0;
     }
@@ -97,16 +110,5 @@ class Parking extends BaseModel {
     double totalCost = parkingSpace!.pricePerHour * elapsedHours;
 
     return totalCost > 0 ? totalCost : 0;
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "vehicle": vehicle?.toJson(),
-      "parkingSpace": parkingSpace?.toJson(),
-      "startTime": startTime.toIso8601String(),
-      "endTime": endTime?.toIso8601String(),
-    };
   }
 }

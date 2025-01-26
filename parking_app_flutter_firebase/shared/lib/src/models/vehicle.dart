@@ -50,6 +50,9 @@ class Vehicle extends BaseModel {
   }
 
   @override
+  List<Object?> get props => [id, registrationNumber, vehicleType, owner];
+
+  @override
   String toString() {
     return """Vehicle(
       registrationNumber: $registrationNumber,
