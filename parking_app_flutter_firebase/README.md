@@ -19,7 +19,7 @@ Some generated Swedish social security numbers for testing:
   parking history and creating the user profile.
 - Moved firebase repositories to a new package called shared_client_firebase that is shared by the
   admin and user clients.
-- Moved datetime extensions to a new package called shared_client_firebase.
+- Moved datetime extensions to the new package shared_client_firebase.
 - Removed cli client and server.
 - Updated mocks and tests to work with the new repositories.
 
@@ -47,24 +47,6 @@ Some generated Swedish social security numbers for testing:
   the old repositories with the new firebase repositories.
 - Renamed AddParkingForm to StartParkingForm and moved the owned vehicle list widget code inside to
   its own widget called VehicleDropDownField.
-
-### TODOS (Mandatory)
-
-- Auth for Admin client.
-- Video demo
-    - Authentication flow
-    - CRUD operations towards Firestore
-    - Eventual VG functionality
-
-### TODOS (Optional)
-
-- Create a script to run pubspec for all packages.
-
-- Firebase Functions for Person management. Creates a Profil in Firestore when a user is created in
-  Firebase Auth. Either do it by:
-    - Refactoring registration form.
-    - Implementing it with the admin registration.
-- Log in with third-party providers (Google, Facebook, GitHub, etc).
-- Implement realtime listening for Firestore.
-    - Admin client: Listen for active parkings and statistics.
-    - User client: Listen for changes in Available parking spaces.
+- Implemented realtime listening for Available parking spaces by adding a stream to the
+  AvailableSpacesBloc to listen to changes in parking spaces whenever one adds/deletes/modifies a
+  parking space on firestore, or whenever a parking space becomes occupied.
