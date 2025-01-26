@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_client_auth/shared_client_auth.dart';
 
-import '../../features/auth/state/auth_cubit.dart';
 import '../navigation/navigation.dart';
 
 class CustomNavigationRail extends StatelessWidget {
@@ -32,7 +32,7 @@ class CustomNavigationRail extends StatelessWidget {
         child: Align(
           alignment: Alignment.bottomCenter,
           child: IconButton(
-            onPressed: context.read<AuthCubit>().signOut,
+            onPressed: () => context.read<AuthBloc>().add(AuthSignOut()),
             icon: Icon(Icons.logout_rounded),
           ),
         ),

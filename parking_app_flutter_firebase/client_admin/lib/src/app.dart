@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_client_auth/shared_client_auth.dart';
+import 'package:shared_client_firebase/shared_client_firebase.dart';
+import 'package:shared_widgets/shared_widgets.dart';
 
 import 'core/constants/constants.dart';
+import 'core/di/dependencies.dart';
 import 'core/navigation/navigation.dart';
-import 'features/auth/state/auth_cubit.dart';
-import 'features/auth/views/auth_screen.dart';
+import 'features/auth/state/auth_screen_cubit.dart';
+import 'features/auth/views/sign_in_screen.dart';
+import 'features/auth/views/sign_up_screen.dart';
+import 'features/auth/views/unauthorized_screen.dart';
 import 'features/parkings/views/parkings_screen.dart';
 import 'features/spaces/views/spaces_screen.dart';
 import 'features/statistics/state/active_parking_count_bloc.dart';
@@ -18,8 +25,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authStatus = context.watch<AuthCubit>().state;
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "${AppConstants.appName} - Admin",
@@ -29,16 +34,65 @@ class MainApp extends StatelessWidget {
       ),
       home: AnimatedSwitcher(
         duration: const Duration(milliseconds: 500),
-        child: authStatus == AuthStatus.authenticated
-            ? MainContent()
-            : AuthScreen(),
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthSuccess) {
+              return MainContent();
+            } else if (state is AuthLoading) {
+              return const CenteredProgressIndicator();
+            } else if (state is AuthFailure) {
+              return Center(
+                child: Text("Error: ${state.message}"),
+              );
+            }
+
+            final authScreenChoice = context.watch<AuthScreenCubit>().state;
+            if (authScreenChoice == AuthScreenChoice.login) {
+              return SignInScreen();
+            } else {
+              return SignUpScreen();
+            }
+          },
+        ),
       ),
     );
   }
 }
 
 class MainContent extends StatelessWidget {
-  const MainContent({super.key});
+  MainContent({super.key});
+
+  final FirebasePersonRepository firebasePersonRepository = serviceLocator();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: firebasePersonRepository
+          .isAdmin(FirebaseAuth.instance.currentUser?.email ?? ""),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CenteredProgressIndicator();
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error: ${snapshot.error}"),
+          );
+        }
+
+        final isAdmin = snapshot.data as bool;
+        if (!isAdmin) {
+          return UnauthorizedScreen();
+        }
+
+        return NavigationRailContent();
+      },
+    );
+  }
+}
+
+class NavigationRailContent extends StatelessWidget {
+  const NavigationRailContent({super.key});
 
   @override
   Widget build(BuildContext context) {

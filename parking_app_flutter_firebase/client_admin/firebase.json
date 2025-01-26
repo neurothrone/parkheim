@@ -1,1 +1,56 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"parking-app-1ed54","appId":"1:761319125381:android:1d35d0fff4eae2493394ec","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"parking-app-1ed54","appId":"1:761319125381:ios:4e70088bb8434f9b3394ec","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"parking-app-1ed54","appId":"1:761319125381:ios:4e70088bb8434f9b3394ec","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"parking-app-1ed54","configurations":{"android":"1:761319125381:android:1d35d0fff4eae2493394ec","ios":"1:761319125381:ios:4e70088bb8434f9b3394ec","macos":"1:761319125381:ios:4e70088bb8434f9b3394ec","web":"1:761319125381:web:27de9049aca8faa73394ec"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "parking-app-1ed54",
+          "appId": "1:761319125381:android:1d35d0fff4eae2493394ec",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "parking-app-1ed54",
+          "appId": "1:761319125381:ios:4e70088bb8434f9b3394ec",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "parking-app-1ed54",
+          "appId": "1:761319125381:ios:4e70088bb8434f9b3394ec",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "parking-app-1ed54",
+          "configurations": {
+            "android": "1:761319125381:android:1d35d0fff4eae2493394ec",
+            "ios": "1:761319125381:ios:4e70088bb8434f9b3394ec",
+            "macos": "1:761319125381:ios:4e70088bb8434f9b3394ec",
+            "web": "1:761319125381:web:27de9049aca8faa73394ec"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

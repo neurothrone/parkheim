@@ -6,6 +6,8 @@ class Person extends BaseModel {
     required super.id,
     required this.name,
     required this.socialSecurityNumber,
+    this.email = "",
+    this.role = "user",
   });
 
   factory Person.fromJson(Map<String, dynamic> map) {
@@ -15,21 +17,29 @@ class Person extends BaseModel {
       socialSecurityNumber: map.containsKey("socialSecurityNumber")
           ? map["socialSecurityNumber"] as String
           : "",
+      email: map.containsKey("email") ? map["email"] as String : "",
+      role: map.containsKey("role") ? map["role"] as String : "user",
     );
   }
 
   final String name;
   final String socialSecurityNumber;
+  final String email;
+  final String role;
 
   Person copyWith({
     String? id,
     String? name,
     String? socialSecurityNumber,
+    String? email,
+    String? role,
   }) {
     return Person(
       id: id ?? this.id,
       name: name ?? this.name,
       socialSecurityNumber: socialSecurityNumber ?? this.socialSecurityNumber,
+      email: email ?? this.email,
+      role: role ?? this.role,
     );
   }
 
@@ -56,6 +66,8 @@ class Person extends BaseModel {
       "id": id,
       "name": name,
       "socialSecurityNumber": socialSecurityNumber,
+      "email": email,
+      "role": role,
     };
   }
 }

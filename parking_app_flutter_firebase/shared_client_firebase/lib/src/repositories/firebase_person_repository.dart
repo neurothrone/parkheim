@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:shared/shared.dart';
 
 import '../../shared_client_firebase.dart';
@@ -39,5 +40,40 @@ class FirebasePersonRepository extends BaseFirebaseRepository<Person, String> {
       },
       failure: (error) => Result.failure(error: error),
     );
+  }
+
+  Future<bool> isAdmin(String email) async {
+    final querySnapshot =
+        await db.collection("admins").where("email", isEqualTo: email).get();
+
+    if (querySnapshot.docs.isEmpty) {
+      await _createAdmin(email);
+      return false;
+    }
+
+    final person = Person.fromJson(querySnapshot.docs.first.data());
+    return person.role == "admin";
+  }
+
+  Future<void> _createAdmin(String email) async {
+    try {
+      final json = Person(
+        id: null,
+        name: "",
+        socialSecurityNumber: "",
+        email: email,
+      ).toJson();
+      await db.runTransaction((transaction) async {
+        final docRef = db.collection("admins").doc();
+        final updatedJson = {
+          ...json,
+          "id": docRef.id,
+        };
+        transaction.set(docRef, updatedJson);
+        return updatedJson;
+      });
+    } catch (e) {
+      debugPrint("❌ -> Error: $e");
+    }
   }
 }

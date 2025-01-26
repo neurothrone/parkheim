@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_client_auth/shared_client_auth.dart';
 
 import 'src/app.dart';
 import 'src/core/di/dependencies.dart';
 import 'src/core/navigation/navigation_rail_cubit.dart';
-import 'src/features/auth/state/auth_cubit.dart';
+import 'src/features/auth/state/auth_screen_cubit.dart';
 import 'src/features/parkings/state/parking_list_bloc.dart';
 import 'src/features/parkings/state/parking_search_text_cubit.dart';
 import 'src/features/parkings/state/parking_tab_cubit.dart';
@@ -24,11 +25,15 @@ Future<void> main() async {
     MultiBlocProvider(
       providers: [
         // !: Cubits
-        BlocProvider(create: (_) => serviceLocator<AuthCubit>()),
+        BlocProvider(create: (_) => serviceLocator<AuthScreenCubit>()),
+        BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
         BlocProvider(create: (_) => serviceLocator<NavigationRailCubit>()),
         BlocProvider(create: (_) => serviceLocator<ParkingTabCubit>()),
         BlocProvider(create: (_) => serviceLocator<ParkingSearchTextCubit>()),
         // !: Blocs
+        BlocProvider(
+          create: (_) => serviceLocator<AuthBloc>()..add(AuthIsUserSignedIn()),
+        ),
         BlocProvider(create: (_) => serviceLocator<SpacesListBloc>()),
         BlocProvider(create: (_) => serviceLocator<ParkingListBloc>()),
         BlocProvider(create: (_) => serviceLocator<SpaceHistoryBloc>()),
