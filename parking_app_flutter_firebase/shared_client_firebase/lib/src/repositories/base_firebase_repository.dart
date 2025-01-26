@@ -5,12 +5,11 @@ import 'package:shared/shared.dart';
 abstract class BaseFirebaseRepository<T extends Serializable, E>
     implements Repository<T, String> {
   BaseFirebaseRepository({
-    required String collection,
+    required this.collection,
     required T Function(Map<String, dynamic>) fromJson,
-  })  : _collection = collection,
-        _fromJson = fromJson;
+  }) : _fromJson = fromJson;
 
-  final String _collection;
+  final String collection;
   final T Function(Map<String, dynamic>) _fromJson;
 
   final db = FirebaseFirestore.instance;
@@ -20,7 +19,7 @@ abstract class BaseFirebaseRepository<T extends Serializable, E>
     try {
       final json = item.toJson();
       final result = await db.runTransaction((transaction) async {
-        final docRef = db.collection(_collection).doc();
+        final docRef = db.collection(collection).doc();
         final updatedJson = {
           ...json,
           "id": docRef.id,
@@ -37,7 +36,7 @@ abstract class BaseFirebaseRepository<T extends Serializable, E>
   @override
   Future<Result<List<T>, String>> getAll() async {
     try {
-      final snapshot = await db.collection(_collection).get();
+      final snapshot = await db.collection(collection).get();
       final items = snapshot.docs
           .map((doc) => _fromJson(doc.data()))
           .toList(growable: false);
@@ -50,7 +49,7 @@ abstract class BaseFirebaseRepository<T extends Serializable, E>
   @override
   Future<Result<T?, String>> getById(String id) async {
     try {
-      final snapshot = await db.collection(_collection).doc(id).get();
+      final snapshot = await db.collection(collection).doc(id).get();
       if (!snapshot.exists) {
         return Result.success(value: null);
       }
@@ -69,7 +68,7 @@ abstract class BaseFirebaseRepository<T extends Serializable, E>
   @override
   Future<Result<T, String>> update(String id, T item) async {
     try {
-      await db.collection(_collection).doc(id).set(item.toJson());
+      await db.collection(collection).doc(id).set(item.toJson());
       // await db.collection(_collection).doc(id).update(item.toJson());
       return Result.success(value: item);
     } catch (e) {
@@ -92,7 +91,7 @@ abstract class BaseFirebaseRepository<T extends Serializable, E>
     }
 
     try {
-      await db.collection(_collection).doc(id).delete();
+      await db.collection(collection).doc(id).delete();
       return Result.success(value: item!);
     } catch (e) {
       return Result.failure(error: e.toString());
