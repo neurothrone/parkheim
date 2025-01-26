@@ -18,7 +18,10 @@ class _AvailableSpaceItemsState extends State<AvailableSpaceItems> {
   @override
   void initState() {
     super.initState();
-    context.read<AvailableSpacesBloc>().add(AvailableSpacesLoad());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AvailableSpacesBloc>().add(AvailableSpacesLoad());
+    });
   }
 
   @override

@@ -18,7 +18,10 @@ class _HistoryParkingItemsState extends State<HistoryParkingItems> {
   @override
   void initState() {
     super.initState();
-    context.read<ParkingHistoryBloc>().add(ParkingHistoryLoad());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ParkingHistoryBloc>().add(ParkingHistoryLoad());
+    });
   }
 
   @override

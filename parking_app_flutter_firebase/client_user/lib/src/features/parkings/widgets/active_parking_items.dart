@@ -18,7 +18,10 @@ class _ActiveParkingItemsState extends State<ActiveParkingItems> {
   @override
   void initState() {
     super.initState();
-    context.read<ActiveParkingsBloc>().add(ActiveParkingLoad());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ActiveParkingsBloc>().add(ActiveParkingLoad());
+    });
   }
 
   @override
