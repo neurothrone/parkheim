@@ -18,7 +18,7 @@ dependencies:
     path: ../shared_widgets
 
   # Firebase
-  firebase_auth: ^5.3.3
+  firebase_auth: ^5.4.1
 
   # State management
   flutter_bloc: ^8.1.6

@@ -33,7 +33,7 @@ class AvailableSpacesBloc
     emit(AvailableSpacesLoading());
 
     await emit.onEach<List<ParkingSpace>>(
-      _parkingSpaceRepository.getAllAvailableSpacesStream(),
+      _parkingSpaceRepository.getAvailableSpacesStream(),
       onData: (spaces) => emit(AvailableSpacesLoaded(spaces: spaces)),
       onError: (error, stackTrace) => emit(
         AvailableSpacesFailure(message: error.toString()),

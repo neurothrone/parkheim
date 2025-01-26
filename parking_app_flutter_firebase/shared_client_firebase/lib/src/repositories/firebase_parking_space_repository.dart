@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:shared/shared.dart';
@@ -47,21 +49,68 @@ class FirebaseParkingSpaceRepository
             .toList());
   }
 
-  Stream<List<ParkingSpace>> getAllAvailableSpacesStream() async* {
-    // Get a stream of all parkings
+  // Stream<List<ParkingSpace>> getAvailableSpacesStream() async* {
+  //   final unavailableSpacesStream = FirebaseFirestore.instance
+  //       .collection("parkings")
+  //       .where("endTime", isNull: true)
+  //       .snapshots()
+  //       .map((snapshot) => snapshot.docs
+  //           .map((doc) => doc.data()["parkingSpace"]["id"] as String)
+  //           .toList());
+  //
+  //   final parkingSpacesStream = FirebaseFirestore.instance
+  //       .collection("parking-spaces")
+  //       .snapshots()
+  //       .map((snapshot) => snapshot.docs
+  //           .map((doc) => ParkingSpace.fromJson(doc.data()))
+  //           .toList());
+  //
+  //   yield* StreamZip([parkingSpacesStream, unavailableSpacesStream])
+  //       .map((values) {
+  //     final parkingSpaces = values[0] as List<ParkingSpace>;
+  //     final unavailableIds = values[1] as List<String>;
+  //     return parkingSpaces
+  //         .where((space) => !unavailableIds.contains(space.id))
+  //         .toList();
+  //   });
+  // }
+
+// Stream<List<ParkingSpace>> getAvailableSpacesStream() {
+//   return db.collection(collection).snapshots().asyncMap(
+//     (snapshot) async {
+//       final parkingsResult = await _parkingRepository.getAll();
+//       final List<Parking> parkings = parkingsResult.when(
+//         success: (List<Parking> parkings) => parkings,
+//         failure: (_) => [],
+//       );
+//
+//       final unavailableSpaces = parkings
+//           .where((Parking parking) =>
+//               parking.parkingSpace != null && parking.endTime == null)
+//           .map((Parking parking) => parking.parkingSpace!)
+//           .toList();
+//
+//       final spaces = snapshot.docs
+//           .map((doc) => ParkingSpace.fromJson(doc.data()))
+//           .where((space) => !unavailableSpaces.contains(space))
+//           .toList();
+//
+//       return spaces;
+//     },
+//   );
+// }
+
+  Stream<List<ParkingSpace>> getAvailableSpacesStream() async* {
     final parkingsSnapshot = _parkingRepository.getAllStream();
     await for (final parkings in parkingsSnapshot) {
-      // Filter out unavailable parking spaces
       final unavailableSpaces = parkings
           .where((Parking parking) =>
               parking.parkingSpace != null && parking.endTime == null)
           .map((Parking parking) => parking.parkingSpace!)
           .toList();
 
-      // Get a stream of all parking spaces
       final spacesSnapshot = db.collection(collection).snapshots();
       await for (final snapshot in spacesSnapshot) {
-        // Remove unavailable spaces from all spaces
         final spaces = snapshot.docs
             .map((doc) => ParkingSpace.fromJson(doc.data()))
             .where((space) => !unavailableSpaces.contains(space))

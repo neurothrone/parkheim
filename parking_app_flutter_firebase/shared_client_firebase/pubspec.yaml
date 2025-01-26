@@ -14,6 +14,9 @@ dependencies:
   shared:
     path: ../shared
 
+  # !: StreamZip to combine values from two streams into a single list of values
+  async: ^2.11.0
+
   # !: Group by functionality
   collection: ^1.18.0
 
@@ -21,8 +24,8 @@ dependencies:
   intl: ^0.20.1
 
   # Firebase
-  firebase_core: ^3.10.0
-  cloud_firestore: ^5.6.1
+  firebase_core: ^3.10.1
+  cloud_firestore: ^5.6.2
 
 dev_dependencies:
   flutter_test:
