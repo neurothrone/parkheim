@@ -1,0 +1,31 @@
+name: shared_client_auth
+description: "A new Flutter project."
+version: 0.0.1
+publish_to: 'none'
+
+environment:
+  sdk: ^3.6.1
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  shared:
+    path: ../shared
+
+  shared_widgets:
+    path: ../shared_widgets
+
+  # Firebase
+  firebase_auth: ^5.3.3
+
+  # State management
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
