@@ -17,6 +17,7 @@ class AvailableSpacesBloc
   })  : _parkingRepository = parkingRepository,
         _parkingSpaceRepository = parkingSpaceRepository,
         super(AvailableSpacesInitial()) {
+    on<SubscribeToAvailableSpaces>(_onSubscribeToAvailableSpaces);
     on<AvailableSpacesLoad>(_onLoad);
     on<AvailableSpacesStartParking>(_onStartParking);
     on<AvailableSpacesUpdate>(_onUpdate);
@@ -24,6 +25,21 @@ class AvailableSpacesBloc
 
   final FirebaseParkingRepository _parkingRepository;
   final FirebaseParkingSpaceRepository _parkingSpaceRepository;
+
+  Future<void> _onSubscribeToAvailableSpaces(
+      SubscribeToAvailableSpaces event,
+      Emitter<AvailableSpacesState> emit,
+      ) async {
+    emit(AvailableSpacesLoading());
+
+    await emit.onEach<List<ParkingSpace>>(
+      _parkingSpaceRepository.getAllAvailableSpacesStream(),
+      onData: (spaces) => emit(AvailableSpacesLoaded(spaces: spaces)),
+      onError: (error, stackTrace) => emit(
+        AvailableSpacesFailure(message: error.toString()),
+      ),
+    );
+  }
 
   Future<void> _onLoad(
     AvailableSpacesLoad event,

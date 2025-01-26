@@ -41,11 +41,33 @@ class FirebaseParkingSpaceRepository
   }
 
   Stream<List<ParkingSpace>> getAllSpacesStream() {
-    return FirebaseFirestore.instance
-        .collection(collection)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
+    return FirebaseFirestore.instance.collection(collection).snapshots().map(
+        (snapshot) => snapshot.docs
             .map((doc) => ParkingSpace.fromJson(doc.data()))
             .toList());
+  }
+
+  Stream<List<ParkingSpace>> getAllAvailableSpacesStream() async* {
+    // Get a stream of all parkings
+    final parkingsSnapshot = _parkingRepository.getAllStream();
+    await for (final parkings in parkingsSnapshot) {
+      // Filter out unavailable parking spaces
+      final unavailableSpaces = parkings
+          .where((Parking parking) =>
+              parking.parkingSpace != null && parking.endTime == null)
+          .map((Parking parking) => parking.parkingSpace!)
+          .toList();
+
+      // Get a stream of all parking spaces
+      final spacesSnapshot = db.collection(collection).snapshots();
+      await for (final snapshot in spacesSnapshot) {
+        // Remove unavailable spaces from all spaces
+        final spaces = snapshot.docs
+            .map((doc) => ParkingSpace.fromJson(doc.data()))
+            .where((space) => !unavailableSpaces.contains(space))
+            .toList();
+        yield spaces;
+      }
+    }
   }
 }

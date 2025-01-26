@@ -4,6 +4,8 @@ sealed class AvailableSpacesEvent {
   const AvailableSpacesEvent();
 }
 
+final class SubscribeToAvailableSpaces extends AvailableSpacesEvent {}
+
 final class AvailableSpacesLoad extends AvailableSpacesEvent {}
 
 final class AvailableSpacesStartParking extends AvailableSpacesEvent {

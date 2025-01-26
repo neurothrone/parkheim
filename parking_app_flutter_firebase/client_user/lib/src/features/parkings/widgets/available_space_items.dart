@@ -20,7 +20,8 @@ class _AvailableSpaceItemsState extends State<AvailableSpaceItems> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AvailableSpacesBloc>().add(AvailableSpacesLoad());
+      // context.read<AvailableSpacesBloc>().add(AvailableSpacesLoad());
+      context.read<AvailableSpacesBloc>().add(SubscribeToAvailableSpaces());
     });
   }
 

@@ -255,4 +255,16 @@ class FirebaseParkingRepository
       failure: (error) => Result.failure(error: error),
     );
   }
+
+  Stream<List<Parking>> getAllStream() {
+    return db.collection(collection).snapshots().map(
+      (snapshot) {
+        final parkings =
+            snapshot.docs.map((doc) => Parking.fromJson(doc.data())).toList();
+        return parkings;
+      },
+    ).handleError((error) {
+      return [];
+    });
+  }
 }
