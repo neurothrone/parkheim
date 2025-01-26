@@ -54,7 +54,7 @@ class _ParkingSpaceItemsState extends State<ParkingSpaceItems> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SpacesListBloc>().add(SubscribeToSpaces());
     });
   }
