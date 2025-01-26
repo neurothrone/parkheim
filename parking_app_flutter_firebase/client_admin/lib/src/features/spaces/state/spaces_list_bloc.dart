@@ -16,7 +16,7 @@ class SpacesListBloc extends Bloc<SpacesListEvent, SpacesListState> {
     required FirebaseParkingSpaceRepository parkingSpaceRepository,
   })  : _parkingSpaceRepository = parkingSpaceRepository,
         super(SpacesListInitial()) {
-    on<SubscribeToSpaces>(_onChange);
+    on<SubscribeToSpaces>(_onSubscribeToSpaces);
     on<SpacesListLoad>(_onLoad);
     on<SpacesListAddItem>(_onAdd);
     on<SpacesListUpdate>(_onUpdate);
@@ -25,7 +25,7 @@ class SpacesListBloc extends Bloc<SpacesListEvent, SpacesListState> {
 
   final FirebaseParkingSpaceRepository _parkingSpaceRepository;
 
-  Future<void> _onChange(
+  Future<void> _onSubscribeToSpaces(
     SubscribeToSpaces event,
     Emitter<SpacesListState> emit,
   ) async {
