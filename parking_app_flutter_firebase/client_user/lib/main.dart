@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'local_notifications.dart';
 import 'src/app.dart';
 import 'src/core/cubits/navigation/bottom_navigation_cubit.dart';
 import 'src/core/di/dependencies.dart';
@@ -17,6 +18,8 @@ import 'src/features/vehicles/state/vehicle_list_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeNotifications();
 
   await initDependencies();
 
