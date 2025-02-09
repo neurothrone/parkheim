@@ -45,7 +45,7 @@ void main() {
       vehicle: vehicle,
       parkingSpace: parkingSpace,
       startTime: DateTime.now().add(const Duration(hours: -2)),
-      endTime: null,
+      endTime: DateTime.now().add(const Duration(hours: 2)),
     );
 
     setUp(() {

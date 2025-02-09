@@ -31,16 +31,18 @@ class Parking extends BaseModel {
       startTime: map.containsKey("startTime")
           ? DateTime.tryParse(map["startTime"] as String) ?? DateTime.now()
           : DateTime.now(),
-      endTime: map.containsKey("endTime") && map["endTime"] != null
-          ? DateTime.tryParse(map["endTime"] as String)
-          : null,
+      endTime: map.containsKey("endTime")
+          ? DateTime.tryParse(map["endTime"] as String) ?? DateTime.now()
+          : DateTime.now(),
     );
   }
 
   final Vehicle? vehicle;
   final ParkingSpace? parkingSpace;
   final DateTime startTime;
-  final DateTime? endTime;
+  final DateTime endTime;
+
+  bool get isActive => DateTime.now().isBefore(endTime);
 
   Parking copyWith({
     String? id,
@@ -75,11 +77,7 @@ class Parking extends BaseModel {
 
   @override
   bool isValid() {
-    if (endTime != null) {
-      return endTime!.isAfter(startTime);
-    }
-
-    return true;
+    return endTime.isAfter(startTime);
   }
 
   @override
@@ -89,7 +87,7 @@ class Parking extends BaseModel {
       "vehicle": vehicle?.toJson(),
       "parkingSpace": parkingSpace?.toJson(),
       "startTime": startTime.toIso8601String(),
-      "endTime": endTime?.toIso8601String(),
+      "endTime": endTime.toIso8601String(),
     };
   }
 
@@ -98,12 +96,11 @@ class Parking extends BaseModel {
       return 0;
     }
 
-    DateTime end = endTime != null ? endTime! : DateTime.now();
-    if (startTime.isAfter(end)) {
+    if (startTime.isAfter(endTime)) {
       return 0;
     }
 
-    int elapsedHours = end.difference(startTime).inHours;
+    int elapsedHours = endTime.difference(startTime).inHours;
     if (elapsedHours == 0) {
       return parkingSpace!.pricePerHour;
     }

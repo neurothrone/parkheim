@@ -25,11 +25,10 @@ class FirebaseParkingSpaceRepository
       failure: (_) => [],
     );
 
-    final unavailableSpaces = parkings
-        .where((Parking parking) =>
-            parking.parkingSpace != null && parking.endTime == null)
-        .map((Parking parking) => parking.parkingSpace!)
-        .toList();
+    final Set<ParkingSpace> unavailableSpaces = parkings
+        .where((parking) => parking.isActive && parking.parkingSpace != null)
+        .map((parking) => parking.parkingSpace!)
+        .toSet();
 
     final spacesResult = await getAll();
     final List<ParkingSpace> spaces = spacesResult.when(
@@ -37,9 +36,9 @@ class FirebaseParkingSpaceRepository
       failure: (_) => [],
     );
 
-    return spaces
-        .where((ParkingSpace space) => !unavailableSpaces.contains(space))
-        .toList();
+    final availableSpaces =
+        spaces.where((space) => !unavailableSpaces.contains(space)).toList();
+    return availableSpaces;
   }
 
   Stream<List<ParkingSpace>> getAllSpacesStream() {
@@ -103,11 +102,11 @@ class FirebaseParkingSpaceRepository
   Stream<List<ParkingSpace>> getAvailableSpacesStream() async* {
     final parkingsSnapshot = _parkingRepository.getAllStream();
     await for (final parkings in parkingsSnapshot) {
-      final unavailableSpaces = parkings
+      final Set<ParkingSpace> unavailableSpaces = parkings
           .where((Parking parking) =>
-              parking.parkingSpace != null && parking.endTime == null)
+              parking.isActive && parking.parkingSpace != null)
           .map((Parking parking) => parking.parkingSpace!)
-          .toList();
+          .toSet();
 
       final spacesSnapshot = db.collection(collection).snapshots();
       await for (final snapshot in spacesSnapshot) {

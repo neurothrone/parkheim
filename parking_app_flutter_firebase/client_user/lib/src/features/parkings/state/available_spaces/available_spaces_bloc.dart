@@ -60,7 +60,7 @@ class AvailableSpacesBloc
         vehicle: event.vehicle,
         parkingSpace: event.space,
         startTime: DateTime.now(),
-        endTime: null,
+        endTime: DateTime.now().add(const Duration(hours: 1)),
       ),
     );
 
