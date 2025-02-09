@@ -14,6 +14,7 @@ Some generated Swedish social security numbers for testing:
 
 ### User client
 
+- Set up local notifications for Android and iOS.
 - Make `endTime` non-nullable in `Parking` model.
 - Add `isActive` getter to `Parking` to check if the current time is before the `endTime`.
 - Refactor `Parking` model, repositories, and blocs to use a new `isActive` getter for filtering
