@@ -173,6 +173,13 @@ class FirebaseParkingRepository
         parking.copyWith(endTime: DateTime.now()),
       );
 
+  Future<Result<Parking, String>> extendParking(Parking parking) => update(
+        parking.id,
+        parking.copyWith(
+          endTime: parking.endTime.add(const Duration(seconds: 10)), // TODO: set back to 1 hour
+        ),
+      );
+
   Future<Result<List<Parking>, String>> findFinishedParkingsForVehicle(
     Vehicle vehicle,
   ) async {

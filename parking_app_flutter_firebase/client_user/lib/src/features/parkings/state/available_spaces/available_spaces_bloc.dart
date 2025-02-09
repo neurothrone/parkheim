@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared/shared.dart';
 import 'package:shared_client_firebase/shared_client_firebase.dart';
 
+import '../../../../data/repositories/notification_repository.dart';
+
 part 'available_spaces_event.dart';
 
 part 'available_spaces_state.dart';
@@ -14,8 +16,10 @@ class AvailableSpacesBloc
   AvailableSpacesBloc({
     required FirebaseParkingRepository parkingRepository,
     required FirebaseParkingSpaceRepository parkingSpaceRepository,
+    required NotificationRepository notificationRepository,
   })  : _parkingRepository = parkingRepository,
         _parkingSpaceRepository = parkingSpaceRepository,
+        _notificationRepository = notificationRepository,
         super(AvailableSpacesInitial()) {
     on<SubscribeToAvailableSpaces>(_onSubscribeToAvailableSpaces);
     on<AvailableSpacesLoad>(_onLoad);
@@ -25,11 +29,12 @@ class AvailableSpacesBloc
 
   final FirebaseParkingRepository _parkingRepository;
   final FirebaseParkingSpaceRepository _parkingSpaceRepository;
+  final NotificationRepository _notificationRepository;
 
   Future<void> _onSubscribeToAvailableSpaces(
-      SubscribeToAvailableSpaces event,
-      Emitter<AvailableSpacesState> emit,
-      ) async {
+    SubscribeToAvailableSpaces event,
+    Emitter<AvailableSpacesState> emit,
+  ) async {
     emit(AvailableSpacesLoading());
 
     await emit.onEach<List<ParkingSpace>>(
@@ -54,18 +59,30 @@ class AvailableSpacesBloc
   ) async {
     emit(AvailableSpacesLoading());
 
+    final startTime = DateTime.now();
+    // TODO: Set endTime to 1 hour from now
+    // final endTime = startTime.add(const Duration(hours: 1));
+    final endTime = startTime.add(const Duration(seconds: 20));
     final result = await _parkingRepository.create(
       Parking(
         id: null,
         vehicle: event.vehicle,
         parkingSpace: event.space,
-        startTime: DateTime.now(),
-        endTime: DateTime.now().add(const Duration(hours: 1)),
+        startTime: startTime,
+        endTime: endTime,
       ),
     );
 
     result.when(
-      success: (_) => add(AvailableSpacesUpdate()),
+      success: (parking) {
+        add(AvailableSpacesUpdate());
+
+        // !: Schedule a notification 10 minutes before the parking ends
+        _notificationRepository.scheduleParkingReminder(
+          id: parking.id.hashCode,
+          endTime: endTime,
+        );
+      },
       failure: (error) => emit(AvailableSpacesFailure(message: error)),
     );
   }

@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:client_user/src/core/cubits/app_user/app_user_cubit.dart';
 import 'package:client_user/src/core/cubits/app_user/app_user_state.dart';
 import 'package:client_user/src/core/entities/user_entity.dart';
+import 'package:client_user/src/data/repositories/notification_repository.dart';
 import 'package:client_user/src/features/parkings/state/active_parkings/active_parkings_bloc.dart';
 import 'package:shared/shared.dart';
 import 'package:shared_client_firebase/shared_client_firebase.dart';
@@ -17,6 +18,7 @@ void main() {
   group("ActiveParkingsBloc", () {
     late FirebasePersonRepository remotePersonRepository;
     late FirebaseParkingRepository remoteParkingRepository;
+    late NotificationRepository notificationRepository;
 
     late AppUserCubit appUserCubit;
     final UserEntity user = UserEntity(
@@ -51,6 +53,7 @@ void main() {
     setUp(() {
       remotePersonRepository = MockRemotePersonRepository();
       remoteParkingRepository = MockRemoteParkingRepository();
+      notificationRepository = MockNotificationRepository();
 
       appUserCubit = MockAppUserCubit();
       when(() => appUserCubit.state).thenReturn(AppUserSignedIn(user: user));
@@ -74,6 +77,7 @@ void main() {
           appUserCubit: appUserCubit,
           personRepository: remotePersonRepository,
           parkingRepository: remoteParkingRepository,
+          notificationRepository: notificationRepository,
         ),
         seed: () => ActiveParkingsInitial(),
         act: (bloc) => bloc.add(ActiveParkingLoad()),
@@ -102,6 +106,7 @@ void main() {
           appUserCubit: appUserCubit,
           personRepository: remotePersonRepository,
           parkingRepository: remoteParkingRepository,
+          notificationRepository: notificationRepository,
         ),
         seed: () => ActiveParkingsInitial(),
         act: (bloc) => bloc.add(ActiveParkingLoad()),
@@ -138,6 +143,7 @@ void main() {
           appUserCubit: appUserCubit,
           personRepository: remotePersonRepository,
           parkingRepository: remoteParkingRepository,
+          notificationRepository: notificationRepository,
         ),
         seed: () => ActiveParkingsLoaded(
           parkings: [newParking],

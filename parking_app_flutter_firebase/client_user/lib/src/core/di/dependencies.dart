@@ -6,6 +6,7 @@ import 'package:shared_client_firebase/shared_client_firebase.dart';
 
 import '../../../firebase_options.dart';
 import '../../data/repositories/firebase_auth_repository.dart';
+import '../../data/repositories/notification_repository.dart';
 import '../../domain/interfaces/auth_repository.dart';
 import '../../domain/use_cases/auth.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
@@ -99,18 +100,22 @@ Future<void> initDependencies() async {
     );
 
   // !: Parking
+  serviceLocator.registerLazySingleton(() => NotificationRepository());
+
   serviceLocator
     ..registerLazySingleton(
       () => ActiveParkingsBloc(
         appUserCubit: serviceLocator(),
         personRepository: serviceLocator(),
         parkingRepository: serviceLocator(),
+        notificationRepository: serviceLocator(),
       ),
     )
     ..registerLazySingleton(
       () => AvailableSpacesBloc(
         parkingSpaceRepository: serviceLocator(),
         parkingRepository: serviceLocator(),
+        notificationRepository: serviceLocator(),
       ),
     )
     ..registerLazySingleton(

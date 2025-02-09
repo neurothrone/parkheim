@@ -12,4 +12,10 @@ final class ActiveParkingEnd extends ActiveParkingsEvent {
   final Parking parking;
 }
 
+final class ActiveParkingExtend extends ActiveParkingsEvent {
+  const ActiveParkingExtend({required this.parking});
+
+  final Parking parking;
+}
+
 final class ActiveParkingUpdate extends ActiveParkingsEvent {}
