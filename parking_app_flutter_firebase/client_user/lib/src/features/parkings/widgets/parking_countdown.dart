@@ -66,9 +66,12 @@ class _ParkingCountdownState extends State<ParkingCountdown> {
     final remaining = _endTime.difference(now);
 
     if (remaining.isNegative) {
-      return const Text(
+      return Text(
         "Parking time expired",
-        style: TextStyle(color: Colors.red, fontSize: 16),
+        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
       );
     }
 
@@ -77,12 +80,12 @@ class _ParkingCountdownState extends State<ParkingCountdown> {
       children: [
         Text(
           "Time Left:",
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(width: 10.0),
         Text(
           remaining.formatted,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
         ),
