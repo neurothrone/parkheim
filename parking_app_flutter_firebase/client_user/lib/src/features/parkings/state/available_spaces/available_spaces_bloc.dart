@@ -60,9 +60,9 @@ class AvailableSpacesBloc
     emit(AvailableSpacesLoading());
 
     final startTime = DateTime.now();
-    // TODO: Set endTime to 1 hour from now
-    // final endTime = startTime.add(const Duration(hours: 1));
-    final endTime = startTime.add(const Duration(seconds: 20));
+    final endTime = startTime.add(const Duration(hours: 1));
+    // final endTime = startTime.add(const Duration(seconds: 20));
+
     final result = await _parkingRepository.create(
       Parking(
         id: null,
@@ -77,7 +77,7 @@ class AvailableSpacesBloc
       success: (parking) {
         add(AvailableSpacesUpdate());
 
-        // !: Schedule a notification 10 minutes before the parking ends
+        // !: Schedule a notification before the parking ends
         _notificationRepository.scheduleParkingReminder(
           id: parking.id.hashCode,
           endTime: endTime,

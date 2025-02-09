@@ -12,12 +12,12 @@ class NotificationRepository {
   Future<void> scheduleParkingReminder({
     required int id,
     required DateTime endTime,
+    Duration duration = const Duration(minutes: 10),
   }) async {
     await requestPermissions();
 
-    // TODO: set timer to 10 minutes before endTime
-    // final notificationTime = endTime.subtract(const Duration(minutes: 10));
-    final notificationTime = endTime.subtract(const Duration(seconds: 10));
+    final notificationTime = endTime.subtract(duration);
+    // final notificationTime = endTime.subtract(const Duration(seconds: 10));
 
     // Ensure the notification is in the future
     if (notificationTime.isAfter(DateTime.now())) {
