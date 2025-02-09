@@ -54,7 +54,6 @@ class ActiveParkingsBloc
         emit(ActiveParkingExtended());
         add(ActiveParkingUpdate());
 
-        // TODO: reschedule notification
         _notificationRepository.rescheduleParkingReminder(
           parking.id.hashCode,
           parking.endTime,
@@ -76,7 +75,6 @@ class ActiveParkingsBloc
         emit(ActiveParkingEnded());
         add(ActiveParkingUpdate());
 
-        // TODO: Cancel notification
         _notificationRepository.cancelParkingReminder(parking.id.hashCode);
       },
       failure: (error) => emit(ActiveParkingsFailure(message: error)),
