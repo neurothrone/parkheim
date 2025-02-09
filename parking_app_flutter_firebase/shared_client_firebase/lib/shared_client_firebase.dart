@@ -9,3 +9,4 @@ export 'src/repositories/firebase_vehicle_repository.dart';
 
 // !: Utils
 export 'src/utils/datetime_extensions.dart';
+export 'src/utils/duration_extensions.dart';
