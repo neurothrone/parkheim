@@ -56,3 +56,7 @@ I´ll send the parking enforcement bots.
 
 Project is complete and serves as proof that Flutter can handle real-world full-stack use cases, and
 that I can survive multi-month dev cycles with sanity mostly intact.
+
+## Images
+
+![Parkheim User App](assets/parkheim.png)
