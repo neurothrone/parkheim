@@ -4,6 +4,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:client_user/src/features/parkings/state/available_spaces/available_spaces_bloc.dart';
+import 'package:client_user/src/data/repositories/notification_repository.dart';
 import 'package:shared/shared.dart';
 import 'package:shared_client_firebase/shared_client_firebase.dart';
 
@@ -14,6 +15,7 @@ void main() {
   group("AvailableSpacesBloc", () {
     late FirebaseParkingRepository remoteParkingRepository;
     late FirebaseParkingSpaceRepository remoteParkingSpaceRepository;
+    late NotificationRepository notificationRepository;
 
     final Person owner = Person(
       id: "VFa5T4QYQnqayx6ob1E1",
@@ -36,12 +38,13 @@ void main() {
       vehicle: vehicle,
       parkingSpace: parkingSpace,
       startTime: DateTime.now(),
-      endTime: null,
+      endTime: DateTime.now().add(const Duration(hours: 2)),
     );
 
     setUp(() {
       remoteParkingRepository = MockRemoteParkingRepository();
       remoteParkingSpaceRepository = MockRemoteParkingSpaceRepository();
+      notificationRepository = MockNotificationRepository();
     });
 
     setUpAll(() {
@@ -61,6 +64,7 @@ void main() {
         build: () => AvailableSpacesBloc(
           parkingRepository: remoteParkingRepository,
           parkingSpaceRepository: remoteParkingSpaceRepository,
+          notificationRepository: notificationRepository,
         ),
         seed: () => AvailableSpacesInitial(),
         act: (bloc) => bloc.add(AvailableSpacesLoad()),
@@ -83,6 +87,7 @@ void main() {
         build: () => AvailableSpacesBloc(
           parkingRepository: remoteParkingRepository,
           parkingSpaceRepository: remoteParkingSpaceRepository,
+          notificationRepository: notificationRepository,
         ),
         seed: () => AvailableSpacesInitial(),
         act: (bloc) => bloc.add(AvailableSpacesLoad()),
@@ -105,6 +110,7 @@ void main() {
         build: () => AvailableSpacesBloc(
           parkingRepository: remoteParkingRepository,
           parkingSpaceRepository: remoteParkingSpaceRepository,
+          notificationRepository: notificationRepository,
         ),
         seed: () => AvailableSpacesInitial(),
         act: (bloc) => bloc.add(AvailableSpacesLoad()),
@@ -129,6 +135,7 @@ void main() {
         build: () => AvailableSpacesBloc(
           parkingRepository: remoteParkingRepository,
           parkingSpaceRepository: remoteParkingSpaceRepository,
+          notificationRepository: notificationRepository,
         ),
         seed: () => AvailableSpacesLoaded(spaces: [parkingSpace]),
         act: (bloc) => bloc.add(

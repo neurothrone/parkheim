@@ -39,7 +39,7 @@ class FirebaseParkingRepository
         return Result.success(
           value: parkings
               .where((Parking parking) =>
-                  parking.endTime == null && parking.parkingSpace != null)
+                  parking.parkingSpace != null && parking.isActive)
               .toList()
             ..sort((a, b) => b.startTime.compareTo(a.startTime)),
         );
@@ -53,7 +53,7 @@ class FirebaseParkingRepository
     return result.when(
       success: (List<Parking> parkings) => parkings
           .where((Parking parking) =>
-              parking.endTime == null && parking.parkingSpace != null)
+              parking.parkingSpace != null && parking.isActive)
           .length,
       failure: (error) => 0,
     );
@@ -78,8 +78,7 @@ class FirebaseParkingRepository
     return result.when(
       success: (List<Parking> parkings) {
         final parkingSpaces = parkings
-            .where((Parking parking) =>
-                parking.parkingSpace != null && parking.endTime != null)
+            .where((Parking parking) => parking.parkingSpace != null)
             .map((Parking parking) => parking.parkingSpace!)
             .toList();
 
@@ -121,7 +120,7 @@ class FirebaseParkingRepository
             .where((Parking parking) =>
                 parking.vehicle?.id == vehicle.id &&
                 parking.parkingSpace != null &&
-                parking.endTime == null)
+                parking.isActive)
             .toList()
           ..sort((a, b) => b.startTime.compareTo(a.startTime));
       },
@@ -146,7 +145,7 @@ class FirebaseParkingRepository
                   parking.vehicle != null &&
                   vehicles
                       .any((vehicle) => vehicle.id == parking.vehicle!.id) &&
-                  parking.endTime == null)
+                  parking.isActive)
               .toList(),
         );
       },
@@ -156,21 +155,34 @@ class FirebaseParkingRepository
 
   Future<Result<Parking, String>> startParking(
     ParkingSpace parkingSpace,
-    Vehicle vehicle,
-  ) =>
+    Vehicle vehicle, {
+    Duration duration = const Duration(hours: 1),
+  }) =>
       create(
         Parking(
           id: "",
           vehicle: vehicle,
           parkingSpace: parkingSpace,
           startTime: DateTime.now(),
-          endTime: null,
+          endTime: DateTime.now().add(duration),
         ),
       );
 
   Future<Result<Parking, String>> endParking(Parking parking) => update(
         parking.id,
         parking.copyWith(endTime: DateTime.now()),
+      );
+
+  Future<Result<Parking, String>> extendParking(
+    Parking parking, {
+    Duration duration = const Duration(hours: 1),
+  }) =>
+      update(
+        parking.id,
+        parking.copyWith(
+          endTime: parking.endTime.add(duration),
+          // endTime: parking.endTime.add(const Duration(seconds: 10)),
+        ),
       );
 
   Future<Result<List<Parking>, String>> findFinishedParkingsForVehicle(
@@ -182,8 +194,7 @@ class FirebaseParkingRepository
         return Result.success(
             value: parkings
                 .where((Parking parking) =>
-                    parking.vehicle?.id == vehicle.id &&
-                    parking.endTime != null)
+                    parking.vehicle?.id == vehicle.id && !parking.isActive)
                 .toList());
       },
       failure: (error) {
@@ -210,7 +221,7 @@ class FirebaseParkingRepository
                 parking.parkingSpace != null &&
                 parking.vehicle != null &&
                 vehicles.any((vehicle) => vehicle.id == parking.vehicle!.id) &&
-                parking.endTime != null)
+                !parking.isActive)
             .toList();
       },
       failure: (_) => [],

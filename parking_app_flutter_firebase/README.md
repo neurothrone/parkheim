@@ -2,10 +2,6 @@
 
 ## Setup
 
-Download the latest version of objectbox for your platform from
-https://github.com/objectbox/objectbox-c/releases and move the downloaded file to `server/lib`
-directory.
-
 Some generated Swedish social security numbers for testing:
 
 - 19900101-1239
@@ -14,39 +10,21 @@ Some generated Swedish social security numbers for testing:
 
 ## Changes overview
 
-- Replaced old repositories with new firebase repositories.
-- Refactored existing blocs to work with firebase and added new blocs for fetching statistics,
-  parking history and creating the user profile.
-- Moved firebase repositories to a new package called shared_client_firebase that is shared by the
-  admin and user clients.
-- Moved datetime extensions to the new package shared_client_firebase.
-- Removed cli client and server.
-- Updated mocks and tests to work with the new repositories.
-
-### Admin client
-
-- Added blocs for active parkings, most popular parkings and parking revenue in statistics screen.
-- Modified app.dart to fetch statistics when navigating to Statistics Screen for all blocs above.
-- Added new SpaceHistoryBloc to fetch parking history for a specific parking space.
-- Removed redundant provider implementations and package.
-- Implemented realtime listening for Firestore by adding a stream to SpacesListBloc to listen to
-  changes in parking spaces whenever one adds/deletes/modifies a parking space on firestore.
-- Added auth feature to admin client by reusing the auth feature from the user client. Moved shared
-  logic to a new package called shared_client_auth.
-- Created a poor implementation for preventing access to app features until a user has the role "
-  admin" and verifying the user's role by checking if a Person's role contains the string "admin".
-  The plan was to use Firebase Functions to create a admin document in the admins collection in
-  Firestore after a user successfully registers. Sadly I couldn't get it to work.
+- User client: Implement local notifications for parking reminders on Android and iOS.
 
 ### User client
 
-- Removed redundant people feature directory. Move widgets that were in use to vehicles feature.
-- Added new blocs for creating profile, loading profile and parking history.
-- Modified AppRouter to load profile or vehicles when switching tabs.
-- Fixed some bugs with profile creation, adding vehicles and fetching owned vehicles after replacing
-  the old repositories with the new firebase repositories.
-- Renamed AddParkingForm to StartParkingForm and moved the owned vehicle list widget code inside to
-  its own widget called VehicleDropDownField.
-- Implemented realtime listening for Available parking spaces by adding a stream to the
-  AvailableSpacesBloc to listen to changes in parking spaces whenever one adds/deletes/modifies a
-  parking space on firestore, or whenever a parking space becomes occupied.
+- Set up local notifications for Android and iOS.
+- Make `endTime` non-nullable in `Parking` model.
+- Add `isActive` getter to `Parking` to check if the current time is before the `endTime`.
+- Refactor `Parking` model, repositories, and blocs to use a new `isActive` getter for filtering
+  active parkings.
+- Set default 1-hour duration for parking creation.
+- Add `Duration` extension to format time.
+- Implement `NotificationRepository` to handle local notifications.
+- Implement `ParkingCountdown` widget.
+- Add extend parking functionality.
+- Implement parking notifications.
+- Refactor `ActiveParkingScreen` to add new functionality.
+- Mock `NotificationRepository`, Update tests and blocs to use the new `Parking` and `isActive`
+  getter.

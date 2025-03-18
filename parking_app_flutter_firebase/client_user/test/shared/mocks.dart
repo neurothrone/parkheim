@@ -1,6 +1,7 @@
 import 'package:mocktail/mocktail.dart';
 
 import 'package:client_user/src/core/cubits/app_user/app_user_cubit.dart';
+import 'package:client_user/src/data/repositories/notification_repository.dart';
 import 'package:shared_client_firebase/shared_client_firebase.dart';
 
 class MockAppUserCubit extends Mock implements AppUserCubit {}
@@ -16,3 +17,6 @@ class MockRemoteParkingRepository extends Mock
 
 class MockRemoteParkingSpaceRepository extends Mock
     implements FirebaseParkingSpaceRepository {}
+
+class MockNotificationRepository extends Mock
+    implements NotificationRepository {}

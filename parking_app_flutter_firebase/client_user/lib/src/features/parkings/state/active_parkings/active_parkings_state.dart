@@ -25,6 +25,16 @@ class ActiveParkingsLoaded extends ActiveParkingsState {
   List<Object?> get props => [parkings];
 }
 
+class ActiveParkingExtended extends ActiveParkingsState {
+  @override
+  List<Object?> get props => [];
+}
+
+class ActiveParkingEnded extends ActiveParkingsState {
+  @override
+  List<Object?> get props => [];
+}
+
 class ActiveParkingsFailure extends ActiveParkingsState {
   const ActiveParkingsFailure({
     required this.message,

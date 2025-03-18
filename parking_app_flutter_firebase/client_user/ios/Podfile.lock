@@ -1211,6 +1211,10 @@ PODS:
     - nanopb (~> 3.30910.0)
   - FirebaseSharedSwift (11.7.0)
   - Flutter (1.0.0)
+  - flutter_local_notifications (0.0.1):
+    - Flutter
+  - flutter_timezone (0.0.1):
+    - Flutter
   - GoogleUtilities/AppDelegateSwizzler (8.0.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -1336,6 +1340,8 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
+  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
+  - flutter_timezone (from `.symlinks/plugins/flutter_timezone/ios`)
 
 SPEC REPOS:
   trunk:
@@ -1368,6 +1374,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: Flutter
+  flutter_local_notifications:
+    :path: ".symlinks/plugins/flutter_local_notifications/ios"
+  flutter_timezone:
+    :path: ".symlinks/plugins/flutter_timezone/ios"
 
 SPEC CHECKSUMS:
   abseil: d121da9ef7e2ff4cab7666e76c5a3e0915ae08c3
@@ -1386,6 +1396,8 @@ SPEC CHECKSUMS:
   FirebaseFirestoreInternal: db478fdaeb98fe8686ff49e600f3871c224a76ff
   FirebaseSharedSwift: a45efd84d60ebbfdcdbaebc66948af3630459e62
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_local_notifications: 395056b3175ba4f08480a7c5de30cd36d69827e4
+  flutter_timezone: ee50ce7786b5fde27e2fe5375bbc8c9661ffc13f
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   "gRPC-C++": 2fa52b3141e7789a28a737f251e0c45b4cb20a87
   gRPC-Core: a27c294d6149e1c39a7d173527119cfbc3375ce4
@@ -1394,6 +1406,6 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
 
-PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
+PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
 
 COCOAPODS: 1.16.2

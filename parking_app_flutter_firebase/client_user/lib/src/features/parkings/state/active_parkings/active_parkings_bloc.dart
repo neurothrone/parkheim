@@ -7,6 +7,7 @@ import 'package:shared_client_firebase/shared_client_firebase.dart';
 
 import '../../../../core/cubits/app_user/app_user_cubit.dart';
 import '../../../../core/cubits/app_user/app_user_state.dart';
+import '../../../../data/repositories/notification_repository.dart';
 
 part 'active_parkings_event.dart';
 
@@ -18,10 +19,13 @@ class ActiveParkingsBloc
     required this.appUserCubit,
     required FirebasePersonRepository personRepository,
     required FirebaseParkingRepository parkingRepository,
+    required NotificationRepository notificationRepository,
   })  : _personRepository = personRepository,
         _parkingRepository = parkingRepository,
+        _notificationRepository = notificationRepository,
         super(ActiveParkingsInitial()) {
     on<ActiveParkingLoad>(_onLoad);
+    on<ActiveParkingExtend>(_onExtend);
     on<ActiveParkingEnd>(_onEnd);
     on<ActiveParkingUpdate>(_onUpdate);
   }
@@ -29,6 +33,7 @@ class ActiveParkingsBloc
   final AppUserCubit appUserCubit;
   final FirebasePersonRepository _personRepository;
   final FirebaseParkingRepository _parkingRepository;
+  final NotificationRepository _notificationRepository;
 
   Future<void> _onLoad(
     ActiveParkingLoad event,
@@ -37,16 +42,41 @@ class ActiveParkingsBloc
     await loadActiveParkings(emit);
   }
 
+  Future<void> _onExtend(
+    ActiveParkingExtend event,
+    Emitter<ActiveParkingsState> emit,
+  ) async {
+    emit(ActiveParkingsLoading());
+
+    final result = await _parkingRepository.extendParking(event.parking);
+    return result.when(
+      success: (parking) {
+        emit(ActiveParkingExtended());
+        add(ActiveParkingUpdate());
+
+        _notificationRepository.rescheduleParkingReminder(
+          parking.id.hashCode,
+          parking.endTime,
+        );
+      },
+      failure: (error) => emit(ActiveParkingsFailure(message: error)),
+    );
+  }
+
   Future<void> _onEnd(
     ActiveParkingEnd event,
     Emitter<ActiveParkingsState> emit,
   ) async {
     emit(ActiveParkingsLoading());
 
-    final result =
-        await _parkingRepository.endParking(event.parking);
+    final result = await _parkingRepository.endParking(event.parking);
     return result.when(
-      success: (_) => add(ActiveParkingUpdate()),
+      success: (parking) {
+        emit(ActiveParkingEnded());
+        add(ActiveParkingUpdate());
+
+        _notificationRepository.cancelParkingReminder(parking.id.hashCode);
+      },
       failure: (error) => emit(ActiveParkingsFailure(message: error)),
     );
   }
@@ -75,8 +105,7 @@ class ActiveParkingsBloc
       return;
     }
 
-    final result =
-        await _parkingRepository.findActiveParkingsForOwner(owner);
+    final result = await _parkingRepository.findActiveParkingsForOwner(owner);
     result.when(
       success: (parkings) => emit(ActiveParkingsLoaded(parkings: parkings)),
       failure: (error) => emit(ActiveParkingsFailure(message: error)),

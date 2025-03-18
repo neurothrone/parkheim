@@ -40,7 +40,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
         return Result.success(
           value: parkings
               .where((Parking parking) =>
-                  parking.endTime == null && parking.parkingSpace != null)
+                  parking.isActive && parking.parkingSpace != null)
               .toList()
             ..sort((a, b) => b.startTime.compareTo(a.startTime)),
         );
@@ -54,7 +54,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     return result.when(
       success: (List<Parking> parkings) => parkings
           .where((Parking parking) =>
-              parking.endTime == null && parking.parkingSpace != null)
+              parking.isActive && parking.parkingSpace != null)
           .length,
       failure: (error) => 0,
     );
@@ -79,8 +79,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
     return result.when(
       success: (List<Parking> parkings) {
         final parkingSpaces = parkings
-            .where((Parking parking) =>
-                parking.parkingSpace != null && parking.endTime != null)
+            .where((Parking parking) => parking.parkingSpace != null)
             .map((Parking parking) => parking.parkingSpace!)
             .toList();
 
@@ -124,7 +123,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
             .where((Parking parking) =>
                 parking.vehicle?.id == vehicle.id &&
                 parking.parkingSpace != null &&
-                parking.endTime == null)
+                parking.isActive)
             .toList()
           ..sort((a, b) => b.startTime.compareTo(a.startTime));
       },
@@ -152,7 +151,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
                   parking.vehicle != null &&
                   vehicles
                       .any((vehicle) => vehicle.id == parking.vehicle!.id) &&
-                  parking.endTime == null)
+                  parking.isActive)
               .toList(),
         );
       },
@@ -162,15 +161,16 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
 
   Future<Result<Parking, String>> startParking(
     ParkingSpace parkingSpace,
-    Vehicle vehicle,
-  ) =>
+    Vehicle vehicle, {
+    Duration duration = const Duration(hours: 1),
+  }) =>
       create(
         Parking(
           id: "",
           vehicle: vehicle,
           parkingSpace: parkingSpace,
           startTime: DateTime.now(),
-          endTime: null,
+          endTime: DateTime.now().add(duration),
         ),
       );
 
@@ -188,8 +188,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
         return Result.success(
             value: parkings
                 .where((Parking parking) =>
-                    parking.vehicle?.id == vehicle.id &&
-                    parking.endTime != null)
+                    parking.vehicle?.id == vehicle.id && !parking.isActive)
                 .toList());
       },
       failure: (error) {
@@ -217,7 +216,7 @@ class RemoteParkingRepository extends BaseRemoteRepository<Parking, String> {
                 parking.parkingSpace != null &&
                 parking.vehicle != null &&
                 vehicles.any((vehicle) => vehicle.id == parking.vehicle!.id) &&
-                parking.endTime != null)
+                !parking.isActive)
             .toList();
       },
       failure: (_) => [],
